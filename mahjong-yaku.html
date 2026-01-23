@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>採用役一覧｜PO・TORO 麻雀</title>
+<meta name="description" content="ポ・トロ麻雀（四人打ち）採用役一覧。食い下がり採用／翻数のみ簡易計算対応。">
+<style>
+:root{
+  --bg:#fff6fb;
+  --card:#ffffff;
+  --text:#3b2f2a;
+  --muted:#6b6b6b;
+  --accent:#de3f7b;
+  --border:#ffd6e7;
+  --grad1:#f6b7d2;
+  --grad2:#a9d6f7;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",system-ui,-apple-system,Segoe UI,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+}
+header{
+  padding:32px 18px 22px;
+  text-align:center;
+  color:#fff;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+}
+header .badge{
+  display:inline-block;
+  padding:6px 12px;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:999px;
+  font-weight:900;
+  background:rgba(255,255,255,.12);
+}
+header h1{margin:12px 0 6px; font-size:1.35rem; line-height:1.35;}
+header p{margin:0; opacity:.95; font-weight:700;}
+
+main{
+  max-width:920px;
+  margin:0 auto;
+  padding:14px 12px 26px;
+}
+section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  margin:12px 0;
+}
+h2{
+  margin:0 0 8px;
+  color:var(--accent);
+  font-size:1.1rem;
+}
+ul{margin:8px 0 0 1.2em;}
+.note{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.callout{
+  border:2px solid var(--border);
+  background:#fff0f6;
+  border-radius:14px;
+  padding:12px;
+}
+.callout strong{color:var(--accent);}
+.small{font-size:.92rem;}
+.back-link{
+  display:block;
+  margin:18px auto 0;
+  max-width:420px;
+  padding:14px 12px;
+  text-align:center;
+  text-decoration:none;
+  font-weight:900;
+  color:#fff;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+}
+.back-link:hover{opacity:.9;}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="badge">PO・TORO 麻雀</div>
+  <h1>ポ・トロ麻雀　採用役一覧</h1>
+  <p>食い下がり採用／翻数のみ簡易計算</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>この一覧のルール</h2>
+    <div class="callout">
+      <strong>食い下がりを採用</strong><br>
+      食い下がり対象役は、<strong>（門前＝○翻／鳴き＝○翻）</strong>で記載しています。
+    </div>
+    <p class="note">
+      ※本表に記載のない役は採用していません。<br>
+      ※ドラ（赤ドラ・裏ドラ・カンドラ等）は「役」ではなく、加算要素として扱います。
+    </p>
+  </section>
+
+  <section>
+    <h2>1翻役</h2>
+    <ul>
+      <li>立直（リーチ）</li>
+      <li>断么九（タンヤオ）※食い可（1翻）</li>
+      <li>平和（ピンフ）※門前のみ（1翻）</li>
+      <li>役牌（白・發・中・場風・自風）（1翻）</li>
+      <li>一盃口（イーペーコー）※門前のみ（1翻）</li>
+      <li>海底摸月（ハイテイ）／河底撈魚（ホウテイ）（1翻）</li>
+      <li>嶺上開花（リンシャン）（1翻）</li>
+      <li>槍槓（チャンカン）（1翻）</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2翻役（および食い下がり対象）</h2>
+    <ul>
+      <li>七対子（チートイツ）※門前のみ（2翻）</li>
+      <li>対々和（トイトイ）（2翻）</li>
+      <li>三暗刻（サンアンコウ）（2翻）</li>
+      <li>三色同順（サンショク）<strong>（門前＝2翻／鳴き＝1翻）</strong></li>
+      <li>一気通貫（イッツー）<strong>（門前＝2翻／鳴き＝1翻）</strong></li>
+      <li>混全帯么九（チャンタ）<strong>（門前＝2翻／鳴き＝1翻）</strong></li>
+    </ul>
+    <p class="note small">※上記の「鳴き＝1翻」が食い下がりです。</p>
+  </section>
+
+  <section>
+    <h2>3翻以上（および食い下がり対象）</h2>
+    <ul>
+      <li>混一色（ホンイツ）<strong>（門前＝3翻／鳴き＝2翻）</strong></li>
+      <li>清一色（チンイツ）<strong>（門前＝6翻／鳴き＝5翻）</strong></li>
+      <li>小三元（ショウサンゲン）（2翻）</li>
+      <li>混老頭（ホンロウトウ）（2翻）</li>
+    </ul>
+    <p class="note small">
+      ※「小三元／混老頭」は一般的には2翻ですが、当店では“採用役”としてこちらにまとめて掲載しています（翻数表記は上記の通りです）。
+    </p>
+  </section>
+
+  <section>
+    <h2>役満</h2>
+    <ul>
+      <li>大三元</li>
+      <li>大四喜</li>
+      <li>小四喜</li>
+      <li>四槓子</li>
+      <li>字一色</li>
+      <li>緑一色</li>
+      <li>清老頭</li>
+      <li>国士無双</li>
+      <li>四暗刻</li>
+      <li>九連宝燈</li>
+      <li>天和</li>
+      <li>地和</li>
+    </ul>
+    <p class="note">※人和（レンホー）は当店では役満として扱いません（本一覧から削除）。</p>
+  </section>
+
+  <a class="back-link" href="./">← 麻雀システムHPへ戻る</a>
+
+</main>
+</body>
+</html>
