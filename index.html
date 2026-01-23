@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>メイドさんと楽しむ健全麻雀｜PO・TORO</title>
-<meta name="description" content="ポ・トロ新サービス。全自動麻雀卓でメイドさんと楽しむ健全麻雀。ご利用方法・料金・点数表・対局ルールを掲載。">
+<meta name="description" content="ポ・トロ新サービス。全自動麻雀卓でメイドさんと楽しむ健全麻雀。ご利用方法・料金・点数表・対局ルール・採用役一覧を掲載。">
 <style>
 :root{
   --bg:#fff6fb;
@@ -42,7 +42,8 @@ header h1{
   margin:14px 0 6px;
   font-size:1.55rem;
 }
-header p{margin:0; font-weight:700;}
+header p{margin:0; font-weight:700; opacity:.98;}
+
 main{
   max-width:980px;
   margin:0 auto;
@@ -64,6 +65,7 @@ ul{margin:10px 0 0 1.2em; padding:0;}
 .checks{
   list-style:none;
   padding:0;
+  margin:10px 0 0;
 }
 .checks li{
   margin:6px 0;
@@ -105,7 +107,7 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   gap:10px;
   margin-top:14px;
 }
-.score-link, .rules-link{
+.score-link, .rules-link, .yaku-link{
   display:block;
   padding:14px 12px;
   text-align:center;
@@ -124,6 +126,11 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   background:linear-gradient(135deg,#f6b7d2,#a9d6f7);
 }
 .rules-link:hover{opacity:.92;}
+.yaku-link{
+  color:#3b2f2a;
+  background:#fffafc;
+}
+.yaku-link:hover{background:#fff0f6;}
 
 .cta{
   display:block;
@@ -135,6 +142,12 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   color:#fff;
   border-radius:16px;
   background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
+}
+.cta small{
+  display:block;
+  font-weight:700;
+  opacity:.95;
+  margin-top:2px;
 }
 footer{
   text-align:center;
@@ -155,63 +168,77 @@ footer{
 
 <main>
 
-<section>
-  <h2>サービス概要</h2>
-  <p>
-    全自動麻雀卓を使用して、メイドさんと一緒に麻雀を楽しめる
-    ポ・トロの新アミューズメントです。
-  </p>
-  <ul class="checks">
-    <li>全自動麻雀卓使用</li>
-    <li>初心者OK</li>
-    <li>ルール説明・進行サポートあり</li>
-  </ul>
-</section>
+  <section>
+    <h2>サービス概要</h2>
+    <p>
+      全自動麻雀卓を使用して、メイドさんと一緒に麻雀を楽しめるポ・トロの新アミューズメントです。<br>
+      点数計算が不安な方や、久しぶりに麻雀をする方でも、ゆったり・楽しく遊んでいただけます。
+    </p>
+    <ul class="checks">
+      <li>全自動麻雀卓使用</li>
+      <li>初心者OK</li>
+      <li>ルール説明・進行サポートあり</li>
+    </ul>
+  </section>
 
-<section>
-  <h2>ご利用方法（予約必須）</h2>
-  <p><strong>ご利用日前日までに、XのDMにてご予約ください。</strong></p>
-  <ul>
-    <li>麻雀システム利用希望</li>
-    <li>ご希望日時</li>
-    <li>ご利用時間（初回60分〜）</li>
-    <li>ご利用人数</li>
-  </ul>
-</section>
+  <section>
+    <h2>ご利用方法（予約必須）</h2>
+    <p><strong>ご利用日前日までに、XのDMにてご予約ください。</strong></p>
+    <ul>
+      <li>「麻雀システム利用希望」の旨</li>
+      <li>ご希望日時</li>
+      <li>ご利用時間（初回60分〜／延長は30分〜）</li>
+      <li>ご利用人数（ご主人様／お嬢様の人数）</li>
+    </ul>
+    <p class="note">空き状況を確認のうえ、ご返信いたします。</p>
+  </section>
 
-<section>
-  <h2>料金案内</h2>
-  <div class="pricebox">
-    <p class="price">■ 全自動麻雀卓貸出料：2,000円（税込）</p>
-    <p class="note">※初回60分のみ／延長時は再発生しません</p>
+  <section>
+    <h2>料金案内</h2>
+    <div class="pricebox">
+      <p class="price">■ 初回ご利用：60分〜</p>
+      <p class="price">■ ご延長：30分〜（30分単位）</p>
+      <p class="note">※表示はすべて税込です。</p>
+    </div>
 
-    <p class="price">■ メイドさん同卓料：30分 2,000円（税込）／人</p>
-    <p class="note">※同卓メイドは最大2名まで</p>
-  </div>
+    <div class="pricebox" style="margin-top:12px;">
+      <p class="price">① 全自動麻雀卓貸出料：2,000円（税込）／回</p>
+      <p class="note">※初回60分のみ発生します。延長時は再発生しません。</p>
 
-  <div class="example">
-    <strong>料金例</strong><br>
-    ご主人様2名＋メイドさん2名／60分の場合<br>
-    卓代2,000円＋同卓料（30分×2枠×2名）＝<strong>10,000円（税込）</strong>
-  </div>
+      <p class="price">② メイドさん同卓料：30分 2,000円（税込）／人</p>
+      <p class="note">※同卓メイドは最大2名まで。</p>
+    </div>
 
-  <!-- 導線ボタン -->
-  <div class="link-grid">
-    <a class="score-link" href="mahjong-score.html">🀄 ポ・トロ独自の簡易点数計算を見る</a>
-    <a class="rules-link" href="mahjong-rules.html">📘 四人打ち対局ルールを見る</a>
-  </div>
-</section>
+    <div class="example">
+      <strong>料金例</strong><br>
+      ご主人様2名＋メイドさん2名／60分の場合<br>
+      卓代2,000円＋同卓料（30分2,000円×2枠×メイド2名）＝<strong>10,000円（税込）</strong><br>
+      <span class="note">※60分は「30分×2枠」として計算します。</span>
+    </div>
 
-<section>
-  <h2>注意事項</h2>
-  <ul>
-    <li>健全なアミューズメントサービスです</li>
-    <li>金銭のやり取り・賭博行為は禁止です</li>
-    <li>メイドさんへの過度な要求は禁止です</li>
-  </ul>
-</section>
+    <!-- 導線ボタン（3本） -->
+    <div class="link-grid">
+      <a class="score-link" href="mahjong-score.html">🀄 ポ・トロ独自の簡易点数計算を見る</a>
+      <a class="rules-link" href="mahjong-rules.html">📘 四人打ち対局ルールを見る</a>
+      <a class="yaku-link" href="mahjong-yaku.html">🧾 採用役一覧を見る</a>
+    </div>
+  </section>
 
-<a class="cta" href="https://x.com/po_toro">XのDMで予約する</a>
+  <section>
+    <h2>注意事項</h2>
+    <ul>
+      <li>健全なアミューズメントサービスです</li>
+      <li>金銭のやり取り・賭博行為は禁止です</li>
+      <li>他のお客様のご迷惑になる行為はご遠慮ください</li>
+      <li>メイドさんへの過度な要求は禁止です</li>
+    </ul>
+  </section>
+
+  <!-- 予約導線：公式XのDMリンクに差し替え推奨 -->
+  <a class="cta" href="#">
+    XのDMで予約する
+    <small>※リンクは公式Xに差し替えてください</small>
+  </a>
 
 </main>
 
