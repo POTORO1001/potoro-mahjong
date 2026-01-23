@@ -35,7 +35,7 @@ header .badge{
   padding:6px 12px;
   border:1px solid rgba(255,255,255,.45);
   border-radius:999px;
-  font-weight:800;
+  font-weight:900;
   background:rgba(255,255,255,.12);
 }
 header h1{
@@ -120,15 +120,38 @@ td:first-child, th:first-child{
   border-radius:12px;
   padding:10px 12px;
 }
-footer{
+
+/* 採用役リンクボタン */
+.yaku-link{
+  display:block;
+  margin-top:12px;
+  padding:14px 12px;
   text-align:center;
-  color:var(--muted);
-  font-size:.86rem;
-  padding:18px 10px 26px;
+  text-decoration:none;
+  font-weight:900;
+  border-radius:16px;
+  border:2px solid #ffd6e7;
+  color:#3b2f2a;
+  background:#fffafc;
 }
-.small{
-  font-size:.92rem;
+.yaku-link:hover{ background:#fff0f6; }
+
+/* 戻るボタン */
+.back-link{
+  display:block;
+  margin:18px auto 0;
+  max-width:420px;
+  padding:14px 12px;
+  text-align:center;
+  text-decoration:none;
+  font-weight:900;
+  color:#ffffff;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  border-radius:16px;
 }
+.back-link:hover{opacity:.9;}
+
+.small{font-size:.92rem;}
 </style>
 </head>
 
@@ -148,11 +171,16 @@ footer{
       <span class="pill">ロン／ツモ対応</span>
       <span class="pill">親・子対応</span>
     </div>
+
     <div class="callout" style="margin-top:10px;">
       <strong>七対子（チートイツ）について</strong><br>
       本表では、七対子は<strong>2翻以上</strong>として扱います（1翻は「ー」表示）。
     </div>
-    <p class="note">※本ページはポ・トロ独自の簡易計算です。一般的な符計算とは異なります。</p>
+
+    <p class="note">※本ページはポ・トロ運用の簡易計算です。一般的な符計算とは異なります。</p>
+
+    <!-- 採用役一覧への導線 -->
+    <a class="yaku-link" href="mahjong-yaku.html">🧾 採用役一覧を見る（翻数の確認）</a>
   </section>
 
   <section>
@@ -293,19 +321,19 @@ footer{
   </section>
 
   <section>
-    <h2>補足</h2>
+    <h2>補足（店内運用向け）</h2>
     <ul>
       <li>翻数が分からない場合は、メイドさんが確認・案内します。</li>
-      <li>本点数表はポ・トロの独自ルールに基づきます（一般の符計算とは異なります）。</li>
+      <li>本点数表はポ・トロの簡易ルールに基づきます（一般の符計算とは異なります）。</li>
     </ul>
   </section>
-  
-<a class="back-link" href="./">← 麻雀システムHPへ戻る</a>
-</a>
-  
+
+  <!-- 戻るボタン：以前の修正方針に合わせて「./」を採用 -->
+  <a class="back-link" href="./">← 麻雀システムHPへ戻る</a>
+
 </main>
 
-<footer>
+<footer style="text-align:center; color:var(--muted); font-size:.86rem; padding:18px 10px 26px;">
   concept cafe PO・TORO
 </footer>
 </body>
