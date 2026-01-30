@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>三人打ち対局ルール｜PO・TORO 麻雀</title>
+<meta name="description" content="PO・TORO（ポ・トロ）麻雀の三人打ち（サンマ）対局ルール。北抜きドラ（役満特例）、三家立直の扱い、連荘、流局、ドラ等の取り扱い。">
+<style>
+:root{
+  --bg:#fff6fb;
+  --card:#ffffff;
+  --text:#3b2f2a;
+  --muted:#6b6b6b;
+  --accent:#de3f7b;
+  --border:#ffd6e7;
+  --grad1:#f6b7d2;
+  --grad2:#a9d6f7;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",system-ui,-apple-system,Segoe UI,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+}
+header{
+  padding:34px 18px 22px;
+  text-align:center;
+  color:#fff;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+}
+header .badge{
+  display:inline-block;
+  padding:6px 12px;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:999px;
+  font-weight:900;
+  background:rgba(255,255,255,.12);
+}
+header h1{
+  margin:12px 0 6px;
+  font-size:1.4rem;
+  line-height:1.35;
+}
+header p{margin:0; opacity:.95; font-weight:700;}
+main{
+  max-width:980px;
+  margin:0 auto;
+  padding:14px 12px 26px;
+}
+section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px 16px;
+  margin:12px 0;
+}
+h2{
+  margin:0 0 10px;
+  color:var(--accent);
+  font-size:1.1rem;
+}
+.note{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:.92rem;
+}
+ul{margin:10px 0 0 1.2em; padding:0;}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media(min-width:820px){
+  .grid{ grid-template-columns:1fr 1fr; }
+}
+.rulebox{
+  border:1px dashed var(--border);
+  background:#fffafc;
+  border-radius:14px;
+  padding:12px;
+}
+.badge2{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:999px;
+  background:#fff0f6;
+  border:1px solid var(--border);
+  color:var(--accent);
+  font-weight:900;
+  font-size:.86rem;
+}
+.callout{
+  border:2px solid var(--border);
+  background:#fff0f6;
+  border-radius:14px;
+  padding:12px;
+}
+.callout strong{
+  color:var(--accent);
+}
+.callout ul{
+  margin:8px 0 0 1.2em;
+}
+.back-link{
+  display:block;
+  margin:18px auto 0;
+  max-width:420px;
+  padding:14px 12px;
+  text-align:center;
+  text-decoration:none;
+  font-weight:900;
+  color:#ffffff;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  border-radius:16px;
+}
+.back-link:hover{opacity:.9;}
+.small{font-size:.92rem;}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="badge">PO・TORO 麻雀</div>
+  <h1>ポ・トロ麻雀　三人打ち対局ルール</h1>
+  <p>健全アミューズメント／賭けるのは己のプライドのみ</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>ゲーム形式</h2>
+    <div class="rulebox">
+      <p style="margin:0;">
+        <span class="badge2">東風戦</span> 30,000点スタート／35,000点返し<br>
+        <span class="badge2">半荘戦</span> 35,000点スタート／40,000点返し
+      </p>
+    </div>
+    <p class="note">※対局の形式（東風／半荘）は当日のご案内・状況により決定します。</p>
+  </section>
+
+  <section>
+    <h2>重要ルール</h2>
+    <div class="callout">
+      <strong>特に重要な3点</strong>
+      <ul>
+        <li><strong>食いかえなし（鳴いた同巡内）</strong>：同巡内での食いかえは禁止です。</li>
+        <li><strong>三家立直は流局になりません</strong>（※当店ルール）。</li>
+        <li><strong>北は通常使用不可。役満構成時のみ使用可。抜いた北は戻せません</strong>（北抜きドラ：重要）。</li>
+      </ul>
+    </div>
+    <p class="note small">※上記は誤解が起きやすい項目のため、お屋敷内運用として明確化しています。</p>
+  </section>
+
+  <section>
+    <h2>基本ルール</h2>
+    <ul>
+      <li>三人打ち（サンマ）／萬子は <strong>1萬・9萬のみ使用（2〜8萬抜き）</strong></li>
+      <li>食いタン、後付けあり</li>
+      <li><strong>食いかえなし（鳴いた同巡内）</strong></li>
+      <li>赤ドラあり（赤5筒×1、赤5索×1、赤1萬×1）</li>
+      <li>裏ドラ、カンドラ、カン裏ドラあり</li>
+      <li>点数計算は「簡易点数表」を参照</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>北抜きドラ（役満特例）</h2>
+    <div class="rulebox">
+      <ul>
+        <li><strong>北は通常、手牌として使用不可</strong></li>
+        <li>ツモった北は <strong>抜きドラ</strong> として公開し、<strong>嶺上から補充</strong></li>
+        <li>抜き北1枚につき <strong>ドラ1枚</strong></li>
+      </ul>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <strong>役満時のみ北を手牌として使用可（重要）</strong>
+      <ul>
+        <li>対象：<strong>小四喜／大四喜／国士無双</strong></li>
+        <li><strong>抜いた北は戻せません</strong>（抜いた北は役構成牌として使用不可）</li>
+      </ul>
+    </div>
+
+    <p class="note small">※「抜く（ドラを増やす）」か「残す（役満の可能性）」かの判断が発生します。</p>
+  </section>
+
+  <section>
+    <h2>ロン・供託</h2>
+    <ul>
+      <li>ダブロンあり</li>
+      <li>トリプルロンなし（3人のため発生しません）</li>
+      <li>供託（リーチ棒）は、あがり時に獲得します</li>
+      <li><strong>ダブロン時は頭ハネ（上家取り）</strong>とし、供託は頭ハネの和了者が獲得します</li>
+    </ul>
+    <p class="note small">※供託の取り扱いはお屋敷内運用の簡易ルールです。</p>
+  </section>
+
+  <section>
+    <h2>連荘・流局・特殊流局</h2>
+    <div class="grid">
+      <div class="rulebox">
+        <strong>連荘</strong>
+        <ul>
+          <li>親のテンパイ、あがりで連荘</li>
+          <li>九種九牌は親の連荘</li>
+        </ul>
+      </div>
+      <div class="rulebox">
+        <strong>流局・特殊流局</strong>
+        <ul>
+          <li><strong>三家立直は流局にならない</strong></li>
+          <li>四槓流れは、親流れ</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <sectio
