@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PO・TORO｜麻雀システム 面子募集</title>
+  <meta name="description" content="麻雀システムの面子募集。部屋の作成／閲覧へ進めます。" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="theme-color" content="#f6b7d2" />
+  <style>
+    :root{
+      --bg:#fff7fb;
+      --card:#ffffff;
+      --ink:#2b2b2b;
+      --sub:#666;
+      --accent:#ff79a6;
+      --accent2:#7fc9ff;
+      --ring:#ffd7e6;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --radius:22px;
+      --max:960px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(255,121,166,.20), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(127,201,255,.22), transparent 60%),
+        linear-gradient(180deg, var(--bg), #ffffff 60%);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:22px}
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px;
+      padding:10px 4px 18px;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:4px;
+      line-height:1.1;
+    }
+    .brand .logo{
+      font-weight:900; letter-spacing:.02em;
+      font-size:18px;
+    }
+    .brand .tag{
+      font-size:12px; color:var(--sub);
+    }
+    .badge{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.7);
+      border:1px solid rgba(255,121,166,.22);
+      box-shadow:0 6px 16px rgba(0,0,0,.06);
+      color:#b34a6a;
+      white-space:nowrap;
+    }
+
+    .hero{
+      margin-top:6px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(255,215,230,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(320px 220px at 10% 0%, rgba(255,121,166,.18), transparent 60%),
+        radial-gradient(300px 220px at 92% 20%, rgba(127,201,255,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .hero-inner{position:relative}
+    h1{
+      margin:0 0 8px;
+      font-size:22px;
+      letter-spacing:.01em;
+    }
+    .lead{
+      margin:0;
+      color:var(--sub);
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid rgba(255,215,230,.9);
+      border-radius:var(--radius);
+      box-shadow:0 10px 24px rgba(0,0,0,.06);
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:170px;
+    }
+    .card .label{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800;
+      font-size:16px;
+    }
+    .dot{
+      width:12px; height:12px; border-radius:50%;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 0 0 6px rgba(255,215,230,.55);
+      flex:0 0 auto;
+    }
+    .desc{
+      margin:0;
+      color:var(--sub);
+      font-size:13px;
+      line-height:1.7;
+    }
+    .btn{
+      margin-top:auto;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,121,166,.28);
+      background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.80));
+      box-shadow:0 10px 18px rgba(0,0,0,.06);
+      cursor:pointer;
+      font-weight:800;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 14px 22px rgba(0,0,0,.08); border-color:rgba(255,121,166,.38)}
+    .btn:active{transform:translateY(0px)}
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(255,121,166,.20), rgba(127,201,255,.20));
+      border-color:rgba(127,201,255,.35);
+    }
+    .arrow{
+      width:18px; height:18px; display:inline-block;
+      border-radius:999px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.06);
+      position:relative;
+      flex:0 0 auto;
+    }
+    .arrow:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      margin:auto;
+      width:7px; height:7px;
+      border-right:2px solid rgba(0,0,0,.45);
+      border-bottom:2px solid rgba(0,0,0,.45);
+      transform:rotate(-45deg);
+      top:5px;
+      left:5px;
+    }
+
+    footer{
+      margin-top:14px;
+      color:#888;
+      font-size:12px;
+      text-align:center;
+      padding:14px 4px 6px;
+    }
+    .mini{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .pill{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(255,215,230,.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">PO・TORO｜麻雀システム</div>
+        <div class="tag">面子募集（部屋の作成／閲覧）</div>
+      </div>
+      <div class="badge">ご主人様・お嬢様向け</div>
+    </header>
+
+    <section class="hero" aria-label="面子募集トップ">
+      <div class="hero-inner">
+        <h1>面子募集</h1>
+        <p class="lead">
+          「面子募集の部屋を作成」または「面子募集の部屋を見る」から進んでください。<br />
+          ※ここは入口ページです。次の画面（作成／閲覧）は次ステップで作ります。
+        </p>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="分岐メニュー">
+      <!-- 作成 -->
+      <div class="card">
+        <div class="label"><span class="dot" aria-hidden="true"></span>面子募集の部屋を作成</div>
+        <p class="desc">
+          募集内容（日時・人数・ルール・ひとこと等）を入力して、募集部屋を作成します。
+        </p>
+        <a class="btn primary" href="room-create.html" aria-label="面子募集の部屋を作成ページへ">
+          作成ページへ進む <span class="arrow" aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <!-- 閲覧 -->
+      <div class="card">
+        <div class="label"><span class="dot" aria-hidden="true"></span>面子募集の部屋を見る</div>
+        <p class="desc">
+          すでに作成された募集部屋を一覧／検索して、参加希望の部屋を確認します。
+        </p>
+        <a class="btn" href="room-list.html" aria-label="面子募集の部屋を見るページへ">
+          閲覧ページへ進む <span class="arrow" aria-hidden="true"></span>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="mini">
+        <div class="pill">予約・連絡：各部屋の案内に従ってください</div>
+        <div class="pill">PO・TORO / Mahjong</div>
+      </div>
+      <div style="margin-top:10px;">© PO・TORO</div>
+    </footer>
+  </div>
+</body>
+</html>
