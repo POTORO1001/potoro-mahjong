@@ -1,291 +1,586 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>四人打ち対局ルール｜PO・TORO 麻雀</title>
-<meta name="description" content="PO・TORO（ポ・トロ）麻雀の四人打ち対局ルール。東風戦・半荘戦、リーチ、供託、流局、パオ、赤ドラ等の取り扱い。">
-<style>
-:root{
-  /* ポータルと同じ“読みやすさ最適化”系 */
-  --bg:#fbf7fa;            /* 旧:#fff6fb */
-  --card:#ffffff;
-  --text:#2f2622;          /* 旧:#3b2f2a（少し濃く） */
-  --muted:#5f5f5f;         /* 旧:#6b6b6b */
-  --accent:#de3f7b;
-  --border:#ffd6e7;
-  --grad1:#f6b7d2;
-  --grad2:#a9d6f7;
-}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PO・TORO 麻雀｜四人打ちルール</title>
+  <meta name="description" content="concept cafe PO・TORO（ポ・トロ）麻雀システム：四人打ち（東風戦・半荘戦）の対局ルールまとめ。スマホで読みやすい最適化版。" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="theme-color" content="#ff79a6" />
+  <style>
+    :root{
+      --bg:#fff7fb;
+      --card:#ffffff;
+      --ink:#2b2b2b;
+      --sub:#666;
+      --accent:#ff79a6;
+      --accent2:#7fc9ff;
+      --ring:#ffd7e6;
+      --chip:#fff0f6;
+      --shadow:0 14px 30px rgba(0,0,0,.07);
+      --radius:18px;
+      --radius2:22px;
+      --max:980px;
+    }
 
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",system-ui,-apple-system,Segoe UI,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.85; /* 読みやすく */
-}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(255,121,166,.18), transparent 60%),
+        radial-gradient(1200px 600px at 90% 0%, rgba(127,201,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--ink);
+      font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.65;
+    }
 
-header{
-  padding:34px 18px 22px;
-  text-align:center;
-  color:#fff;
-  background:linear-gradient(135deg,var(--grad1),var(--grad2));
-}
-header .badge{
-  display:inline-block;
-  padding:6px 12px;
-  border:1px solid rgba(255,255,255,.45);
-  border-radius:999px;
-  font-weight:900;
-  background:rgba(255,255,255,.12);
-}
-header h1{
-  margin:12px 0 6px;
-  font-size:1.45rem;
-  line-height:1.35;
-  font-weight:900;
-  letter-spacing:.01em;
-}
-header p{margin:0; opacity:.95; font-weight:700;}
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 14px 36px}
+    header{
+      position:sticky; top:0; z-index:10;
+      background:linear-gradient(to bottom, rgba(255,247,251,.95), rgba(255,247,251,.65));
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid rgba(255,215,230,.7);
+    }
+    .bar{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:10px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .logo{
+      width:36px; height:36px; border-radius:12px;
+      background:
+        radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.65) 35%, transparent 55%),
+        linear-gradient(135deg, rgba(255,121,166,.95), rgba(127,201,255,.95));
+      box-shadow:0 10px 20px rgba(255,121,166,.18);
+      border:1px solid rgba(255,255,255,.8);
+      flex:0 0 auto;
+    }
+    .brand h1{
+      font-size:14px; line-height:1.2; margin:0;
+      letter-spacing:.2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .brand .sub{
+      font-size:12px; color:var(--sub); margin:2px 0 0;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
 
-main{
-  max-width:860px; /* 旧:980px（長文の視線移動を減らす） */
-  margin:0 auto;
-  padding:14px 12px 26px;
-}
+    .btns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      appearance:none; border:1px solid rgba(255,215,230,.9);
+      background:rgba(255,255,255,.9);
+      color:var(--ink);
+      padding:8px 10px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:12px;
+      display:inline-flex; align-items:center; gap:8px;
+      box-shadow:0 8px 18px rgba(0,0,0,.05);
+      cursor:pointer;
+      transition:transform .08s ease, box-shadow .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 22px rgba(0,0,0,.07); border-color:rgba(255,121,166,.35)}
+    .btn:active{transform:translateY(0)}
+    .btn .dot{
+      width:8px; height:8px; border-radius:99px;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 0 0 4px rgba(255,215,230,.65);
+    }
 
-section{
-  background:rgba(255,255,255,.92);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:22px 18px; /* 余白を増やして読みやすく */
-  margin:12px 0;
-  box-shadow:0 10px 22px rgba(0,0,0,.05);
-}
+    .hero{padding:18px 0 10px}
+    .titleRow{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin:10px 0 12px;
+    }
+    .titleRow h2{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.3px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(135deg, rgba(255,121,166,.12), rgba(127,201,255,.12));
+      border:1px solid rgba(255,215,230,.85);
+      box-shadow:0 10px 22px rgba(0,0,0,.05);
+      font-weight:800;
+      font-size:12px;
+      color:#3a2a32;
+      white-space:nowrap;
+    }
+    .pill b{color:var(--accent)}
+    .noteTop{
+      margin:0;
+      color:var(--sub);
+      font-size:13px;
+    }
 
-h2{
-  margin:0 0 12px;
-  color:var(--accent);
-  font-size:1.12rem;
-  font-weight:900;
-  letter-spacing:.01em;
-  padding-bottom:8px;
-  border-bottom:1px dashed rgba(222,63,123,.25);
-}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (min-width:900px){
+      .grid{grid-template-columns: 1.2fr .8fr}
+    }
 
-p{margin:0 0 10px;}
+    .card{
+      background:var(--card);
+      border:1px solid rgba(255,215,230,.9);
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardInner{padding:14px}
+    .cardTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin:0 0 6px;
+    }
+    .cardTitle h3{
+      margin:0;
+      font-size:15px;
+      letter-spacing:.2px;
+    }
+    .chip{
+      display:inline-flex; align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--chip);
+      border:1px solid rgba(255,215,230,.9);
+      color:#5a3b46;
+      font-size:12px;
+      font-weight:800;
+      white-space:nowrap;
+    }
 
-.note{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:.95rem;
-}
-.small{font-size:.95rem;}
+    .toc{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      padding:12px 14px 2px;
+    }
+    .toc a{
+      text-decoration:none;
+      font-size:12px;
+      font-weight:800;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(255,215,230,.9);
+      box-shadow:0 8px 18px rgba(0,0,0,.04);
+      transition:transform .08s ease, border-color .15s ease;
+    }
+    .toc a:hover{transform:translateY(-1px); border-color:rgba(127,201,255,.55)}
 
-ul{margin:8px 0 0 1.2em; padding:0;}
+    details{
+      border-top:1px dashed rgba(255,215,230,.9);
+    }
+    details:first-of-type{border-top:none}
+    summary{
+      cursor:pointer;
+      list-style:none;
+      padding:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-weight:900;
+      color:#3a2a32;
+      user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    .kicker{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .badge{
+      flex:0 0 auto;
+      width:28px; height:28px;
+      border-radius:10px;
+      background:linear-gradient(135deg, rgba(255,121,166,.18), rgba(127,201,255,.18));
+      border:1px solid rgba(255,215,230,.9);
+      display:grid; place-items:center;
+      font-size:14px;
+    }
+    .arrow{
+      flex:0 0 auto;
+      width:28px; height:28px;
+      border-radius:10px;
+      border:1px solid rgba(255,215,230,.9);
+      background:rgba(255,255,255,.9);
+      display:grid; place-items:center;
+      transition:transform .18s ease;
+    }
+    details[open] .arrow{transform:rotate(180deg)}
+    .body{
+      padding:0 14px 14px;
+      color:var(--ink);
+    }
 
-/* 2カラム（PC） */
-.grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-}
-@media(min-width:820px){
-  .grid{ grid-template-columns:1fr 1fr; }
-}
+    ul{margin:8px 0 0; padding-left:18px}
+    li{margin:6px 0}
+    .muted{color:var(--sub)}
+    .em{
+      font-weight:900;
+      color:#2f1a22;
+      background:linear-gradient(to bottom, transparent 58%, rgba(255,121,166,.16) 58%);
+    }
 
-.rulebox{
-  border:1px dashed var(--border);
-  background:#fffafc;
-  border-radius:14px;
-  padding:12px;
-}
+    .aside .cardInner{padding:14px 14px 16px}
+    .callout{
+      border-radius:16px;
+      border:1px solid rgba(255,215,230,.9);
+      background:linear-gradient(135deg, rgba(255,121,166,.10), rgba(127,201,255,.10));
+      padding:12px 12px 10px;
+    }
+    .callout h4{
+      margin:0 0 6px;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .callout p{margin:0; color:#4b3a42; font-size:13px}
+    .mini{
+      margin-top:10px;
+      display:grid;
+      gap:10px;
+    }
+    .mini .row{
+      display:flex; align-items:flex-start; gap:10px;
+      padding:10px 10px 9px;
+      border-radius:16px;
+      border:1px solid rgba(255,215,230,.9);
+      background:rgba(255,255,255,.92);
+    }
+    .mini .ic{
+      width:30px; height:30px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(255,121,166,.18), rgba(127,201,255,.18));
+      border:1px solid rgba(255,215,230,.9);
+      display:grid; place-items:center;
+      flex:0 0 auto;
+      font-size:14px;
+    }
+    .mini .t{font-weight:900; font-size:12.5px; margin:0}
+    .mini .d{margin:2px 0 0; font-size:12.5px; color:var(--sub)}
 
-/* 小さなタグ */
-.badge2{
-  display:inline-block;
-  padding:3px 10px;
-  border-radius:999px;
-  background:#fff0f6;
-  border:1px solid var(--border);
-  color:var(--accent);
-  font-weight:900;
-  font-size:.88rem;
-}
+    footer{
+      margin-top:14px;
+      padding:14px 2px 0;
+      color:var(--sub);
+      font-size:12px;
+      text-align:center;
+    }
 
-/* 重要ルールの強調枠 */
-.callout{
-  border:2px solid var(--border);
-  background:#fff0f6;
-  border-radius:14px;
-  padding:12px;
-}
-.callout strong{color:var(--accent);}
-.callout ul{margin:8px 0 0 1.2em;}
-
-/* ホバー効果（戻るボタン含む） */
-.back-link{
-  display:block;
-  margin:18px auto 0;
-  max-width:420px;
-  padding:14px 12px;
-  text-align:center;
-  text-decoration:none;
-  font-weight:900;
-  color:#ffffff;
-  background:linear-gradient(135deg,var(--grad1),var(--grad2));
-  border-radius:16px;
-  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
-  position:relative;
-  overflow:hidden;
-  will-change:transform;
-}
-.back-link:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 24px rgba(0,0,0,.14);
-  filter:saturate(1.05) brightness(1.02);
-}
-.back-link:active{
-  transform:translateY(-1px);
-  box-shadow:0 8px 18px rgba(0,0,0,.12);
-}
-.back-link::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-75%;
-  width:50%;
-  height:100%;
-  background:linear-gradient(
-    120deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,.38) 50%,
-    rgba(255,255,255,0) 100%
-  );
-  transform:skewX(-25deg);
-  pointer-events:none;
-}
-.back-link:hover::after{
-  animation:shine .85s forwards;
-}
-@keyframes shine{100%{left:125%;}}
-</style>
+    /* small helper for in-page anchors */
+    .anchor{position:relative; top:-78px; height:1px}
+  </style>
 </head>
 
 <body>
-<header>
-  <div class="badge">PO・TORO 麻雀</div>
-  <h1>ポ・トロ麻雀　四人打ち対局ルール</h1>
-  <p>健全アミューズメント／賭けるのは己のプライドのみ</p>
-</header>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div style="min-width:0">
+          <h1>PO・TORO 麻雀</h1>
+          <p class="sub">四人打ちルール（読みやすい最適化版）</p>
+        </div>
+      </div>
 
-<main>
+      <div class="btns">
+        <button class="btn" type="button" id="btnCopy" title="ページのルール本文をコピー">
+          <span class="dot" aria-hidden="true"></span> ルールをコピー
+        </button>
+        <button class="btn" type="button" id="btnOpenAll" title="すべて開く">
+          <span class="dot" aria-hidden="true"></span> 全部ひらく
+        </button>
+        <button class="btn" type="button" id="btnCloseAll" title="すべて閉じる">
+          <span class="dot" aria-hidden="true"></span> 全部とじる
+        </button>
+      </div>
+    </div>
+  </header>
 
-  <section>
-    <h2>ゲーム形式</h2>
-    <div class="rulebox">
-      <p style="margin:0;">
-        <span class="badge2">東風戦</span> 20,000点スタート／25,000点返し<br>
-        <span class="badge2">半荘戦</span> 25,000点スタート／30,000点返し
+  <main class="wrap">
+    <section class="hero">
+      <div class="titleRow">
+        <h2>四人打ち 対局ルール</h2>
+        <div class="pill">PO・TORO 独自仕様 <b>一部あり</b></div>
+      </div>
+      <p class="noteTop">
+        スマホでも読みやすいよう、<span class="em">要点をカテゴリ別</span>に整理しています。対局前の確認にご利用ください。
       </p>
-    </div>
-    <p class="note">※対局の形式（東風／半荘）は当日のご案内・状況により決定します。</p>
-  </section>
+    </section>
 
-  <section>
-    <h2>重要ルール</h2>
-    <div class="callout">
-      <strong>特に重要な3点</strong>
-      <ul>
-        <li><strong>食いかえなし（鳴いた同巡内）</strong>：同巡内での食いかえは禁止です。</li>
-        <li><strong>四家立直は流局になりません</strong>（※当店ルール）。</li>
-        <li><strong>ダブロン時の供託（リーチ棒）は、和了した2人で折半</strong>します。</li>
-      </ul>
-    </div>
-    <p class="note small">※上記は誤解が起きやすい項目のため、お屋敷内運用として明確化しています。</p>
-  </section>
+    <section class="card" aria-label="目次">
+      <nav class="toc">
+        <a href="#sec-basic">① 基本ルール</a>
+        <a href="#sec-score">② 得点・ドラ</a>
+        <a href="#sec-flow">③ 流局・連荘</a>
+        <a href="#sec-ron">④ ロン関連</a>
+        <a href="#sec-end">⑤ 終局条件</a>
+        <a href="#sec-note">補足</a>
+      </nav>
+    </section>
 
-  <section>
-    <h2>基本ルール</h2>
-    <ul>
-      <li>食いタン、後付けあり</li>
-      <li><strong>食いかえなし（鳴いた同巡内）</strong></li>
-      <li>赤ドラあり（マンズ×1、ソウズ×1、ピンズ×1）</li>
-      <li>裏ドラ、カンドラ、カン裏ドラあり</li>
-      <li>流し満貫あり（流局扱い）</li>
-      <li>点数計算は「簡易点数表」を参照</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>ロン・供託・責任払い</h2>
-    <ul>
-      <li>ダブロン、トリプルロンあり</li>
-      <li>供託（リーチ棒）は、あがり時に獲得します</li>
-      <li><strong>ダブロン時の供託（リーチ棒）は、和了した2人で折半</strong>します</li>
-      <li>パオ（責任払い）あり（大三元／大四喜／四槓子に適用）</li>
-    </ul>
-    <p class="note small">※供託の取り扱いはお屋敷内運用の簡易ルールです。</p>
-  </section>
-
-  <section>
-    <h2>連荘・流局・特殊流局</h2>
     <div class="grid">
-      <div class="rulebox">
-        <strong>連荘</strong>
-        <ul>
-          <li>親のテンパイ、あがりで連荘</li>
-          <li>九種九牌は親の連荘</li>
-        </ul>
-      </div>
-      <div class="rulebox">
-        <strong>流局・特殊流局</strong>
-        <ul>
-          <li><strong>四家立直は流局にならない</strong></li>
-          <li>四風連打、四槓流れは、親流れ</li>
-        </ul>
-      </div>
+      <!-- MAIN -->
+      <section class="card" id="rulesCard" aria-label="四人打ちルール本文">
+        <div class="cardInner">
+          <div class="cardTitle">
+            <h3>ルール一覧（タップで展開）</h3>
+            <span class="chip">4人打ち</span>
+          </div>
+          <p class="muted" style="margin:0 0 8px">
+            各項目を開くと詳細が表示されます（店内掲示用にも使えるように簡潔化）。
+          </p>
+        </div>
+
+        <div class="anchor" id="sec-basic"></div>
+        <details open>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">①</span>
+              基本ルール
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>東風戦：<span class="em">20,000点スタート／25,000点返し</span></li>
+              <li>半荘戦：<span class="em">25,000点スタート／30,000点返し</span></li>
+              <li>食いタンあり</li>
+              <li>後付けあり</li>
+              <li>食い替えなし（鳴いた同巡内）</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="anchor" id="sec-score"></div>
+        <details>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">②</span>
+              得点・ドラ関連
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>赤ドラあり（<span class="em">萬子×1／索子×1／筒子×2</span>）</li>
+              <li>裏ドラあり</li>
+              <li>カンドラあり</li>
+              <li>カン裏ドラあり</li>
+              <li>パオ（責任払い）あり（大三元／大四喜／四槓子に適用）</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="anchor" id="sec-flow"></div>
+        <details>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">③</span>
+              流局・連荘関連
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>親のテンパイで連荘</li>
+              <li>親のあがりで連荘</li>
+              <li>九種九牌は親の連荘</li>
+              <li>四家立直は流局にならない</li>
+              <li>四風連打／四槓流れは、親流れ</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="anchor" id="sec-ron"></div>
+        <details>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">④</span>
+              ロン関連
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>ダブロン、トリプルロンあり</li>
+              <li>供託はあがり時に獲得（ダブロン以上は上家取り）</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="anchor" id="sec-end"></div>
+        <details>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">⑤</span>
+              終局条件
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>オーラス（終了条件）：オーラスの親のあがりやめあり（親がトップになった時点で終了）</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="anchor" id="sec-note"></div>
+        <div class="cardInner" style="padding-top:10px">
+          <div class="callout" role="note" aria-label="補足">
+            <h4>補足（気持ちよく遊ぶために）</h4>
+            <p>
+              ※本ルールは、ご主人様・お嬢様に楽しんでいただくための <span class="em">PO・TORO独自仕様</span> を一部含みます。<br />
+              皆さまが気持ちよく対局できるよう、ご協力をお願いいたします。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASIDE -->
+      <aside class="card aside" aria-label="サイド情報">
+        <div class="cardInner">
+          <div class="cardTitle">
+            <h3>このページの使い方</h3>
+            <span class="chip">スマホ最適</span>
+          </div>
+
+          <div class="mini">
+            <div class="row">
+              <div class="ic" aria-hidden="true">📌</div>
+              <div>
+                <p class="t">対局前のチェック用</p>
+                <p class="d">目次から該当セクションへジャンプできます。</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="ic" aria-hidden="true">🧾</div>
+              <div>
+                <p class="t">「ルールをコピー」</p>
+                <p class="d">SNSや案内文への貼り付けに便利です。</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="ic" aria-hidden="true">🪄</div>
+              <div>
+                <p class="t">全部ひらく／とじる</p>
+                <p class="d">店内掲示や印刷時は「全部ひらく」がおすすめ。</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="callout" aria-label="トーン補足">
+            <h4>表現トーンについて</h4>
+            <p>
+              ギャンブル要素を強めず、<span class="em">「遊びとしての麻雀」</span>に寄せた案内文になるよう、言い回しをやさしめに整えています。
+            </p>
+          </div>
+        </div>
+      </aside>
     </div>
-  </section>
 
-  <section>
-    <h2>オーラス（終了条件）</h2>
-    <ul>
-      <li>オーラスの親のあがりやめあり（親がトップになった時点で自動的に終了）</li>
-      <li>オーラスの流局時に供託点棒（場に置かれた立直棒）があった場合、その供託点棒はトップ者の持ち点に加算</li>
-    </ul>
-  </section>
+    <footer>
+      © PO・TORO / Mahjong Rules (4 players) — Optimized UI
+    </footer>
+  </main>
 
-  <section>
-    <h2>ぶっとび・リーチ制限</h2>
-    <ul>
-      <li>ぶっとびあり（持ち点が0点以下で終了）</li>
-      <li>流し満貫あり（流局扱い）</li>
-      <li>1,000点未満は立直をかけられない</li>
-      <li>立直をかけて0点の状態で流局し4人テンパイの場合、ぶっとび</li>
-      <li>あがり牌のない立直はかけられない</li>
-    </ul>
-  </section>
+  <script>
+    (function(){
+      const $ = (s, r=document) => r.querySelector(s);
+      const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-  <section>
-    <h2>最後に</h2>
-    <div class="rulebox">
-      <p style="margin:0; font-weight:900; text-align:center;">
-        賭けることができるのは己のプライドのみ
-      </p>
-    </div>
-    <p class="note">※健全なアミューズメントとしてお楽しみください。</p>
-  </section>
+      const detailsList = $$('section#rulesCard details');
+      const btnOpenAll = $('#btnOpenAll');
+      const btnCloseAll = $('#btnCloseAll');
+      const btnCopy = $('#btnCopy');
 
-  <!-- 戻るボタン：必要に応じてファイル名を変更 -->
-  <a class="back-link" href="./">← 麻雀システムHPへ戻る</a>
+      btnOpenAll?.addEventListener('click', () => {
+        detailsList.forEach(d => d.open = true);
+      });
 
-</main>
+      btnCloseAll?.addEventListener('click', () => {
+        detailsList.forEach(d => d.open = false);
+        // 先頭に戻して「閉じた」感を出す
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
 
-<footer style="text-align:center; color:var(--muted); font-size:.86rem; padding:18px 10px 26px;">
-  concept cafe PO・TORO
-</footer>
+      // コピー内容（見出し＋箇条書きのみ）
+      function buildCopyText(){
+        const lines = [];
+        lines.push('PO・TORO 麻雀｜四人打ちルール');
+        lines.push('（読みやすい最適化版）');
+        lines.push('');
+
+        const map = [
+          ['① 基本ルール', '#sec-basic'],
+          ['② 得点・ドラ関連', '#sec-score'],
+          ['③ 流局・連荘関連', '#sec-flow'],
+          ['④ ロン関連', '#sec-ron'],
+          ['⑤ 終局条件', '#sec-end'],
+          ['補足', '#sec-note'],
+        ];
+
+        map.forEach(([title, id]) => {
+          lines.push(title);
+          const anchor = document.querySelector(id);
+          // idはanchor divのため、その次の details/body または補足ブロックを拾う
+          let block = null;
+
+          if (id !== '#sec-note') {
+            // アンカー直後のdetailsを拾う
+            block = anchor?.nextElementSibling?.tagName === 'DETAILS' ? anchor.nextElementSibling : null;
+            const items = block ? Array.from(block.querySelectorAll('li')).map(li => '・' + li.textContent.trim()) : [];
+            items.forEach(x => lines.push(x));
+          } else {
+            const note = document.querySelector('[role="note"] p');
+            if (note) {
+              lines.push('・' + note.textContent.replace(/\s+/g,' ').trim());
+            }
+          }
+          lines.push('');
+        });
+
+        return lines.join('\n').trim() + '\n';
+      }
+
+      async function copyToClipboard(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          return true;
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          let ok = false;
+          try{ ok = document.execCommand('copy'); }catch(_){}
+          document.body.removeChild(ta);
+          return ok;
+        }
+      }
+
+      btnCopy?.addEventListener('click', async () => {
+        const text = buildCopyText();
+        const ok = await copyToClipboard(text);
+        btnCopy.textContent = ok ? 'コピーしました！' : 'コピー失敗…';
+        setTimeout(() => {
+          btnCopy.innerHTML = '<span class="dot" aria-hidden="true"></span> ルールをコピー';
+        }, 1400);
+      });
+    })();
+  </script>
 </body>
 </html>
