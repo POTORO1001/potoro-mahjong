@@ -192,9 +192,51 @@ window.createRoom = async function(){
       createdAt: serverTimestamp()
     });
 
-    $("ok").style.display="block";
-    $("ok").innerHTML =
-      `保存しました。<br>部屋ID：<b>${roomId}</b><br>終了予定：${endDate.toLocaleString()}`;
+   $("ok").style.display = "block";
+$("ok").innerHTML = `
+  <b>部屋を作成しました！</b><br><br>
+  部屋ID：<b>${roomId}</b><br>
+  終了予定：${endDate.toLocaleString()}<br><br>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+    <a href="mahjong-room-list.html"
+       style="
+         flex:1;
+         text-align:center;
+         padding:12px;
+         border-radius:14px;
+         border:1px solid rgba(255,121,166,.25);
+         background:#fff;
+         text-decoration:none;
+         font-weight:1000;
+         font-size:14px;
+         box-shadow:0 6px 14px rgba(0,0,0,.08);
+       ">
+      一覧へ
+    </a>
+
+    <a href="mahjong-room-chat.html?id=${encodeURIComponent(roomId)}"
+       style="
+         flex:1;
+         text-align:center;
+         padding:12px;
+         border-radius:14px;
+         border:none;
+         background:linear-gradient(135deg,#ff79a6,#7fc9ff);
+         color:#fff;
+         text-decoration:none;
+         font-weight:1000;
+         font-size:14px;
+         box-shadow:0 6px 14px rgba(0,0,0,.12);
+       ">
+      チャットへ
+    </a>
+
+  </div>
+`;
+
+window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
     window.scrollTo({top: document.body.scrollHeight, behavior:"smooth"});
   }catch(e){
     console.error(e);
