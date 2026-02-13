@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PO・TORO｜面子募集チャット</title>
+<meta name="theme-color" content="#f6b7d2" />
+<style>
+:root{
+  --bg:#fff7fb; --ink:#2b2b2b; --sub:#666;
+  --accent:#ff79a6; --accent2:#7fc9ff; --ring:#ffd7e6;
+  --shadow:0 12px 28px rgba(0,0,0,.08); --radius:20px;
+  --danger:#ff5b6a; --ok:#2ecc71;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,121,166,.18), transparent 55%),
+    radial-gradient(900px 500px at 85% 20%, rgba(127,201,255,.20), transparent 60%),
+    linear-gradient(180deg,var(--bg),#fff 60%);
+  color:var(--ink);
+}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:12px}
+h1{margin:0;font-size:20px}
+.sub{font-size:13px;color:var(--sub);margin-top:6px;line-height:1.5}
+.badge{
+  font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.7);
+  border:1px solid rgba(255,121,166,.22); color:#b34a6a; white-space:nowrap;
+}
+.card{
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--ring);
+  border-radius:var(--radius);
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+.roommeta{font-size:13px;color:var(--sub);line-height:1.7}
+.roommeta b{color:var(--ink)}
+.pill{
+  display:inline-block; margin-left:8px;
+  font-size:12px; font-weight:1000; padding:6px 10px;
+  border-radius:999px; border:1px solid rgba(0,0,0,.06); background:#fff;
+}
+.pill.open{color:#0d7a33;border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.08)}
+.pill.closed{color:#a51d2c;border-color:rgba(255,91,106,.35);background:rgba(255,91,106,.10)}
+.chatbox{
+  margin-top:12px;
+  height:56vh;
+  overflow:auto;
+  border-radius:18px;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fff;
+  padding:12px;
+}
+.msg{margin:0 0 10px}
+.msg .head{font-size:12px;color:#777}
+.msg .body{
+  display:inline-block;
+  margin-top:4px;
+  padding:9px 10px;
+  border-radius:14px;
+  background:rgba(255,121,166,.06);
+  border:1px solid rgba(255,121,166,.14);
+  font-size:14px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.form{margin-top:10px;display:flex;gap:8px}
+.form input{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+.form button{
+  padding:12px 14px;
+  border:none;
+  border-radius:14px;
+  font-weight:1000;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+.form button:disabled{opacity:.5;cursor:not-allowed}
+.notice{
+  margin-top:10px;
+  font-size:12px;
+  color:#7a6a70;
+  line-height:1.6;
+  background:rgba(255,255,255,.7);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px;
+  padding:10px 12px;
+}
+.back{margin-top:14px;text-align:center}
+.back a{font-size:13px;color:#888;text-decoration:none}
+.modal{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.4);
+  display:none; align-items:center; justify-content:center;
+  padding:18px;
+}
+.modal .box{
+  width:min(420px,100%);
+  background:#fff;
+  border-radius:20px;
+  padding:14px;
+  border:1px solid rgba(0,0,0,.08);
+}
+.modal label{display:block;font-weight:1000;margin-bottom:6px}
+.modal input{width:100%;padding:12px;border-radius:14px;border:1px solid #ddd;font-size:14px}
+.modal button{
+  margin-top:10px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  font-weight:1000;
+  color:#fff;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+.small{font-size:12px;color:#888;margin-top:8px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>面子募集チャット</h1>
+      <div class="sub">集合方法・ルール確認などを相談できます（締切後は閲覧のみ）</div>
+    </div>
+    <div class="badge">PO・TORO / Mahjong</div>
+  </header>
+
+  <div class="card">
+    <div class="roommeta" id="roommeta">読み込み中…</div>
+
+    <div class="chatbox" id="chat"></div>
+
+    <div class="form">
+      <input id="text" maxlength="300" placeholder="メッセージ（300文字まで）" />
+      <button id="sendBtn" type="button">送信</button>
+    </div>
+
+    <div class="notice">
+      <b>注意</b><br>
+      ・個人情報（電話番号・住所など）の送信は控えてください。<br>
+      ・迷惑行為は運用側で対応します。<br>
+      ・締切後 / 満員 / closed の場合は送信できません。
+    </div>
+  </div>
+
+  <div class="back">
+    <a href="mahjong-room-list.html">← 一覧へ戻る</a>
+  </div>
+</div>
+
+<!-- 表示名モーダル -->
+<div class="modal" id="nameModal">
+  <div class="box">
+    <label>表示名（20文字まで）</label>
+    <input id="displayName" maxlength="20" placeholder="例：ご主人様1234 / お嬢様ミント" />
+    <button id="saveNameBtn" type="button">この名前で入室</button>
+    <div class="small">※この端末に保存されます（次回も同じ名前で入室）</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, collection, addDoc,
+  query, orderBy, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+/** ★ここをFirebase Consoleの値に置換（create/listと同じ） */
+const firebaseConfig = {
+  apiKey: "REPLACE_ME",
+  authDomain: "REPLACE_ME",
+  projectId: "REPLACE_ME",
+  storageBucket: "REPLACE_ME",
+  messagingSenderId: "REPLACE_ME",
+  appId: "REPLACE_ME"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = (id)=>document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const roomId = params.get("id");
+
+if(!roomId){
+  alert("部屋IDがありません。一覧から入ってください。");
+  location.href = "mahjong-room-list.html";
+}
+
+let currentUid = null;
+let roomData = null;
+let displayName = null;
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function tsToLabel(ts){
+  const d = ts.toDate();
+  const w = ["日","月","火","水","木","金","土"][d.getDay()];
+  return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())}(${w}) ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function formatDurationMinutes(min){
+  const m = Number(min);
+  if(!Number.isFinite(m) || m <= 0) return "—";
+  const h = Math.floor(m/60);
+  const mm = m%60;
+  return mm === 0 ? `${h}時間` : `${h}時間30分`;
+}
+function remainingSlots(r){ return Math.max(0, (r.slotsTotal|0) - (r.joinedCount|0)); }
+function computeClosed(r){
+  const now = Date.now();
+  const deadline = r.deadlineAt.toDate().getTime();
+  if(r.closed) return true;
+  if(now > deadline) return true;
+  if(remainingSlots(r) <= 0) return true;
+  return false;
+}
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#39;");
+}
+
+function showNameModal(){
+  $("nameModal").style.display = "flex";
+  $("displayName").value = localStorage.getItem("potoro_display_name") || "";
+}
+function hideNameModal(){ $("nameModal").style.display = "none"; }
+
+$("saveNameBtn").addEventListener("click", async ()=>{
+  const name = $("displayName").value.trim();
+  if(!name || name.length > 20){
+    alert("表示名を入力してください（20文字以内）。");
+    return;
+  }
+  localStorage.setItem("potoro_display_name", name);
+  displayName = name;
+  hideNameModal();
+  await ensureMember();
+  setupMessages();
+  refreshUI();
+});
+
+onAuthStateChanged(auth, async (u)=>{
+  if(u){
+    currentUid = u.uid;
+    await loadRoom();
+    if(!roomData){
+      alert("部屋が見つかりませんでした。");
+      location.href = "mahjong-room-list.html";
+      return;
+    }
+
+    displayName = localStorage.getItem("potoro_display_name");
+    if(!displayName){
+      showNameModal();
+      return;
+    }
+
+    await ensureMember();
+    setupMessages();
+    refreshUI();
+  }
+});
+
+// ★原因特定しやすいcatch（エラーコードを表示）
+signInAnonymously(auth).catch((e)=>{
+  console.error(e);
+  alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
+});
+
+async function loadRoom(){
+  const snap = await getDoc(doc(db, "rooms", roomId));
+  roomData = snap.exists() ? snap.data() : null;
+}
+
+async function ensureMember(){
+  if(!currentUid || !displayName) return;
+  // membersに自分を登録（任意：出席確認などに使える）
+  const ref = doc(db, "rooms", roomId, "members", currentUid);
+  await setDoc(ref, { displayName, joinedAt: serverTimestamp() }, { merge:true });
+}
+
+function refreshUI(){
+  const r = roomData;
+  const closed = computeClosed(r);
+
+  const rem = remainingSlots(r);
+  const durationText = formatDurationMinutes(r.durationMinutes);
+  const endAtText = r.endAt ? tsToLabel(r.endAt) : "—";
+  const rangeText = `${tsToLabel(r.eventAt)} 〜 ${endAtText}`;
+
+  const pill = closed
+    ? `<span class="pill closed">締切済み（閲覧のみ）</span>`
+    : `<span class="pill open">募集中（送信OK）</span>`;
+
+  $("roommeta").innerHTML = `
+    <div><b>部屋ID：</b>${escapeHtml(r.id)} ${pill}</div>
+    <div><b>作成者：</b>${escapeHtml(r.creatorName)}　<b>形式：</b>${escapeHtml(r.rule)}</div>
+    <div><b>利用時間：</b>${escapeHtml(durationText)}　<b>時間：</b>${escapeHtml(rangeText)}</div>
+    <div><b>締切：</b>${tsToLabel(r.deadlineAt)}　<b>残り：</b>${rem}名（募集${r.slotsTotal} / 参加${r.joinedCount}）</div>
+  `;
+
+  $("sendBtn").disabled = closed;
+  $("text").disabled = closed;
+}
+
+let unsubMessages = null;
+let lastSendAt = 0;
+
+function setupMessages(){
+  if(unsubMessages) unsubMessages();
+
+  const qMsg = query(collection(db, "rooms", roomId, "messages"), orderBy("createdAt", "asc"));
+
+  unsubMessages = onSnapshot(qMsg, async (snap)=>{
+    // ルーム情報も都度更新（人数や締切反映）
+    await loadRoom();
+    if(!roomData) return;
+    refreshUI();
+
+    const chat = $("chat");
+    chat.innerHTML = snap.docs.map(d=>{
+      const m = d.data();
+      const t = m.createdAt?.toDate?.() ? m.createdAt.toDate() : null;
+      const time = t ? `${pad(t.getHours())}:${pad(t.getMinutes())}` : "--:--";
+      return `
+        <div class="msg">
+          <div class="head">${escapeHtml(m.displayName || "名無しさん")} ・ ${time}</div>
+          <div class="body">${escapeHtml(m.text || "")}</div>
+        </div>
+      `;
+    }).join("");
+
+    chat.scrollTop = chat.scrollHeight;
+  });
+}
+
+$("sendBtn").addEventListener("click", sendMessage);
+$("text").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+async function sendMessage(){
+  const now = Date.now();
+  if(now - lastSendAt < 3000){
+    alert("連投防止のため、少し待ってから送信してください。");
+    return;
+  }
+  lastSendAt = now;
+
+  const text = $("text").value.trim();
+  if(!text) return;
+
+  // 最新状態チェック
+  await loadRoom();
+  if(!roomData) return;
+  if(computeClosed(roomData)){
+    refreshUI();
+    alert("この部屋は締切済みです。");
+    return;
+  }
+
+  try{
+    await addDoc(collection(db, "rooms", roomId, "messages"), {
+      uid: currentUid,
+      displayName,
+      text: text.slice(0,300),
+      createdAt: serverTimestamp()
+    });
+    $("text").value = "";
+  }catch(e){
+    console.error(e);
+    alert("送信に失敗しました。Firestoreルール/設定を確認してください。");
+  }
+}
+</script>
+</body>
+</html>
