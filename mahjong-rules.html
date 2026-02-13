@@ -7,23 +7,26 @@
 <meta name="description" content="PO・TORO（ポ・トロ）麻雀の四人打ち対局ルール。東風戦・半荘戦、リーチ、供託、流局、パオ、赤ドラ等の取り扱い。">
 <style>
 :root{
-  --bg:#fff6fb;
+  /* ポータルと同じ“読みやすさ最適化”系 */
+  --bg:#fbf7fa;            /* 旧:#fff6fb */
   --card:#ffffff;
-  --text:#3b2f2a;
-  --muted:#6b6b6b;
+  --text:#2f2622;          /* 旧:#3b2f2a（少し濃く） */
+  --muted:#5f5f5f;         /* 旧:#6b6b6b */
   --accent:#de3f7b;
   --border:#ffd6e7;
   --grad1:#f6b7d2;
   --grad2:#a9d6f7;
 }
+
 *{box-sizing:border-box;}
 body{
   margin:0;
-  font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",system-ui,-apple-system,Segoe UI,sans-serif;
+  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",system-ui,-apple-system,Segoe UI,sans-serif;
   background:var(--bg);
   color:var(--text);
-  line-height:1.7;
+  line-height:1.85; /* 読みやすく */
 }
+
 header{
   padding:34px 18px 22px;
   text-align:center;
@@ -40,33 +43,50 @@ header .badge{
 }
 header h1{
   margin:12px 0 6px;
-  font-size:1.4rem;
+  font-size:1.45rem;
   line-height:1.35;
+  font-weight:900;
+  letter-spacing:.01em;
 }
 header p{margin:0; opacity:.95; font-weight:700;}
+
 main{
-  max-width:980px;
+  max-width:860px; /* 旧:980px（長文の視線移動を減らす） */
   margin:0 auto;
   padding:14px 12px 26px;
 }
+
 section{
-  background:var(--card);
+  background:rgba(255,255,255,.92);
   border:1px solid var(--border);
   border-radius:16px;
-  padding:18px 16px;
+  padding:22px 18px; /* 余白を増やして読みやすく */
   margin:12px 0;
+  box-shadow:0 10px 22px rgba(0,0,0,.05);
 }
+
 h2{
-  margin:0 0 10px;
+  margin:0 0 12px;
   color:var(--accent);
-  font-size:1.1rem;
+  font-size:1.12rem;
+  font-weight:900;
+  letter-spacing:.01em;
+  padding-bottom:8px;
+  border-bottom:1px dashed rgba(222,63,123,.25);
 }
+
+p{margin:0 0 10px;}
+
 .note{
   margin-top:8px;
   color:var(--muted);
-  font-size:.92rem;
+  font-size:.95rem;
 }
-ul{margin:10px 0 0 1.2em; padding:0;}
+.small{font-size:.95rem;}
+
+ul{margin:8px 0 0 1.2em; padding:0;}
+
+/* 2カラム（PC） */
 .grid{
   display:grid;
   grid-template-columns:1fr;
@@ -75,12 +95,15 @@ ul{margin:10px 0 0 1.2em; padding:0;}
 @media(min-width:820px){
   .grid{ grid-template-columns:1fr 1fr; }
 }
+
 .rulebox{
   border:1px dashed var(--border);
   background:#fffafc;
   border-radius:14px;
   padding:12px;
 }
+
+/* 小さなタグ */
 .badge2{
   display:inline-block;
   padding:3px 10px;
@@ -89,20 +112,20 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   border:1px solid var(--border);
   color:var(--accent);
   font-weight:900;
-  font-size:.86rem;
+  font-size:.88rem;
 }
+
+/* 重要ルールの強調枠 */
 .callout{
   border:2px solid var(--border);
   background:#fff0f6;
   border-radius:14px;
   padding:12px;
 }
-.callout strong{
-  color:var(--accent);
-}
-.callout ul{
-  margin:8px 0 0 1.2em;
-}
+.callout strong{color:var(--accent);}
+.callout ul{margin:8px 0 0 1.2em;}
+
+/* ホバー効果（戻るボタン含む） */
 .back-link{
   display:block;
   margin:18px auto 0;
@@ -114,9 +137,40 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   color:#ffffff;
   background:linear-gradient(135deg,var(--grad1),var(--grad2));
   border-radius:16px;
+  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+  position:relative;
+  overflow:hidden;
+  will-change:transform;
 }
-.back-link:hover{opacity:.9;}
-.small{font-size:.92rem;}
+.back-link:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 24px rgba(0,0,0,.14);
+  filter:saturate(1.05) brightness(1.02);
+}
+.back-link:active{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
+}
+.back-link::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-75%;
+  width:50%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.38) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform:skewX(-25deg);
+  pointer-events:none;
+}
+.back-link:hover::after{
+  animation:shine .85s forwards;
+}
+@keyframes shine{100%{left:125%;}}
 </style>
 </head>
 
