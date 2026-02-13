@@ -109,7 +109,10 @@ const db = getFirestore(app);
 
 let currentUid = null;
 onAuthStateChanged(auth, u => { if(u) currentUid = u.uid; });
-signInAnonymously(auth).catch(()=>alert("Firebase認証に失敗しました（Anonymous Authを有効化してください）"));
+signInAnonymously(auth).catch((e)=>{
+  console.error(e);
+  alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
+});
 
 // ===== 利用時間セレクト（2時間〜5時間 / 30分刻み） =====
 const durationSelect = document.getElementById("durationSelect");
