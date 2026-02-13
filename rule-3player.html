@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>PO・TORO 麻雀｜三人打ちルール</title>
-  <meta name="description" content="concept cafe PO・TORO（ポ・トロ）麻雀システム：三人打ち（サンマ）の対局ルールまとめ。北抜きドラ（役満特例）、三家立直の扱い、連荘、流局、ドラ等の取り扱い。スマホで読みやすい最適化版。" />
+  <meta name="description" content="concept cafe PO・TORO（ポ・トロ）麻雀システム：三人打ち（サンマ）の対局ルールまとめ。4人打ちページ基準のUIに完全統一した最適化版。" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="theme-color" content="#ff79a6" />
 
@@ -38,7 +38,6 @@
     }
     a{color:inherit}
 
-    /* Sticky header */
     header{
       position:sticky; top:0; z-index:10;
       background:linear-gradient(to bottom, rgba(255,247,251,.95), rgba(255,247,251,.65));
@@ -97,7 +96,6 @@
       box-shadow:0 0 0 4px rgba(255,215,230,.65);
     }
 
-    /* Layout */
     .wrap{max-width:var(--max); margin:0 auto; padding:18px 14px 36px}
     .hero{padding:8px 0 10px}
     .titleRow{
@@ -159,7 +157,6 @@
       white-space:nowrap;
     }
 
-    /* TOC */
     .toc{
       display:flex;
       flex-wrap:wrap;
@@ -179,7 +176,6 @@
     }
     .toc a:hover{transform:translateY(-1px); border-color:rgba(127,201,255,.55)}
 
-    /* Accordion */
     details{border-top:1px dashed rgba(255,215,230,.9)}
     details:first-of-type{border-top:none}
     summary{
@@ -201,6 +197,7 @@
       border:1px solid rgba(255,215,230,.9);
       display:grid; place-items:center;
       font-size:14px;
+      font-weight:1000;
     }
     .arrow{
       flex:0 0 auto;
@@ -223,7 +220,6 @@
       background:linear-gradient(to bottom, transparent 58%, rgba(255,121,166,.16) 58%);
     }
 
-    /* Callouts / side */
     .aside .cardInner{padding:14px 14px 16px}
     .callout{
       border-radius:16px;
@@ -285,7 +281,6 @@
       text-align:center;
     }
 
-    /* In-page anchors */
     .anchor{position:relative; top:-78px; height:1px}
   </style>
 </head>
@@ -326,23 +321,22 @@
       </p>
     </section>
 
+    <!-- TOC: 4打ち基準の粒度に統一（最大7程度に圧縮） -->
     <section class="card" aria-label="目次">
       <nav class="toc">
-        <a href="#sec-format">ゲーム形式</a>
-        <a href="#sec-important">重要ルール</a>
-        <a href="#sec-basic">基本ルール</a>
-        <a href="#sec-nuki">北抜きドラ</a>
-        <a href="#sec-ron">ロン・供託</a>
-        <a href="#sec-flow">連荘・流局</a>
-        <a href="#sec-end">オーラス</a>
-        <a href="#sec-limit">ぶっとび等</a>
-        <a href="#sec-note">最後に</a>
+        <a href="#sec-basic">① 基本ルール</a>
+        <a href="#sec-score">② 得点・ドラ関連</a>
+        <a href="#sec-north">③ 北抜きドラ</a>
+        <a href="#sec-flow">④ 流局・連荘関連</a>
+        <a href="#sec-ron">⑤ ロン関連</a>
+        <a href="#sec-end">⑥ 終局条件</a>
+        <a href="#sec-note">補足</a>
       </nav>
     </section>
 
     <div class="grid">
       <!-- MAIN -->
-      <section class="card" id="rulesCard" aria-label="三人打ちルール本文">
+      <section class="card" id="rulesCard" aria-label="三人打ちルール本文（統一版）">
         <div class="cardInner">
           <div class="cardTitle">
             <h3>ルール一覧（タップで展開）</h3>
@@ -353,52 +347,8 @@
           </p>
         </div>
 
-        <div class="anchor" id="sec-format"></div>
-        <details open>
-          <summary>
-            <span class="kicker">
-              <span class="badge" aria-hidden="true">🀄</span>
-              ゲーム形式
-            </span>
-            <span class="arrow" aria-hidden="true">▾</span>
-          </summary>
-          <div class="body">
-            <ul>
-              <li>東風戦：<span class="em">30,000点スタート／35,000点返し</span></li>
-              <li>半荘戦：<span class="em">35,000点スタート／40,000点返し</span></li>
-            </ul>
-            <p class="muted" style="margin:10px 0 0; font-size:13px">
-              ※対局の形式（東風／半荘）は当日のご案内・状況により決定します。
-            </p>
-          </div>
-        </details>
-
-        <div class="anchor" id="sec-important"></div>
-        <details>
-          <summary>
-            <span class="kicker">
-              <span class="badge" aria-hidden="true">⭐</span>
-              重要ルール（特に誤解が起きやすい）
-            </span>
-            <span class="arrow" aria-hidden="true">▾</span>
-          </summary>
-          <div class="body">
-            <div class="callout" role="note" aria-label="特に重要な3点">
-              <h4>特に重要な3点</h4>
-              <ul>
-                <li><span class="em">食いかえなし（鳴いた同巡内）</span>：同巡内での食いかえは禁止です。</li>
-                <li><span class="em">三家立直は流局になりません</span>（※当店ルール）。</li>
-                <li><span class="em">北は通常使用不可。役満構成時のみ使用可。抜いた北は戻せません</span>（北抜きドラ：重要）。</li>
-              </ul>
-            </div>
-            <p class="muted" style="margin:10px 0 0; font-size:13px">
-              ※上記は誤解が起きやすい項目のため、お屋敷内運用として明確化しています。
-            </p>
-          </div>
-        </details>
-
         <div class="anchor" id="sec-basic"></div>
-        <details>
+        <details open>
           <summary>
             <span class="kicker">
               <span class="badge" aria-hidden="true">①</span>
@@ -411,19 +361,40 @@
               <li>三人打ち（サンマ）／萬子は <span class="em">1萬・9萬のみ使用（2〜8萬抜き）</span></li>
               <li>食いタン、後付けあり</li>
               <li><span class="em">食いかえなし（鳴いた同巡内）</span></li>
-              <li>赤ドラあり（赤5筒×1、赤5索×1、赤1萬×1）</li>
-              <li>裏ドラ、カンドラ、カン裏ドラあり</li>
+              <li><span class="em">三家立直は流局になりません</span>（※当店ルール）</li>
               <li><span class="em">流し満貫あり（流局扱い）</span></li>
               <li>点数計算は「簡易点数表」を参照</li>
             </ul>
+            <p class="muted" style="margin:10px 0 0; font-size:13px">
+              ※誤解が起きやすい項目（食いかえ／三家立直／北抜き）は当店運用として明確化しています。
+            </p>
           </div>
         </details>
 
-        <div class="anchor" id="sec-nuki"></div>
+        <div class="anchor" id="sec-score"></div>
         <details>
           <summary>
             <span class="kicker">
               <span class="badge" aria-hidden="true">②</span>
+              得点・ドラ関連
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>赤ドラあり（赤5筒×1、赤5索×1、赤1萬×1）</li>
+              <li>裏ドラあり</li>
+              <li>カンドラあり</li>
+              <li>カン裏ドラあり</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="anchor" id="sec-north"></div>
+        <details>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">③</span>
               北抜きドラ（役満特例）
             </span>
             <span class="arrow" aria-hidden="true">▾</span>
@@ -452,12 +423,33 @@
           </div>
         </details>
 
+        <div class="anchor" id="sec-flow"></div>
+        <details>
+          <summary>
+            <span class="kicker">
+              <span class="badge" aria-hidden="true">④</span>
+              流局・連荘関連
+            </span>
+            <span class="arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="body">
+            <ul>
+              <li>親のテンパイで連荘</li>
+              <li>親のあがりで連荘</li>
+              <li>九種九牌は親の連荘</li>
+              <li><span class="em">三家立直は流局にならない</span></li>
+              <li>四槓流れは、親流れ</li>
+              <li><span class="em">流し満貫あり（流局扱い）</span></li>
+            </ul>
+          </div>
+        </details>
+
         <div class="anchor" id="sec-ron"></div>
         <details>
           <summary>
             <span class="kicker">
-              <span class="badge" aria-hidden="true">③</span>
-              ロン・供託
+              <span class="badge" aria-hidden="true">⑤</span>
+              ロン関連
             </span>
             <span class="arrow" aria-hidden="true">▾</span>
           </summary>
@@ -474,88 +466,54 @@
           </div>
         </details>
 
-        <div class="anchor" id="sec-flow"></div>
-        <details>
-          <summary>
-            <span class="kicker">
-              <span class="badge" aria-hidden="true">④</span>
-              連荘・流局・特殊流局
-            </span>
-            <span class="arrow" aria-hidden="true">▾</span>
-          </summary>
-          <div class="body">
-            <ul>
-              <li>親のテンパイ、あがりで連荘</li>
-              <li>九種九牌は親の連荘</li>
-              <li><span class="em">三家立直は流局にならない</span></li>
-              <li>四槓流れは、親流れ</li>
-            </ul>
-          </div>
-        </details>
-
         <div class="anchor" id="sec-end"></div>
         <details>
           <summary>
             <span class="kicker">
-              <span class="badge" aria-hidden="true">⑤</span>
-              オーラス（終了条件）
-            </span>
-            <span class="arrow" aria-hidden="true">▾</span>
-          </summary>
-          <div class="body">
-            <ul>
-              <li>オーラスの親のあがりやめあり（親がトップになった時点で自動的に終了）</li>
-              <li>オーラスの流局時に供託点棒（場に置かれた立直棒）があった場合、その供託点棒はトップ者の持ち点に加算</li>
-            </ul>
-          </div>
-        </details>
-
-        <div class="anchor" id="sec-limit"></div>
-        <details>
-          <summary>
-            <span class="kicker">
               <span class="badge" aria-hidden="true">⑥</span>
-              ぶっとび・リーチ制限
+              終局条件（オーラス／ぶっとび／リーチ制限）
             </span>
             <span class="arrow" aria-hidden="true">▾</span>
           </summary>
           <div class="body">
-            <ul>
-              <li>ぶっとびあり（持ち点が0点以下で終了）</li>
-              <li><span class="em">流し満貫あり（流局扱い）</span></li>
-              <li>1,000点未満は立直をかけられない</li>
-              <li>立直をかけて0点の状態で流局し4人テンパイの場合、ぶっとび</li>
-              <li>あがり牌のない立直はかけられない</li>
-            </ul>
+            <div class="callout" aria-label="オーラス（終了条件）">
+              <h4>オーラス（終了条件）</h4>
+              <ul>
+                <li>オーラスの親のあがりやめあり（親がトップになった時点で自動的に終了）</li>
+                <li>オーラスの流局時に供託点棒（場に置かれた立直棒）があった場合、その供託点棒はトップ者の持ち点に加算</li>
+              </ul>
+            </div>
+
+            <div class="callout" style="margin-top:10px" aria-label="ぶっとび・リーチ制限">
+              <h4>ぶっとび・リーチ制限</h4>
+              <ul>
+                <li>ぶっとびあり（持ち点が0点以下で終了）</li>
+                <li>1,000点未満は立直をかけられない</li>
+                <li>立直をかけて0点の状態で流局し4人テンパイの場合、ぶっとび</li>
+                <li>あがり牌のない立直はかけられない</li>
+              </ul>
+            </div>
           </div>
         </details>
 
         <div class="anchor" id="sec-note"></div>
-        <details>
-          <summary>
-            <span class="kicker">
-              <span class="badge" aria-hidden="true">🌸</span>
-              最後に
-            </span>
-            <span class="arrow" aria-hidden="true">▾</span>
-          </summary>
-          <div class="body">
-            <div class="callout" aria-label="最後にメッセージ">
-              <h4>賭けることができるのは己のプライドのみ</h4>
-              <p style="margin:0">
-                ※健全なアミューズメントとしてお楽しみください。<br />
-                皆さまが気持ちよく対局できるよう、ご協力をお願いいたします。
-              </p>
-            </div>
+        <div class="cardInner" style="padding-top:10px">
+          <div class="callout" role="note" aria-label="補足">
+            <h4>補足（気持ちよく遊ぶために）</h4>
+            <p>
+              ※本ルールは、ご主人様・お嬢様に楽しんでいただくための <span class="em">PO・TORO独自仕様</span> を一部含みます。<br />
+              皆さまが気持ちよく対局できるよう、ご協力をお願いいたします。<br />
+              健全アミューズメント／<span class="em">賭けるのは己のプライドのみ</span>
+            </p>
           </div>
-        </details>
+        </div>
 
         <div class="cardInner" style="padding-top:10px">
           <a class="back" href="./">← 麻雀システムHPへ戻る</a>
         </div>
       </section>
 
-      <!-- ASIDE -->
+      <!-- ASIDE（4打ちと同型） -->
       <aside class="card aside" aria-label="サイド情報">
         <div class="cardInner">
           <div class="cardTitle">
@@ -590,8 +548,7 @@
           <div style="margin-top:12px" class="callout" aria-label="トーン補足">
             <h4>表現トーンについて</h4>
             <p>
-              「遊びとしての麻雀」に寄せた案内文になるよう、言い回しをやさしめに整えています。
-              ルール運用は店内案内に従ってください。
+              4人打ちページと同じUI／トーンに統一しています。ルール運用は店内案内に従ってください。
             </p>
           </div>
         </div>
@@ -599,7 +556,7 @@
     </div>
 
     <footer>
-      © PO・TORO / Mahjong Rules (3 players) — Optimized UI
+      © PO・TORO / Mahjong Rules (3 players) — Unified UI
     </footer>
   </main>
 
@@ -622,48 +579,44 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
 
+      // 4打ち基準に合わせて「見出し＋箇条書き中心」でコピー
       function buildCopyText(){
         const lines = [];
         lines.push('PO・TORO 麻雀｜三人打ちルール');
-        lines.push('（読みやすい最適化版）');
-        lines.push('健全アミューズメント／賭けるのは己のプライドのみ');
+        lines.push('（4人打ちページ基準に統一）');
         lines.push('');
 
         const map = [
-          ['ゲーム形式', '#sec-format'],
-          ['重要ルール（特に誤解が起きやすい）', '#sec-important'],
-          ['基本ルール', '#sec-basic'],
-          ['北抜きドラ（役満特例）', '#sec-nuki'],
-          ['ロン・供託', '#sec-ron'],
-          ['連荘・流局・特殊流局', '#sec-flow'],
-          ['オーラス（終了条件）', '#sec-end'],
-          ['ぶっとび・リーチ制限', '#sec-limit'],
-          ['最後に', '#sec-note'],
+          ['① 基本ルール', '#sec-basic'],
+          ['② 得点・ドラ関連', '#sec-score'],
+          ['③ 北抜きドラ（役満特例）', '#sec-north'],
+          ['④ 流局・連荘関連', '#sec-flow'],
+          ['⑤ ロン関連', '#sec-ron'],
+          ['⑥ 終局条件（オーラス／ぶっとび／リーチ制限）', '#sec-end'],
+          ['補足', '#sec-note'],
         ];
 
         map.forEach(([title, id]) => {
           lines.push(title);
           const anchor = document.querySelector(id);
-          let block = null;
 
-          // アンカー直後のdetailsを拾う
-          block = anchor?.nextElementSibling?.tagName === 'DETAILS' ? anchor.nextElementSibling : null;
+          // 補足はdetailsではない（固定callout）
+          if (id === '#sec-note') {
+            const noteP = anchor?.parentElement?.querySelector('[role="note"] p');
+            if (noteP) lines.push('・' + noteP.textContent.replace(/\s+/g,' ').trim());
+            lines.push('');
+            return;
+          }
 
-          if (block) {
-            const lis = Array.from(block.querySelectorAll('li')).map(li => '・' + li.textContent.trim());
-            lis.forEach(x => lines.push(x));
-
-            // details内の補足（muted）も拾う
-            const muted = Array.from(block.querySelectorAll('.muted')).map(p => p.textContent.replace(/\s+/g,' ').trim()).filter(Boolean);
+          const details = anchor?.nextElementSibling?.tagName === 'DETAILS' ? anchor.nextElementSibling : null;
+          if (details) {
+            const items = Array.from(details.querySelectorAll('li')).map(li => '・' + li.textContent.trim());
+            items.forEach(x => lines.push(x));
+            const muted = Array.from(details.querySelectorAll('.muted'))
+              .map(p => p.textContent.replace(/\s+/g,' ').trim())
+              .filter(Boolean);
             muted.forEach(t => lines.push('※' + t));
           }
-
-          // 最後にセクションの callout本文
-          if (id === '#sec-note') {
-            const p = block?.querySelector('.callout p');
-            if (p) lines.push('・' + p.textContent.replace(/\s+/g,' ').trim());
-          }
-
           lines.push('');
         });
 
