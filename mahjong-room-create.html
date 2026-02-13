@@ -10,85 +10,82 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;background:linear-gradient(180deg,var(--bg),#fff);color:var(--ink)}
 .wrap{max-width:780px;margin:0 auto;padding:20px}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px}
-h1{margin:0;font-size:22px}
-.sub{font-size:13px;color:var(--sub);margin-top:6px}
+h1{margin:0 0 14px;font-size:22px}
 .card{background:rgba(255,255,255,.9);border:1px solid var(--ring);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
 .field{margin-bottom:14px}
 label{display:block;font-weight:900;font-size:14px;margin-bottom:6px}
-input,select,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ddd;font-size:14px;background:#fff}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ddd;font-size:14px;background:#fff;font-family:inherit}
 textarea{min-height:88px;resize:vertical}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:720px){.row{grid-template-columns:1fr}}
 .radio{display:flex;gap:14px;flex-wrap:wrap}
+.radio label{display:flex;align-items:center;gap:6px;margin:0;font-weight:800}
 .btn{width:100%;padding:14px;border:none;border-radius:14px;font-weight:1000;font-size:15px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
 .ok{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;background:#f6fff8;border:1px solid rgba(46,204,113,.35)}
-.small{font-size:12px;color:var(--sub)}
+.small{font-size:12px;color:var(--sub);margin-top:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <h1>面子募集の部屋を作成</h1>
-      <div class="sub">Firestore保存 + 利用時間対応版</div>
-    </div>
-  </header>
 
-  <div class="card">
+<h1>面子募集の部屋を作成</h1>
 
-    <div class="field">
-      <label>作成者名</label>
-      <input id="creatorName" maxlength="30" />
-    </div>
+<div class="card">
 
-    <div class="row">
-      <div class="field">
-        <label>開催日時（開始時刻）</label>
-        <input id="eventAt" type="datetime-local" />
-      </div>
-
-      <div class="field">
-        <label>利用時間</label>
-        <select id="durationHours">
-          <option value="">選択してください</option>
-          <option value="1">1時間</option>
-          <option value="2">2時間</option>
-          <option value="3">3時間</option>
-          <option value="4">4時間以上</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label>募集締切（任意）</label>
-        <input id="deadlineAt" type="datetime-local" />
-      </div>
-
-      <div class="field">
-        <label>募集人数</label>
-        <select id="slotsTotal">
-          <option value="">選択してください</option>
-          <option value="1">1名</option>
-          <option value="2">2名</option>
-          <option value="3">3名</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>三打ち or 四打ち</label>
-      <div class="radio">
-        <label><input type="radio" name="rule" value="三打ち">三打ち</label>
-        <label><input type="radio" name="rule" value="四打ち">四打ち</label>
-      </div>
-    </div>
-
-    <button class="btn" onclick="createRoom()">部屋を作成</button>
-
-    <div id="ok" class="ok"></div>
+  <div class="field">
+    <label>作成者名</label>
+    <input id="creatorName" maxlength="30" placeholder="例：トロご主人様" />
   </div>
+
+  <div class="row">
+    <div class="field">
+      <label>開催日時（開始時刻）</label>
+      <input id="eventAt" type="datetime-local" />
+    </div>
+
+    <div class="field">
+      <label>利用時間（30分刻み）</label>
+      <select id="durationSelect"></select>
+      <div class="small">2時間〜5時間（30分刻み）</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>募集締切（任意）</label>
+      <input id="deadlineAt" type="datetime-local" />
+      <div class="small">未入力なら「開催30分前」を自動設定します</div>
+    </div>
+
+    <div class="field">
+      <label>募集人数</label>
+      <select id="slotsTotal">
+        <option value="">選択してください</option>
+        <option value="1">1名</option>
+        <option value="2">2名</option>
+        <option value="3">3名</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>三打ち or 四打ち</label>
+    <div class="radio">
+      <label><input type="radio" name="rule" value="三打ち">三打ち</label>
+      <label><input type="radio" name="rule" value="四打ち">四打ち</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>ひとこと（任意）</label>
+    <textarea id="comment" maxlength="140" placeholder="例：初心者歓迎です！楽しく打てる方お待ちしています。"></textarea>
+    <div class="small"><span id="count">0</span>/140</div>
+  </div>
+
+  <button class="btn" onclick="createRoom()">部屋を作成</button>
+
+  <div id="ok" class="ok"></div>
+</div>
 </div>
 
 <script type="module">
@@ -96,6 +93,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+/** ここをFirebase Consoleの値に置換 */
 const firebaseConfig = {
   apiKey: "REPLACE_ME",
   authDomain: "REPLACE_ME",
@@ -111,7 +109,24 @@ const db = getFirestore(app);
 
 let currentUid = null;
 onAuthStateChanged(auth, u => { if(u) currentUid = u.uid; });
-signInAnonymously(auth);
+signInAnonymously(auth).catch(()=>alert("Firebase認証に失敗しました（Anonymous Authを有効化してください）"));
+
+// ===== 利用時間セレクト（2時間〜5時間 / 30分刻み） =====
+const durationSelect = document.getElementById("durationSelect");
+function formatDuration(minutes){
+  const h = Math.floor(minutes/60);
+  const m = minutes%60;
+  return m === 0 ? `${h}時間` : `${h}時間30分`;
+}
+// 2h(120)〜5h(300)を30分刻み
+for(let minutes = 120; minutes <= 300; minutes += 30){
+  const opt = document.createElement("option");
+  opt.value = String(minutes);
+  opt.textContent = formatDuration(minutes);
+  durationSelect.appendChild(opt);
+}
+// 既定値：2時間
+durationSelect.value = "120";
 
 function pad(n){ return String(n).padStart(2,"0"); }
 function generateRoomId(eventAtISO){
@@ -125,48 +140,66 @@ function generateRoomId(eventAtISO){
   return `RM-${yy}${mm}${dd}-${hh}${mi}-${rnd}`;
 }
 
-window.createRoom = async function(){
-  const creatorName = document.getElementById("creatorName").value.trim();
-  const eventAtLocal = document.getElementById("eventAt").value;
-  const durationHours = Number(document.getElementById("durationHours").value);
-  const deadlineAtLocal = document.getElementById("deadlineAt").value;
-  const slotsTotal = Number(document.getElementById("slotsTotal").value);
-  const ruleEl = document.querySelector('input[name="rule"]:checked');
+const $ = (id)=>document.getElementById(id);
 
-  if(!creatorName || !eventAtLocal || !durationHours || !slotsTotal || !ruleEl){
+window.createRoom = async function(){
+  if(!currentUid){
+    alert("認証中です。少し待ってもう一度お試しください。");
+    return;
+  }
+
+  const creatorName = $("creatorName").value.trim();
+  const eventAtLocal = $("eventAt").value;
+  const durationMinutes = Number(durationSelect.value);
+  const deadlineAtLocalInput = $("deadlineAt").value;
+  const slotsTotal = Number($("slotsTotal").value);
+  const ruleEl = document.querySelector('input[name="rule"]:checked');
+  const comment = ($("comment").value || "").trim();
+
+  if(!creatorName || !eventAtLocal || !durationMinutes || !slotsTotal || !ruleEl){
     alert("未入力の項目があります。");
     return;
   }
 
   const eventDate = new Date(eventAtLocal);
-  const endDate = new Date(eventDate);
-  endDate.setHours(endDate.getHours() + durationHours);
+  const endDate = new Date(eventDate.getTime() + durationMinutes * 60000);
 
-  const deadlineDate = deadlineAtLocal
-    ? new Date(deadlineAtLocal)
-    : new Date(eventDate.getTime() - 30*60000);
+  // 締切：未入力なら開催30分前
+  let deadlineDate = deadlineAtLocalInput ? new Date(deadlineAtLocalInput) : new Date(eventDate.getTime() - 30*60000);
+  // 締切が開催より後なら開催に丸め
+  if(deadlineDate > eventDate) deadlineDate = new Date(eventDate);
 
   const roomId = generateRoomId(eventAtLocal);
 
-  await setDoc(doc(db,"rooms",roomId),{
-    id: roomId,
-    creatorUid: currentUid,
-    creatorName,
-    eventAt: Timestamp.fromDate(eventDate),
-    endAt: Timestamp.fromDate(endDate),
-    durationHours,
-    deadlineAt: Timestamp.fromDate(deadlineDate),
-    slotsTotal,
-    joinedCount: 0,
-    rule: ruleEl.value,
-    closed: false,
-    createdAt: serverTimestamp()
-  });
+  try{
+    await setDoc(doc(db,"rooms",roomId),{
+      id: roomId,
+      creatorUid: currentUid,
+      creatorName,
+      eventAt: Timestamp.fromDate(eventDate),
+      endAt: Timestamp.fromDate(endDate),
+      durationMinutes,                // ★ 2〜5時間を30分刻み（分で保存）
+      deadlineAt: Timestamp.fromDate(deadlineDate),
+      slotsTotal,
+      joinedCount: 0,
+      rule: ruleEl.value,
+      comment: comment.slice(0,140),
+      closed: false,
+      createdAt: serverTimestamp()
+    });
 
-  document.getElementById("ok").style.display="block";
-  document.getElementById("ok").innerHTML =
-    `保存しました。<br>終了予定：${endDate.toLocaleString()}`;
+    $("ok").style.display="block";
+    $("ok").innerHTML =
+      `保存しました。<br>部屋ID：<b>${roomId}</b><br>終了予定：${endDate.toLocaleString()}`;
+    window.scrollTo({top: document.body.scrollHeight, behavior:"smooth"});
+  }catch(e){
+    console.error(e);
+    alert("保存に失敗しました。Firestoreルール/設定を確認してください。");
+  }
 };
+
+// 文字数
+$("comment").addEventListener("input", ()=>{ $("count").textContent = String($("comment").value.length); });
 </script>
 </body>
 </html>
