@@ -7,23 +7,27 @@
 <meta name="description" content="ポ・トロ新サービス。全自動麻雀卓でメイドさんと楽しむ健全麻雀。ご利用方法・料金・点数表・対局ルール・採用役一覧を掲載。">
 <style>
 :root{
-  --bg:#fff6fb;
+  /* 読みやすさ重視：背景を少し落ち着かせ、文字コントラストを上げる */
+  --bg:#fbf7fa;            /* 旧:#fff6fb */
   --card:#ffffff;
-  --text:#3b2f2a;
-  --muted:#6b6b6b;
+  --text:#2f2622;          /* 旧:#3b2f2a（少し濃く） */
+  --muted:#5f5f5f;         /* 旧:#6b6b6b */
   --accent:#de3f7b;
   --border:#ffd6e7;
   --grad1:#f6b7d2;
   --grad2:#a9d6f7;
 }
+
 *{box-sizing:border-box;}
 body{
   margin:0;
-  font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",system-ui,-apple-system,Segoe UI,sans-serif;
+  /* 本文可読性：Noto Sans JPを先頭に */
+  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",system-ui,-apple-system,Segoe UI,sans-serif;
   background:var(--bg);
   color:var(--text);
-  line-height:1.7;
+  line-height:1.85; /* 少しゆったり */
 }
+
 header{
   padding:44px 18px 28px;
   text-align:center;
@@ -40,28 +44,41 @@ header .badge{
 }
 header h1{
   margin:14px 0 6px;
-  font-size:1.55rem;
+  font-size:1.65rem;
+  font-weight:900;
+  letter-spacing:.01em;
 }
 header p{margin:0; font-weight:700; opacity:.98;}
 
 main{
-  max-width:980px;
+  /* 長文の読みやすさ：横幅を少し狭める */
+  max-width:860px; /* 旧:980px */
   margin:0 auto;
   padding:14px 12px 26px;
 }
+
 section{
-  background:var(--card);
+  background:rgba(255,255,255,.92);
   border:1px solid var(--border);
   border-radius:16px;
-  padding:18px 16px;
+  padding:22px 18px; /* 余白増で読みやすく */
   margin:12px 0;
+  box-shadow:0 10px 22px rgba(0,0,0,.05); /* うっすら影 */
 }
+
 h2{
-  margin:0 0 10px;
+  margin:0 0 12px;
   color:var(--accent);
-  font-size:1.1rem;
+  font-size:1.12rem;
+  font-weight:900;
+  letter-spacing:.01em;
+  padding-bottom:8px;
+  border-bottom:1px dashed rgba(222,63,123,.25); /* 視線誘導 */
 }
-ul{margin:10px 0 0 1.2em; padding:0;}
+
+p{margin:0 0 10px;}
+ul{margin:8px 0 0 1.2em; padding:0;}
+
 .checks{
   list-style:none;
   padding:0;
@@ -79,11 +96,13 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   color:var(--accent);
   font-weight:900;
 }
+
 .note{
   margin-top:8px;
   color:var(--muted);
-  font-size:.92rem;
+  font-size:.95rem;
 }
+
 .pricebox{
   border:1px dashed var(--border);
   border-radius:14px;
@@ -93,6 +112,7 @@ ul{margin:10px 0 0 1.2em; padding:0;}
 .price{
   font-weight:900;
 }
+
 .example{
   margin-top:10px;
   padding:10px 12px;
@@ -108,7 +128,7 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   margin-top:14px;
 }
 
-/* ルール2つは横並び */
+/* ルール2つは横並び（小画面は縦） */
 .rules-row{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -144,8 +164,6 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   box-shadow:0 12px 24px rgba(0,0,0,.14);
   filter:saturate(1.05) brightness(1.02);
 }
-
-/* クリック時（押し込み） */
 .score-link:active,
 .rules-link:active,
 .yaku-link:active,
@@ -231,6 +249,7 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   opacity:.95;
   margin-top:2px;
 }
+
 footer{
   text-align:center;
   color:var(--muted);
