@@ -107,6 +107,17 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   gap:10px;
   margin-top:14px;
 }
+
+/* ルール2つは横並び */
+.rules-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+@media (max-width:560px){
+  .rules-row{grid-template-columns:1fr;}
+}
+
 .score-link,
 .rules-link,
 .yaku-link,
@@ -118,45 +129,81 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   font-weight:900;
   border-radius:18px;
   color:#fff;
-  transition:.2s;
+  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+  position:relative;
+  overflow:hidden;
+  will-change:transform;
+}
+
+/* 共通ホバー効果（統一） */
+.score-link:hover,
+.rules-link:hover,
+.yaku-link:hover,
+.match-link:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 24px rgba(0,0,0,.14);
+  filter:saturate(1.05) brightness(1.02);
+}
+
+/* クリック時（押し込み） */
+.score-link:active,
+.rules-link:active,
+.yaku-link:active,
+.match-link:active{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
+}
+
+/* ほんのり光るスイープ（ホバー時） */
+.score-link::after,
+.rules-link::after,
+.yaku-link::after,
+.match-link::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-75%;
+  width:50%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.38) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform:skewX(-25deg);
+  pointer-events:none;
+}
+.score-link:hover::after,
+.rules-link:hover::after,
+.yaku-link:hover::after,
+.match-link:hover::after{
+  animation:shine .85s forwards;
+}
+@keyframes shine{
+  100%{left:125%;}
 }
 
 /* 🟣 点数計算 */
 .score-link{
   background:linear-gradient(135deg,#c084fc,#a855f7);
 }
-.score-link:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 16px rgba(168,85,247,.35);
-}
 
 /* 🔵 ルール系 */
 .rules-link{
   background:linear-gradient(135deg,#60a5fa,#38bdf8);
-}
-.rules-link:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 16px rgba(56,189,248,.35);
 }
 
 /* 🧾 採用役 */
 .yaku-link{
   background:linear-gradient(135deg,#94a3b8,#64748b);
 }
-.yaku-link:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 16px rgba(100,116,139,.35);
-}
 
 /* 🟢 面子募集 */
 .match-link{
   background:linear-gradient(135deg,#34d399,#10b981);
 }
-.match-link:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 16px rgba(16,185,129,.35);
-}
-  
+
 .cta{
   display:block;
   margin-top:14px;
@@ -167,6 +214,16 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   color:#fff;
   border-radius:16px;
   background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
+  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+}
+.cta:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 24px rgba(0,0,0,.14);
+  filter:saturate(1.05) brightness(1.02);
+}
+.cta:active{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
 }
 .cta small{
   display:block;
@@ -204,8 +261,7 @@ footer{
       <li>初心者OK</li>
       <li>ルール説明・進行サポートあり</li>
       <li>ご主人様のみでのご利用も可能です（貸卓利用対応）</li>
-<li>三人打ち（サンマ）対局にも対応しております</li>
-
+      <li>三人打ち（サンマ）対局にも対応しております</li>
     </ul>
   </section>
 
@@ -230,18 +286,18 @@ footer{
     </div>
 
     <div class="pricebox" style="margin-top:12px;">
-     <p class="price">① 全自動麻雀卓貸出料：2,000円（税込）／回</p>
-<p class="note">※初回のみ発生します。延長時は再発生しません。</p>
+      <p class="price">① 全自動麻雀卓貸出料：2,000円（税込）／回</p>
+      <p class="note">※初回のみ発生します。延長時は再発生しません。</p>
 
-<div class="pricebox" style="margin-top:10px;">
-  <p class="price">🉐 長時間予約割（卓貸出料）</p>
-  <ul style="margin:8px 0 0 1.2em;">
-    <li><strong>3時間</strong>のご利用予約：<strong>1,000円（税込）</strong></li>
-    <li><strong>4時間以上</strong>のご利用予約：<strong>無料（0円）</strong></li>
-  </ul>
-  <p class="note">※ご予約時に申告いただいたご利用時間を基準に適用します。</p>
-</div>
-      
+      <div class="pricebox" style="margin-top:10px;">
+        <p class="price">🉐 長時間予約割（卓貸出料）</p>
+        <ul style="margin:8px 0 0 1.2em;">
+          <li><strong>3時間</strong>のご利用予約：<strong>1,000円（税込）</strong></li>
+          <li><strong>4時間以上</strong>のご利用予約：<strong>無料（0円）</strong></li>
+        </ul>
+        <p class="note">※ご予約時に申告いただいたご利用時間を基準に適用します。</p>
+      </div>
+
       <p class="price">② メイドさん同卓料：30分 2,000円（税込）／人</p>
       <p class="note">※同卓メイドは最大2名まで。</p>
     </div>
@@ -253,11 +309,15 @@ footer{
       <span class="note">※120分は「30分×4枠」として計算します。</span>
     </div>
 
-    <!-- 導線ボタン（3本） -->
+    <!-- 導線ボタン -->
     <div class="link-grid">
       <a class="score-link" href="mahjong-score.html">🀄 ポ・トロ独自の簡易点数計算を見る</a>
-      <a class="rules-link" href="mahjong-rules.html">📘 四人打ち対局ルールを見る</a>
-      <a class="rules-link" href="rule-3player.html">📘 三人打ち対局ルールを見る</a>
+
+      <div class="rules-row">
+        <a class="rules-link" href="mahjong-rules.html">📘 四人打ち対局ルールを見る</a>
+        <a class="rules-link" href="rule-3player.html">📘 三人打ち対局ルールを見る</a>
+      </div>
+
       <a class="yaku-link" href="mahjong-yaku.html">🧾 採用役一覧を見る</a>
       <a class="match-link" href="mahjong-lobby.html">👪 面子募集を見る</a>
     </div>
@@ -268,8 +328,7 @@ footer{
     <ul>
       <li>健全なアミューズメントサービスです</li>
       <li>金銭のやり取り・賭博行為は禁止です</li>
-      <li>お屋敷の卓を大切にするため、強打はご遠慮ください。
-※牌はそっと優しく置いていただけますと幸いです。</li>
+      <li>お屋敷の卓を大切にするため、強打はご遠慮ください。※牌はそっと優しく置いていただけますと幸いです。</li>
       <li>他のお客様のご迷惑になる行為はご遠慮ください</li>
       <li>メイドさんへの過度な要求は禁止です</li>
     </ul>
@@ -277,8 +336,8 @@ footer{
 
   <!-- 予約導線：公式XのDMリンクに差し替え推奨 -->
   <a class="cta" href="https://twitter.com/messages/compose?recipient_id=1161961177749999617">
-  XのDMで予約する
-</a>
+    XのDMで予約する
+  </a>
 
 </main>
 
