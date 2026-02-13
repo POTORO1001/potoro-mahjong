@@ -2,11 +2,12 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PO・TORO｜麻雀システム 面子募集</title>
-  <meta name="description" content="麻雀システムの面子募集。部屋の作成／閲覧へ進めます。" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PO・TORO 麻雀｜面子募集</title>
+  <meta name="description" content="PO・TORO（ポ・トロ）麻雀システムの面子募集。部屋の作成／閲覧へ進めます。" />
   <meta name="format-detection" content="telephone=no" />
-  <meta name="theme-color" content="#f6b7d2" />
+  <meta name="theme-color" content="#ff79a6" />
+
   <style>
     :root{
       --bg:#fff7fb;
@@ -16,112 +17,214 @@
       --accent:#ff79a6;
       --accent2:#7fc9ff;
       --ring:#ffd7e6;
-      --shadow:0 12px 30px rgba(0,0,0,.08);
-      --radius:22px;
-      --max:960px;
+      --chip:#fff0f6;
+      --shadow:0 14px 30px rgba(0,0,0,.07);
+      --radius:18px;
+      --radius2:22px;
+      --max:980px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      color:var(--ink);
       background:
-        radial-gradient(1200px 600px at 15% 10%, rgba(255,121,166,.20), transparent 55%),
-        radial-gradient(900px 500px at 85% 20%, rgba(127,201,255,.22), transparent 60%),
-        linear-gradient(180deg, var(--bg), #ffffff 60%);
-    }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max); margin:0 auto; padding:22px}
-    header{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:14px;
-      padding:10px 4px 18px;
-    }
-    .brand{
-      display:flex; flex-direction:column; gap:4px;
-      line-height:1.1;
-    }
-    .brand .logo{
-      font-weight:900; letter-spacing:.02em;
-      font-size:18px;
-    }
-    .brand .tag{
-      font-size:12px; color:var(--sub);
-    }
-    .badge{
-      font-size:12px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.7);
-      border:1px solid rgba(255,121,166,.22);
-      box-shadow:0 6px 16px rgba(0,0,0,.06);
-      color:#b34a6a;
-      white-space:nowrap;
+        radial-gradient(1200px 600px at 10% -10%, rgba(255,121,166,.18), transparent 60%),
+        radial-gradient(1200px 600px at 90% 0%, rgba(127,201,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--ink);
+      font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.65;
     }
 
-    .hero{
-      margin-top:6px;
-      background:rgba(255,255,255,.75);
-      border:1px solid rgba(255,215,230,.9);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px;
-      position:relative;
-      overflow:hidden;
+    a{color:inherit; text-decoration:none}
+
+    /* Sticky header: 4打ち/3打ちと統一 */
+    header{
+      position:sticky; top:0; z-index:10;
+      background:linear-gradient(to bottom, rgba(255,247,251,.95), rgba(255,247,251,.65));
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid rgba(255,215,230,.7);
     }
-    .hero:before{
-      content:"";
-      position:absolute; inset:-2px;
+    .bar{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:10px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .logo{
+      width:36px; height:36px; border-radius:12px;
       background:
-        radial-gradient(320px 220px at 10% 0%, rgba(255,121,166,.18), transparent 60%),
-        radial-gradient(300px 220px at 92% 20%, rgba(127,201,255,.18), transparent 60%);
-      pointer-events:none;
+        radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.65) 35%, transparent 55%),
+        linear-gradient(135deg, rgba(255,121,166,.95), rgba(127,201,255,.95));
+      box-shadow:0 10px 20px rgba(255,121,166,.18);
+      border:1px solid rgba(255,255,255,.8);
+      flex:0 0 auto;
     }
-    .hero-inner{position:relative}
-    h1{
-      margin:0 0 8px;
-      font-size:22px;
-      letter-spacing:.01em;
+    .brand h1{
+      font-size:14px; line-height:1.2; margin:0;
+      letter-spacing:.2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .lead{
+    .brand .sub{
+      font-size:12px; color:var(--sub); margin:2px 0 0;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    .btns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      appearance:none; border:1px solid rgba(255,215,230,.9);
+      background:rgba(255,255,255,.9);
+      color:var(--ink);
+      padding:8px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      display:inline-flex; align-items:center; gap:8px;
+      box-shadow:0 8px 18px rgba(0,0,0,.05);
+      cursor:pointer;
+      transition:transform .08s ease, box-shadow .15s ease, border-color .15s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 22px rgba(0,0,0,.07); border-color:rgba(255,121,166,.35)}
+    .btn:active{transform:translateY(0)}
+    .btn .dot{
+      width:8px; height:8px; border-radius:99px;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 0 0 4px rgba(255,215,230,.65);
+    }
+
+    /* Layout */
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 14px 36px}
+    .hero{padding:8px 0 10px}
+    .titleRow{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin:10px 0 10px;
+    }
+    .titleRow h2{margin:0; font-size:22px; letter-spacing:.3px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(135deg, rgba(255,121,166,.12), rgba(127,201,255,.12));
+      border:1px solid rgba(255,215,230,.85);
+      box-shadow:0 10px 22px rgba(0,0,0,.05);
+      font-weight:900;
+      font-size:12px;
+      color:#3a2a32;
+      white-space:nowrap;
+    }
+    .pill b{color:var(--accent)}
+    .noteTop{
       margin:0;
       color:var(--sub);
-      font-size:14px;
-      line-height:1.7;
+      font-size:13px;
     }
 
     .grid{
-      margin-top:16px;
       display:grid;
-      grid-template-columns:repeat(2, minmax(0, 1fr));
+      grid-template-columns:1fr;
       gap:12px;
+      margin-top:12px;
     }
-    @media (max-width: 720px){
-      .grid{grid-template-columns:1fr}
+    @media (min-width:900px){
+      .grid{grid-template-columns: 1.2fr .8fr}
     }
 
     .card{
       background:var(--card);
       border:1px solid rgba(255,215,230,.9);
-      border-radius:var(--radius);
-      box-shadow:0 10px 24px rgba(0,0,0,.06);
-      padding:16px;
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardInner{padding:14px}
+    .cardTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin:0 0 6px;
+    }
+    .cardTitle h3{margin:0; font-size:15px; letter-spacing:.2px}
+    .chip{
+      display:inline-flex; align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--chip);
+      border:1px solid rgba(255,215,230,.9);
+      color:#5a3b46;
+      font-size:12px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .muted{color:var(--sub)}
+    .em{
+      font-weight:900;
+      color:#2f1a22;
+      background:linear-gradient(to bottom, transparent 58%, rgba(255,121,166,.16) 58%);
+    }
+
+    /* Action cards (visual upgrade) */
+    .actions{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      padding:14px;
+    }
+    @media (min-width:780px){
+      .actions{grid-template-columns:1fr 1fr}
+    }
+
+    .action{
+      border:1px solid rgba(255,215,230,.9);
+      border-radius:20px;
+      background:
+        radial-gradient(420px 220px at 12% 5%, rgba(255,121,166,.10), transparent 60%),
+        radial-gradient(420px 220px at 92% 15%, rgba(127,201,255,.10), transparent 60%),
+        rgba(255,255,255,.92);
+      box-shadow:0 12px 24px rgba(0,0,0,.06);
+      padding:14px;
       display:flex;
       flex-direction:column;
       gap:10px;
-      min-height:170px;
+      min-height:190px;
+      position:relative;
+      overflow:hidden;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
     }
-    .card .label{
+    .action:hover{
+      transform:translateY(-1px);
+      box-shadow:0 16px 28px rgba(0,0,0,.08);
+      border-color:rgba(255,121,166,.26);
+    }
+    .action:active{transform:translateY(0)}
+    .actionHead{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .actionLabel{
       display:flex; align-items:center; gap:10px;
-      font-weight:800;
+      font-weight:1000;
       font-size:16px;
+      letter-spacing:.1px;
     }
-    .dot{
-      width:12px; height:12px; border-radius:50%;
+    .dotBig{
+      width:12px; height:12px; border-radius:999px;
       background:linear-gradient(135deg, var(--accent), var(--accent2));
       box-shadow:0 0 0 6px rgba(255,215,230,.55);
       flex:0 0 auto;
+    }
+    .tagMini{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(255,215,230,.9);
+      color:#5a3b46;
+      font-weight:900;
+      white-space:nowrap;
     }
     .desc{
       margin:0;
@@ -129,7 +232,8 @@
       font-size:13px;
       line-height:1.7;
     }
-    .btn{
+
+    .cta{
       margin-top:auto;
       display:inline-flex;
       align-items:center;
@@ -141,13 +245,13 @@
       background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.80));
       box-shadow:0 10px 18px rgba(0,0,0,.06);
       cursor:pointer;
-      font-weight:800;
+      font-weight:1000;
       transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
       user-select:none;
     }
-    .btn:hover{transform:translateY(-1px); box-shadow:0 14px 22px rgba(0,0,0,.08); border-color:rgba(255,121,166,.38)}
-    .btn:active{transform:translateY(0px)}
-    .btn.primary{
+    .cta:hover{transform:translateY(-1px); box-shadow:0 14px 22px rgba(0,0,0,.08); border-color:rgba(255,121,166,.38)}
+    .cta:active{transform:translateY(0px)}
+    .cta.primary{
       background:linear-gradient(135deg, rgba(255,121,166,.20), rgba(127,201,255,.20));
       border-color:rgba(127,201,255,.35);
     }
@@ -168,84 +272,232 @@
       border-right:2px solid rgba(0,0,0,.45);
       border-bottom:2px solid rgba(0,0,0,.45);
       transform:rotate(-45deg);
-      top:5px;
-      left:5px;
+      top:5px; left:5px;
     }
+
+    .callout{
+      border-radius:16px;
+      border:1px solid rgba(255,215,230,.9);
+      background:linear-gradient(135deg, rgba(255,121,166,.10), rgba(127,201,255,.10));
+      padding:12px 12px 10px;
+    }
+    .callout h4{margin:0 0 6px; font-size:13px; letter-spacing:.2px}
+    .callout p{margin:0; color:#4b3a42; font-size:13px}
+
+    .mini{
+      margin-top:10px;
+      display:grid;
+      gap:10px;
+    }
+    .mini .row{
+      display:flex; align-items:flex-start; gap:10px;
+      padding:10px 10px 9px;
+      border-radius:16px;
+      border:1px solid rgba(255,215,230,.9);
+      background:rgba(255,255,255,.92);
+    }
+    .mini .ic{
+      width:30px; height:30px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(255,121,166,.18), rgba(127,201,255,.18));
+      border:1px solid rgba(255,215,230,.9);
+      display:grid; place-items:center;
+      flex:0 0 auto;
+      font-size:14px;
+    }
+    .mini .t{font-weight:1000; font-size:12.5px; margin:0}
+    .mini .d{margin:2px 0 0; font-size:12.5px; color:var(--sub)}
+
+    .back{
+      display:block;
+      margin:14px auto 0;
+      max-width:460px;
+      padding:14px 12px;
+      text-align:center;
+      text-decoration:none;
+      font-weight:1000;
+      color:#ffffff;
+      background:linear-gradient(135deg, rgba(255,121,166,.92), rgba(127,201,255,.92));
+      border-radius:18px;
+      box-shadow:0 16px 28px rgba(0,0,0,.08);
+      border:1px solid rgba(255,255,255,.55);
+      transition:transform .08s ease, opacity .15s ease;
+    }
+    .back:hover{opacity:.94; transform:translateY(-1px)}
+    .back:active{transform:translateY(0)}
 
     footer{
       margin-top:14px;
-      color:#888;
+      padding:14px 2px 0;
+      color:var(--sub);
       font-size:12px;
       text-align:center;
-      padding:14px 4px 6px;
     }
-    .mini{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:8px;
+
+    /* Skip-to-content for accessibility */
+    .skip{
+      position:absolute;
+      left:-9999px;
+      top:auto;
+      width:1px;height:1px;
+      overflow:hidden;
     }
-    .pill{
-      font-size:12px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.75);
+    .skip:focus{
+      left:14px; top:10px;
+      width:auto; height:auto;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#fff;
       border:1px solid rgba(255,215,230,.9);
+      box-shadow:0 10px 22px rgba(0,0,0,.08);
+      z-index:999;
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
+  <a class="skip" href="#content">本文へスキップ</a>
+
+  <header>
+    <div class="bar">
       <div class="brand">
-        <div class="logo">PO・TORO｜麻雀システム</div>
-        <div class="tag">面子募集（部屋の作成／閲覧）</div>
+        <div class="logo" aria-hidden="true"></div>
+        <div style="min-width:0">
+          <h1>PO・TORO 麻雀</h1>
+          <p class="sub">面子募集（部屋の作成／閲覧）</p>
+        </div>
       </div>
-      <div class="badge">ご主人様・お嬢様向け</div>
-    </header>
 
-    <section class="hero" aria-label="面子募集トップ">
-      <div class="hero-inner">
-        <h1>面子募集</h1>
-        <p class="lead">
-          「面子募集の部屋を作成」または「面子募集の部屋を見る」から進んでください。<br />
-          ※ここは入口ページです。次の画面（作成／閲覧）は次ステップで作ります。
-        </p>
-      </div>
-    </section>
-
-    <section class="grid" aria-label="分岐メニュー">
-      <!-- 作成 -->
-      <div class="card">
-        <div class="label"><span class="dot" aria-hidden="true"></span>面子募集の部屋を作成</div>
-        <p class="desc">
-          募集内容（日時・人数・ルール・ひとこと等）を入力して、募集部屋を作成します。
-        </p>
-        <a class="btn primary" href="mahjong-room-create.html" aria-label="面子募集の部屋を作成ページへ">
-          作成ページへ進む <span class="arrow" aria-hidden="true"></span>
+      <div class="btns">
+        <a class="btn" href="./" title="麻雀システムHPへ戻る">
+          <span class="dot" aria-hidden="true"></span> 戻る
         </a>
       </div>
+    </div>
+  </header>
 
-      <!-- 閲覧 -->
-      <div class="card">
-        <div class="label"><span class="dot" aria-hidden="true"></span>面子募集の部屋を見る</div>
-        <p class="desc">
-          すでに作成された募集部屋を一覧／検索して、参加希望の部屋を確認します。
-        </p>
-        <a class="btn" href="mahjong-room-list.html" aria-label="面子募集の部屋を見るページへ">
-          閲覧ページへ進む <span class="arrow" aria-hidden="true"></span>
-        </a>
+  <main class="wrap" id="content">
+    <section class="hero">
+      <div class="titleRow">
+        <h2>面子募集</h2>
+        <div class="pill">ご主人様・お嬢様向け <b>入口ページ</b></div>
       </div>
+      <p class="noteTop">
+        「募集部屋を作成」または「募集部屋を見る」から進んでください。<br />
+        <span class="muted">※次の画面（作成／閲覧）は別ページです。</span>
+      </p>
     </section>
+
+    <div class="grid">
+      <!-- MAIN -->
+      <section class="card" aria-label="分岐メニュー">
+        <div class="cardInner">
+          <div class="cardTitle">
+            <h3>メニュー</h3>
+            <span class="chip">面子募集</span>
+          </div>
+          <p class="muted" style="margin:0 0 10px; font-size:13px">
+            目的に合わせて選んでください。
+          </p>
+        </div>
+
+        <div class="actions">
+          <!-- 作成 -->
+          <article class="action" aria-label="面子募集の部屋を作成">
+            <div class="actionHead">
+              <div class="actionLabel">
+                <span class="dotBig" aria-hidden="true"></span>
+                面子募集の部屋を作成
+              </div>
+              <span class="tagMini">はじめる</span>
+            </div>
+
+            <p class="desc">
+              募集内容（日時・人数・ルール・ひとこと等）を入力して、募集部屋を作成します。
+            </p>
+
+            <a class="cta primary" href="mahjong-room-create.html" aria-label="面子募集の部屋を作成ページへ">
+              作成ページへ進む <span class="arrow" aria-hidden="true"></span>
+            </a>
+          </article>
+
+          <!-- 閲覧 -->
+          <article class="action" aria-label="面子募集の部屋を見る">
+            <div class="actionHead">
+              <div class="actionLabel">
+                <span class="dotBig" aria-hidden="true"></span>
+                面子募集の部屋を見る
+              </div>
+              <span class="tagMini">一覧／検索</span>
+            </div>
+
+            <p class="desc">
+              すでに作成された募集部屋を一覧／検索して、参加希望の部屋を確認します。
+            </p>
+
+            <a class="cta" href="mahjong-room-list.html" aria-label="面子募集の部屋を見るページへ">
+              閲覧ページへ進む <span class="arrow" aria-hidden="true"></span>
+            </a>
+          </article>
+        </div>
+
+        <div class="cardInner" style="padding-top:10px">
+          <div class="callout" role="note" aria-label="補足">
+            <h4>補足</h4>
+            <p>
+              予約・連絡方法は、各部屋の案内に従ってください。<br />
+              みんなが気持ちよく遊べるよう、マナーを守って楽しみましょう。
+            </p>
+          </div>
+
+          <a class="back" href="./">← 麻雀システムHPへ戻る</a>
+        </div>
+      </section>
+
+      <!-- ASIDE -->
+      <aside class="card" aria-label="このページの使い方">
+        <div class="cardInner">
+          <div class="cardTitle">
+            <h3>このページの使い方</h3>
+            <span class="chip">ガイド</span>
+          </div>
+
+          <div class="mini">
+            <div class="row">
+              <div class="ic" aria-hidden="true">📝</div>
+              <div>
+                <p class="t">募集を出す</p>
+                <p class="d">「作成」から、日時や人数などを入力して部屋を作ります。</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="ic" aria-hidden="true">🔎</div>
+              <div>
+                <p class="t">参加する</p>
+                <p class="d">「閲覧」から一覧を見て、参加したい部屋を探します。</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="ic" aria-hidden="true">💬</div>
+              <div>
+                <p class="t">連絡・予約</p>
+                <p class="d">連絡手段は各部屋の案内に従ってください（DM等）。</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="callout" aria-label="トーン補足">
+            <h4>デザインについて</h4>
+            <p>
+              4人打ち／3人打ちルールページと同じ配色・カードUIに統一しています。
+            </p>
+          </div>
+        </div>
+      </aside>
+    </div>
 
     <footer>
-      <div class="mini">
-        <div class="pill">予約・連絡：各部屋の案内に従ってください</div>
-        <div class="pill">PO・TORO / Mahjong</div>
-      </div>
-      <div style="margin-top:10px;">© PO・TORO</div>
+      © PO・TORO / Mahjong — Menco Matching
     </footer>
-  </div>
+  </main>
 </body>
 </html>
