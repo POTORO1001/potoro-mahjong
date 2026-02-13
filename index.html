@@ -107,31 +107,56 @@ ul{margin:10px 0 0 1.2em; padding:0;}
   gap:10px;
   margin-top:14px;
 }
-.score-link, .rules-link, .yaku-link{
+.score-link,
+.rules-link,
+.yaku-link,
+.match-link{
   display:block;
-  padding:14px 12px;
+  padding:16px 14px;
   text-align:center;
   text-decoration:none;
   font-weight:900;
-  border-radius:16px;
-  border:2px solid #ffd6e7;
+  border-radius:18px;
+  color:#fff;
+  transition:.2s;
 }
-.score-link{
-  color:#de3f7b;
-  background:#fff0f6;
-}
-.score-link:hover{background:#ffe3ef;}
-.rules-link{
-  color:#ffffff;
-  background:linear-gradient(135deg,#f6b7d2,#a9d6f7);
-}
-.rules-link:hover{opacity:.92;}
-.yaku-link{
-  color:#3b2f2a;
-  background:#fffafc;
-}
-.yaku-link:hover{background:#fff0f6;}
 
+/* 🟣 点数計算 */
+.score-link{
+  background:linear-gradient(135deg,#c084fc,#a855f7);
+}
+.score-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(168,85,247,.35);
+}
+
+/* 🔵 ルール系 */
+.rules-link{
+  background:linear-gradient(135deg,#60a5fa,#38bdf8);
+}
+.rules-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(56,189,248,.35);
+}
+
+/* 🧾 採用役 */
+.yaku-link{
+  background:linear-gradient(135deg,#94a3b8,#64748b);
+}
+.yaku-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(100,116,139,.35);
+}
+
+/* 🟢 面子募集 */
+.match-link{
+  background:linear-gradient(135deg,#34d399,#10b981);
+}
+.match-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(16,185,129,.35);
+}
+  
 .cta{
   display:block;
   margin-top:14px;
