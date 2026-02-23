@@ -2,64 +2,237 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>PO・TORO｜面子募集の部屋を見る</title>
 <meta name="theme-color" content="#f6b7d2" />
 <style>
-:root{--bg:#fff7fb;--ink:#2b2b2b;--sub:#666;--accent:#ff79a6;--accent2:#7fc9ff;--ring:#ffd7e6;--shadow:0 12px 28px rgba(0,0,0,.08);--radius:22px;--danger:#ff5b6a}
+:root{
+  --bg:#fff7fb;--ink:#2b2b2b;--sub:#666;
+  --accent:#ff79a6;--accent2:#7fc9ff;--ring:#ffd7e6;
+  --shadow:0 12px 28px rgba(0,0,0,.08);
+  --radius:22px;--danger:#ff5b6a;--ok:#2ecc71;
+  --card:rgba(255,255,255,.92);--line:rgba(0,0,0,.08);
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;background:linear-gradient(180deg,var(--bg),#fff);color:var(--ink)}
-.wrap{max-width:980px;margin:0 auto;padding:20px}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,121,166,.14), transparent 55%),
+    radial-gradient(900px 500px at 85% 20%, rgba(127,201,255,.16), transparent 60%),
+    linear-gradient(180deg,var(--bg),#fff);
+  color:var(--ink)
+}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(255,121,166,.35);
+  outline-offset:3px;
+  border-radius:14px;
+}
+
+.wrap{max-width:980px;margin:0 auto;padding:18px 14px 26px}
+
+/* header */
+header{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px;flex-wrap:wrap
+}
 h1{margin:0;font-size:22px}
 .sub{font-size:13px;color:var(--sub);margin-top:6px;line-height:1.5}
-.badge{font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(255,121,166,.22);color:#b34a6a;white-space:nowrap}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.9);border:1px solid var(--ring);border-radius:20px;padding:12px;box-shadow:var(--shadow);margin-bottom:14px}
-select,input{padding:10px 12px;border-radius:14px;border:1px solid #ddd;font-size:14px;font-family:inherit;background:#fff}
-.btn{padding:10px 12px;border-radius:14px;border:1px solid rgba(255,121,166,.25);background:#fff;font-weight:1000;cursor:pointer}
+.badge{
+  font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.75);
+  border:1px solid rgba(255,121,166,.22);color:#b34a6a;white-space:nowrap
+}
+
+/* toolbar */
+.toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;
+  background:rgba(255,255,255,.9);
+  border:1px solid var(--ring);
+  border-radius:20px;padding:12px;
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+  align-items:center;
+}
+select,input{
+  padding:10px 12px;border-radius:14px;border:1px solid #ddd;
+  font-size:14px;font-family:inherit;background:#fff
+}
+input{min-width:220px; flex:1}
+.btn{
+  padding:10px 12px;border-radius:14px;border:1px solid rgba(255,121,166,.25);
+  background:#fff;font-weight:1000;cursor:pointer;
+  transition:transform .08s ease, box-shadow .15s ease, border-color .15s ease;
+  box-shadow:0 10px 22px rgba(0,0,0,.05);
+}
+.btn:hover{transform:translateY(-1px); box-shadow:0 14px 24px rgba(0,0,0,.08); border-color:rgba(255,121,166,.35)}
+.btn:active{transform:translateY(0)}
 .btn.primary{border:none;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.btn.ghost{border-color:rgba(0,0,0,.10)}
+.chipBtn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 12px;border-radius:999px;
+  border:1px solid rgba(0,0,0,.08);
+  background:rgba(255,255,255,.9);
+  font-weight:1000; cursor:pointer;
+}
+.chipBtn.on{
+  border-color:rgba(127,201,255,.42);
+  background:linear-gradient(135deg, rgba(127,201,255,.18), rgba(255,121,166,.10));
+}
+
+/* grid/cards */
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:820px){.grid{grid-template-columns:1fr}}
-.card{background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.06);border-radius:var(--radius);padding:14px;box-shadow:0 10px 22px rgba(0,0,0,.06)}
+.card{
+  background:var(--card);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:var(--radius);
+  padding:14px;
+  box-shadow:0 10px 22px rgba(0,0,0,.06);
+  position:relative;
+  overflow:hidden;
+}
+.card.mine{
+  border-color:rgba(127,201,255,.35);
+  box-shadow:0 14px 28px rgba(127,201,255,.10), 0 10px 22px rgba(0,0,0,.05);
+}
+.card.mine::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0;
+  width:6px;
+  background:linear-gradient(180deg, rgba(127,201,255,.85), rgba(255,121,166,.25));
+}
 .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .id{font-weight:1000;font-size:13px;letter-spacing:.02em}
-.status{font-size:12px;font-weight:1000;padding:7px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.06);background:#fff}
+.status{
+  font-size:12px;font-weight:1000;padding:7px 10px;border-radius:999px;
+  border:1px solid rgba(0,0,0,.06);background:#fff;white-space:nowrap
+}
 .status.open{color:#0d7a33;border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.08)}
 .status.closed{color:#a51d2c;border-color:rgba(255,91,106,.35);background:rgba(255,91,106,.10)}
+
 .meta{margin-top:8px;font-size:13px;color:var(--sub);line-height:1.7}
 .meta b{color:var(--ink)}
-.comment{margin-top:10px;padding:10px 12px;border-radius:16px;background:rgba(255,121,166,.06);border:1px solid rgba(255,121,166,.15);font-size:13px;line-height:1.6}
+.comment{
+  margin-top:10px;padding:10px 12px;border-radius:16px;
+  background:rgba(255,121,166,.06);
+  border:1px solid rgba(255,121,166,.15);
+  font-size:13px;line-height:1.6
+}
+.comment.blue{
+  background:rgba(127,201,255,.10);
+  border-color:rgba(127,201,255,.22);
+}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.smallbtn{padding:9px 10px;border-radius:14px;border:1px solid rgba(0,0,0,.08);background:#fff;font-weight:1000;cursor:pointer;font-size:13px;text-decoration:none;display:inline-flex;align-items:center}
+.smallbtn{
+  padding:9px 10px;border-radius:14px;border:1px solid rgba(0,0,0,.08);
+  background:#fff;font-weight:1000;cursor:pointer;font-size:13px;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
 .smallbtn.join{border:none;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}
 .smallbtn.danger{border-color:rgba(255,91,106,.35);color:#a51d2c;background:rgba(255,91,106,.08)}
+.smallbtn.muted{opacity:.65; cursor:not-allowed}
 .small{font-size:12px;color:#999}
-.empty{padding:16px;border-radius:22px;border:1px dashed rgba(0,0,0,.18);background:rgba(255,255,255,.7);color:#666;text-align:center}
+.empty{
+  padding:16px;border-radius:22px;border:1px dashed rgba(0,0,0,.18);
+  background:rgba(255,255,255,.7);color:#666;text-align:center
+}
 .back{margin-top:16px;text-align:center}
 .back a{font-size:13px;color:#888;text-decoration:none}
 hr.sep{border:none;border-top:1px dashed rgba(0,0,0,.12);margin:10px 0}
+
+/* modal */
+.modal{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.42);
+  display:none;
+  align-items:center; justify-content:center;
+  padding:18px;
+  z-index:50;
+}
+.modal .box{
+  width:min(560px,100%);
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  border:1px solid rgba(0,0,0,.10);
+  box-shadow:0 22px 40px rgba(0,0,0,.18);
+}
+.mHead{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  margin-bottom:8px;
+}
+.mHead h2{margin:0;font-size:16px}
+.mClose{
+  border:1px solid rgba(0,0,0,.10);
+  background:#fff;
+  border-radius:14px;
+  padding:8px 10px;
+  cursor:pointer;
+  font-weight:1000;
+}
+.mBody{display:grid; gap:10px; margin-top:10px}
+.field label{
+  display:block; font-weight:1000; font-size:12px; color:#5d5258; margin-bottom:6px;
+}
+.field input,.field select,.field textarea{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:14px;
+  font-family:inherit;
+  background:#fff;
+}
+.field textarea{min-height:92px; resize:vertical}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+@media (max-width:640px){.row2{grid-template-columns:1fr}}
+.mFoot{
+  display:flex; gap:10px; flex-wrap:wrap;
+  margin-top:12px;
+  justify-content:flex-end;
+}
+.mFoot .btn{box-shadow:none}
+.warn{
+  font-size:12px; color:#7a6a70; line-height:1.6;
+  border:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.75);
+  border-radius:14px;
+  padding:10px 12px;
+}
+kbd{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size:12px; background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.08);
+  padding:2px 6px; border-radius:8px;
+}
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <header>
     <div>
       <h1>面子募集の部屋を見る</h1>
-      <div class="sub">利用時間（2〜5時間/30分刻み）・終了予定も表示します</div>
+      <div class="sub">作成者は「編集」「削除」ができます（あなたの部屋には目印がつきます）</div>
     </div>
     <div class="badge">PO・TORO / Mahjong</div>
   </header>
 
   <div class="toolbar">
-    <select id="filterStatus">
+    <select id="filterStatus" aria-label="状態フィルタ">
       <option value="all">すべて</option>
       <option value="open">募集中のみ</option>
       <option value="closed">締切済みのみ</option>
     </select>
 
+    <button class="chipBtn" type="button" id="mineOnly" aria-pressed="false" title="自分が作成した部屋だけ表示">
+      自分の部屋だけ
+    </button>
+
     <input id="q" type="text" placeholder="検索（作成者名 / ID / ひとこと）" />
 
-    <button class="btn" type="button" id="btnRefresh">更新</button>
+    <button class="btn ghost" type="button" id="btnRefresh">更新</button>
     <button class="btn primary" type="button" onclick="location.href='mahjong-room-create.html'">部屋を作成</button>
   </div>
 
@@ -70,12 +243,95 @@ hr.sep{border:none;border-top:1px dashed rgba(0,0,0,.12);margin:10px 0}
   </div>
 </div>
 
+<!-- 編集モーダル（作成者のみ） -->
+<div class="modal" id="editModal" role="dialog" aria-modal="true" aria-label="部屋の編集">
+  <div class="box">
+    <div class="mHead">
+      <div>
+        <h2>募集内容の編集</h2>
+        <div class="small">部屋ID：<span id="mRoomId" style="font-weight:1000"></span></div>
+      </div>
+      <button class="mClose" type="button" id="mClose">閉じる</button>
+    </div>
+
+    <div class="warn">
+      <b>注意</b><br>
+      ・編集できるのは <b>作成者のみ</b> です。<br>
+      ・<b>開始日時</b> または <b>利用時間</b> を変えると、終了予定も自動で更新します。<br>
+      ・人数（募集）を参加数より小さくした場合は、内部で整合を取ります（参加数に丸めます）。
+    </div>
+
+    <div class="mBody">
+      <div class="row2">
+        <div class="field">
+          <label for="fRule">形式（例：4人打ち / 3人打ち）</label>
+          <input id="fRule" placeholder="例：4人打ち（東風）" maxlength="40" />
+        </div>
+        <div class="field">
+          <label for="fSlots">募集人数（slotsTotal）</label>
+          <input id="fSlots" type="number" min="1" max="9" step="1" />
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="fEventAt">開始日時</label>
+          <input id="fEventAt" type="datetime-local" />
+        </div>
+        <div class="field">
+          <label for="fDuration">利用時間（分）</label>
+          <select id="fDuration">
+            <option value="120">2時間</option>
+            <option value="150">2時間30分</option>
+            <option value="180">3時間</option>
+            <option value="210">3時間30分</option>
+            <option value="240">4時間</option>
+            <option value="270">4時間30分</option>
+            <option value="300">5時間</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="fDeadlineAt">締切日時</label>
+          <input id="fDeadlineAt" type="datetime-local" />
+        </div>
+        <div class="field">
+          <label for="fClosed">手動締切（closed）</label>
+          <select id="fClosed">
+            <option value="auto">自動（締切/満員で自動締切）</option>
+            <option value="open">手動で開放（closed=false）</option>
+            <option value="closed">手動で締切（closed=true）</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="fComment">ひとこと（募集コメント）</label>
+        <textarea id="fComment" maxlength="200" placeholder="例：初心者歓迎です！19:00にお屋敷集合でお願いします。"></textarea>
+        <div class="small">※200文字まで</div>
+      </div>
+    </div>
+
+    <div class="mFoot">
+      <button class="btn" type="button" id="mCopyLink">チャットURLをコピー</button>
+      <button class="btn dangerBtn btn" type="button" id="mDelete" style="border-color:rgba(255,91,106,.35); color:#a51d2c; background:rgba(255,91,106,.08)">この部屋を削除</button>
+      <button class="btn primary" type="button" id="mSave">変更を保存</button>
+    </div>
+
+    <div class="small" style="margin-top:10px; color:#8a8086; line-height:1.6">
+      ヒント：検索は即時反映です。自分の部屋だけ見たい時は上の <kbd>自分の部屋だけ</kbd> をONに。
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
   getFirestore, collection, onSnapshot, query, orderBy,
-  doc, runTransaction, deleteDoc
+  doc, runTransaction, deleteDoc, updateDoc, Timestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /** ここをFirebase Consoleの値に置換 */
@@ -100,6 +356,7 @@ signInAnonymously(auth).catch(()=>alert("Firebase認証に失敗しました（A
 const $ = (id)=>document.getElementById(id);
 const list = $("list");
 
+/* ===== util ===== */
 function pad(n){ return String(n).padStart(2,"0"); }
 function tsToLabel(ts){
   const d = ts.toDate();
@@ -113,9 +370,7 @@ function formatDurationMinutes(min){
   const mm = m%60;
   return mm === 0 ? `${h}時間` : `${h}時間30分`;
 }
-
 function remainingSlots(r){ return Math.max(0, (r.slotsTotal|0) - (r.joinedCount|0)); }
-
 function computeClosed(r){
   const now = Date.now();
   const deadline = r.deadlineAt?.toDate?.().getTime?.() ?? 0;
@@ -124,18 +379,45 @@ function computeClosed(r){
   if(remainingSlots(r) <= 0) return true;
   return false;
 }
-
 function escapeHtml(str){
   return String(str)
     .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#39;");
 }
+function toLocalInputValueFromDate(d){
+  // datetime-local は "YYYY-MM-DDTHH:mm"
+  const yyyy = d.getFullYear();
+  const mm = pad(d.getMonth()+1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+}
+function parseLocalInputToDate(value){
+  // value = "YYYY-MM-DDTHH:mm"
+  // ブラウザはローカルタイムとして Date を生成
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+}
+function computeEndAt(eventAtDate, durationMinutes){
+  const ms = Number(durationMinutes) * 60 * 1000;
+  return new Date(eventAtDate.getTime() + ms);
+}
 
+/* ===== state ===== */
 let latestRooms = [];
+let mineOnly = false;
 
+/* ===== render ===== */
 function render(){
   let rooms = [...latestRooms];
 
+  // mine only
+  if(mineOnly && currentUid){
+    rooms = rooms.filter(r => r.creatorUid === currentUid);
+  }
+
+  // search
   const q = ($("q").value || "").trim().toLowerCase();
   if(q){
     rooms = rooms.filter(r=>{
@@ -144,6 +426,7 @@ function render(){
     });
   }
 
+  // status filter
   const f = $("filterStatus").value;
   if(f==="open") rooms = rooms.filter(r=>!computeClosed(r));
   if(f==="closed") rooms = rooms.filter(r=>computeClosed(r));
@@ -159,7 +442,6 @@ function render(){
     const statusText = closed ? "締切済み / 満員" : "募集中";
     const statusClass = closed ? "closed" : "open";
 
-    // 締切まで
     const now = Date.now();
     const dl = r.deadlineAt.toDate().getTime();
     const dlText = now > dl
@@ -172,17 +454,16 @@ function render(){
         })();
 
     const comment = (r.comment||"").trim() || "（ひとこと未設定）";
-
     const durationText = formatDurationMinutes(r.durationMinutes);
     const endAtText = r.endAt ? tsToLabel(r.endAt) : "—";
-
-    // 開始〜終了の表示（視認性高め）
     const timeRange = `${tsToLabel(r.eventAt)} 〜 ${endAtText}`;
 
+    const isMine = (currentUid && r.creatorUid === currentUid);
+
     return `
-      <div class="card">
+      <div class="card ${isMine ? "mine" : ""}">
         <div class="top">
-          <div class="id">${escapeHtml(r.id)}</div>
+          <div class="id">${escapeHtml(r.id)} ${isMine ? `<span class="small" style="margin-left:8px; font-weight:1000; color:#2b4a62">あなたの部屋</span>` : ""}</div>
           <div class="status ${statusClass}">${statusText}</div>
         </div>
 
@@ -195,13 +476,14 @@ function render(){
           <div class="small">${tsToLabel(r.deadlineAt)}（${dlText}）</div>
         </div>
 
-        <div class="comment">${escapeHtml(comment)}</div>
+        <div class="comment ${isMine ? "blue" : ""}">${escapeHtml(comment)}</div>
 
         <div class="actions">
           ${closed ? "" : `<button class="smallbtn join" data-act="join" data-id="${escapeHtml(r.id)}">参加する（+1）</button>`}
           <button class="smallbtn" data-act="cancel" data-id="${escapeHtml(r.id)}">キャンセル（-1）</button>
           <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id)}">チャットへ</a>
-          ${r.creatorUid === currentUid ? `<button class="smallbtn danger" data-act="delete" data-id="${escapeHtml(r.id)}">削除</button>` : ""}
+          ${isMine ? `<button class="smallbtn" data-act="edit" data-id="${escapeHtml(r.id)}">編集</button>` : ""}
+          ${isMine ? `<button class="smallbtn danger" data-act="delete" data-id="${escapeHtml(r.id)}">削除</button>` : ""}
         </div>
 
         <div class="small">※締切超過 or 残り0で自動的に締切扱いになります。</div>
@@ -210,6 +492,7 @@ function render(){
   }).join("");
 }
 
+/* ===== join/cancel transaction ===== */
 async function txUpdateCount(roomId, delta){
   if(!currentUid){ alert("認証中です。"); return; }
 
@@ -220,7 +503,6 @@ async function txUpdateCount(roomId, delta){
       if(!snap.exists()) throw new Error("room_not_found");
       const r = snap.data();
 
-      // 締切/満員判定（トランザクション内で確定）
       const now = Date.now();
       const dl = r.deadlineAt.toDate().getTime();
       const rem = Math.max(0, (r.slotsTotal|0) - (r.joinedCount|0));
@@ -242,31 +524,179 @@ async function txUpdateCount(roomId, delta){
   }
 }
 
+/* ===== delete ===== */
 async function deleteRoom(roomId){
   if(!confirm("この部屋を削除しますか？（作成者のみ可能）")) return;
+
+  // 注意：rooms/{id} だけ消え、messages/members等サブコレは残ります（Firestore仕様）
+  // 完全削除は Cloud Functions の recursive delete 等が必要です。
   try{
     await deleteDoc(doc(db, "rooms", roomId));
+    alert("部屋を削除しました。");
   }catch(e){
     console.error(e);
     alert("削除に失敗しました。");
   }
 }
 
+/* ===== edit modal ===== */
+let editingRoomId = null;
+let editingRoom = null;
+
+function openEditModal(room){
+  editingRoom = room;
+  editingRoomId = room.id;
+
+  $("mRoomId").textContent = room.id;
+
+  $("fRule").value = room.rule || "";
+  $("fSlots").value = String(room.slotsTotal ?? 4);
+
+  // eventAt / deadlineAt
+  try{
+    $("fEventAt").value = toLocalInputValueFromDate(room.eventAt.toDate());
+  }catch{ $("fEventAt").value = ""; }
+
+  $("fDuration").value = String(room.durationMinutes ?? 180);
+
+  try{
+    $("fDeadlineAt").value = toLocalInputValueFromDate(room.deadlineAt.toDate());
+  }catch{ $("fDeadlineAt").value = ""; }
+
+  // closed selector
+  if(room.closed === true) $("fClosed").value = "closed";
+  else $("fClosed").value = "auto"; // 基本はauto（ただし closed=false を明示したいなら open）
+
+  $("fComment").value = room.comment || "";
+
+  // links
+  $("editModal").style.display = "flex";
+}
+
+function closeEditModal(){
+  $("editModal").style.display = "none";
+  editingRoomId = null;
+  editingRoom = null;
+}
+
+$("mClose").addEventListener("click", closeEditModal);
+$("editModal").addEventListener("click", (e)=>{
+  if(e.target === $("editModal")) closeEditModal();
+});
+
+$("mCopyLink").addEventListener("click", async ()=>{
+  if(!editingRoomId) return;
+  const url = `${location.origin}${location.pathname.replace(/[^/]*$/, "")}mahjong-room-chat.html?id=${encodeURIComponent(editingRoomId)}`;
+  try{
+    await navigator.clipboard.writeText(url);
+    alert("チャットURLをコピーしました。");
+  }catch{
+    prompt("コピーできない場合はこのURLをコピーしてください。", url);
+  }
+});
+
+$("mDelete").addEventListener("click", async ()=>{
+  if(!editingRoomId) return;
+  closeEditModal();
+  await deleteRoom(editingRoomId);
+});
+
+$("mSave").addEventListener("click", async ()=>{
+  if(!editingRoomId || !editingRoom) return;
+  if(!currentUid){ alert("認証中です。"); return; }
+  if(editingRoom.creatorUid !== currentUid){
+    alert("作成者ではないため編集できません。");
+    return;
+  }
+
+  const rule = $("fRule").value.trim().slice(0,40);
+  const slotsTotal = Math.max(1, Math.min(9, Number($("fSlots").value || 4)));
+  const eventAtD = parseLocalInputToDate($("fEventAt").value);
+  const durationMinutes = Number($("fDuration").value || 180);
+  const deadlineAtD = parseLocalInputToDate($("fDeadlineAt").value);
+  const comment = $("fComment").value.trim().slice(0,200);
+
+  if(!eventAtD){ alert("開始日時を入力してください。"); return; }
+  if(!deadlineAtD){ alert("締切日時を入力してください。"); return; }
+  if(deadlineAtD.getTime() > eventAtD.getTime()){
+    // OK（締切が開始より後でも運用的にアリなら許容）
+    // ただ一般的には「開始前に締切」が多いので軽く注意だけ
+  }
+
+  const endAtD = computeEndAt(eventAtD, durationMinutes);
+
+  // closed設定
+  const closedSel = $("fClosed").value;
+  let closedValue = undefined; // autoの場合は触らないのが理想だが、ここでは「auto=現状維持」扱い
+  if(closedSel === "closed") closedValue = true;
+  if(closedSel === "open") closedValue = false;
+
+  // joinedCount との整合：募集人数を下げすぎたら joinedCount を丸める
+  const joinedCount = Number(editingRoom.joinedCount || 0);
+  const nextJoined = Math.min(joinedCount, slotsTotal);
+
+  // 自動締切再判定（deadline/残りで変わる）
+  const now = Date.now();
+  const nextRem = Math.max(0, slotsTotal - nextJoined);
+  const autoClosed = (now > deadlineAtD.getTime()) || (nextRem <= 0);
+
+  // closedValue が undefined（auto/現状維持）なら、ここは「closed は自動判定に合わせる」方が分かりやすいので
+  // 仕様を揃えるなら以下のように決め打ち（おすすめ）
+  const finalClosed = (closedValue === undefined) ? autoClosed : closedValue;
+
+  try{
+    await updateDoc(doc(db, "rooms", editingRoomId), {
+      rule,
+      slotsTotal,
+      durationMinutes,
+      comment,
+      eventAt: Timestamp.fromDate(eventAtD),
+      endAt: Timestamp.fromDate(endAtD),
+      deadlineAt: Timestamp.fromDate(deadlineAtD),
+      joinedCount: nextJoined,
+      closed: finalClosed
+    });
+    alert("更新しました。");
+    closeEditModal();
+  }catch(e){
+    console.error(e);
+    alert("更新に失敗しました。Firestoreルール/権限を確認してください。");
+  }
+});
+
+/* ===== events ===== */
 list.addEventListener("click", (ev)=>{
   const btn = ev.target.closest("[data-act]");
   if(!btn) return;
   const act = btn.dataset.act;
   const roomId = btn.dataset.id;
+
   if(act==="join") txUpdateCount(roomId, +1);
-  if(act==="cancel") txUpdateCount(roomId, -1);
+  if(act==="cancel") {
+    // 誤タップ防止（軽め）
+    if(confirm("参加数を -1 しますか？")) txUpdateCount(roomId, -1);
+  }
   if(act==="delete") deleteRoom(roomId);
+  if(act==="edit"){
+    const room = latestRooms.find(r => r.id === roomId);
+    if(!room){ alert("部屋情報の取得に失敗しました。"); return; }
+    if(room.creatorUid !== currentUid){ alert("作成者ではないため編集できません。"); return; }
+    openEditModal(room);
+  }
 });
 
 $("filterStatus").addEventListener("change", render);
 $("q").addEventListener("input", render);
 $("btnRefresh").addEventListener("click", render);
 
-// リアルタイム購読（開催日時昇順）
+$("mineOnly").addEventListener("click", ()=>{
+  mineOnly = !mineOnly;
+  $("mineOnly").classList.toggle("on", mineOnly);
+  $("mineOnly").setAttribute("aria-pressed", mineOnly ? "true" : "false");
+  render();
+});
+
+/* ===== realtime subscribe ===== */
 const qRooms = query(collection(db, "rooms"), orderBy("eventAt", "asc"));
 onSnapshot(qRooms, (snap)=>{
   latestRooms = snap.docs.map(d=>d.data());
