@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>PO・TORO｜面子募集チャット</title>
 <meta name="theme-color" content="#f6b7d2" />
 <style>
@@ -10,9 +10,14 @@
   --bg:#fff7fb; --ink:#2b2b2b; --sub:#666;
   --accent:#ff79a6; --accent2:#7fc9ff; --ring:#ffd7e6;
   --shadow:0 12px 28px rgba(0,0,0,.08); --radius:20px;
+
   --danger:#ff5b6a; --ok:#2ecc71;
+  --card:#ffffff;
+  --line:rgba(0,0,0,.08);
 }
+
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
   font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;
@@ -22,14 +27,62 @@ body{
     linear-gradient(180deg,var(--bg),#fff 60%);
   color:var(--ink);
 }
-.wrap{max-width:920px;margin:0 auto;padding:20px}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:12px}
-h1{margin:0;font-size:20px}
-.sub{font-size:13px;color:var(--sub);margin-top:6px;line-height:1.5}
+
+a{color:inherit; text-decoration:none}
+a:focus-visible, button:focus-visible, input:focus-visible{
+  outline:3px solid rgba(255,121,166,.35);
+  outline-offset:3px;
+  border-radius:14px;
+}
+
+/* ===== Sticky Header (戻る導線を常設) ===== */
+header{
+  position:sticky; top:0; z-index:20;
+  background:linear-gradient(to bottom, rgba(255,247,251,.96), rgba(255,247,251,.72));
+  backdrop-filter:saturate(1.2) blur(10px);
+  border-bottom:1px solid rgba(255,215,230,.75);
+}
+.bar{
+  max-width:920px;
+  margin:0 auto;
+  padding:10px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.left{
+  min-width:0;
+}
+h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.sub{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .badge{
-  font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.7);
+  font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.75);
   border:1px solid rgba(255,121,166,.22); color:#b34a6a; white-space:nowrap;
 }
+.btns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,215,230,.9);
+  background:rgba(255,255,255,.9);
+  box-shadow:0 10px 22px rgba(0,0,0,.06);
+  font-size:12px;
+  font-weight:1000;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .08s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.btn:hover{transform:translateY(-1px); box-shadow:0 14px 24px rgba(0,0,0,.08); border-color:rgba(255,121,166,.35)}
+.btn:active{transform:translateY(0)}
+.btn .dot{
+  width:8px; height:8px; border-radius:99px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 0 0 4px rgba(255,215,230,.65);
+}
+
+/* Layout */
+.wrap{max-width:920px;margin:0 auto;padding:14px 14px 24px}
+
+/* Card */
 .card{
   background:rgba(255,255,255,.92);
   border:1px solid var(--ring);
@@ -37,38 +90,97 @@ h1{margin:0;font-size:20px}
   padding:14px;
   box-shadow:var(--shadow);
 }
-.roommeta{font-size:13px;color:var(--sub);line-height:1.7}
-.roommeta b{color:var(--ink)}
+
+/* Room meta (折りたたみ) */
+.details{
+  border:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.75);
+  border-radius:16px;
+  padding:10px 12px;
+}
+.details summary{
+  cursor:pointer;
+  font-weight:1000;
+  list-style:none;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.details summary::-webkit-details-marker{display:none}
+.details .meta{
+  margin-top:8px;
+  font-size:13px; color:var(--sub); line-height:1.7;
+}
+.details .meta b{color:var(--ink)}
 .pill{
-  display:inline-block; margin-left:8px;
+  display:inline-flex; align-items:center; gap:8px;
   font-size:12px; font-weight:1000; padding:6px 10px;
   border-radius:999px; border:1px solid rgba(0,0,0,.06); background:#fff;
+  white-space:nowrap;
 }
-.pill.open{color:#0d7a33;border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.08)}
-.pill.closed{color:#a51d2c;border-color:rgba(255,91,106,.35);background:rgba(255,91,106,.10)}
+.pill .pDot{width:8px;height:8px;border-radius:999px;background:#bbb}
+.pill.open{color:#0d7a33;border-color:rgba(46,204,113,.40);background:rgba(46,204,113,.10)}
+.pill.open .pDot{background:rgba(46,204,113,.95)}
+.pill.closed{color:#a51d2c;border-color:rgba(255,91,106,.40);background:rgba(255,91,106,.12)}
+.pill.closed .pDot{background:rgba(255,91,106,.95)}
+.kpi{
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-top:10px;
+}
+.kpi .chip{
+  font-size:12px; font-weight:1000;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.85);
+}
+.kpi .chip b{color:var(--ink)}
+.kpi .chip.rem{border-color:rgba(127,201,255,.38)}
+.kpi .chip.deadline{border-color:rgba(255,121,166,.30)}
+
+/* Chat */
 .chatbox{
   margin-top:12px;
   height:56vh;
   overflow:auto;
   border-radius:18px;
-  border:1px solid rgba(0,0,0,.08);
+  border:1px solid var(--line);
   background:#fff;
   padding:12px;
+  scroll-behavior:smooth;
 }
-.msg{margin:0 0 10px}
-.msg .head{font-size:12px;color:#777}
-.msg .body{
+.msg{margin:0 0 10px; display:flex; flex-direction:column; gap:4px}
+.msg .head{
+  font-size:12px;
+  color:#777;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.msg .who{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.msg .time{flex:0 0 auto; color:#9a8f95}
+.bubble{
   display:inline-block;
-  margin-top:4px;
   padding:9px 10px;
   border-radius:14px;
-  background:rgba(255,121,166,.06);
-  border:1px solid rgba(255,121,166,.14);
   font-size:14px;
   line-height:1.5;
   white-space:pre-wrap;
   word-break:break-word;
+  border:1px solid rgba(0,0,0,.06);
+  background:rgba(0,0,0,.02);
+  max-width:min(560px, 92%);
 }
+.msg.me{align-items:flex-end}
+.msg.me .bubble{
+  background:rgba(127,201,255,.12);
+  border-color:rgba(127,201,255,.28);
+}
+.msg.other .bubble{
+  background:rgba(255,121,166,.06);
+  border-color:rgba(255,121,166,.14);
+}
+
+/* Form */
 .form{margin-top:10px;display:flex;gap:8px}
 .form input{
   flex:1;
@@ -76,6 +188,11 @@ h1{margin:0;font-size:20px}
   border-radius:14px;
   border:1px solid #ddd;
   font-size:14px;
+  background:#fff;
+}
+.form input:disabled{
+  background:rgba(0,0,0,.03);
+  color:#777;
 }
 .form button{
   padding:12px 14px;
@@ -85,8 +202,10 @@ h1{margin:0;font-size:20px}
   cursor:pointer;
   color:#fff;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 12px 22px rgba(0,0,0,.08);
 }
-.form button:disabled{opacity:.5;cursor:not-allowed}
+.form button:disabled{opacity:.5;cursor:not-allowed; box-shadow:none}
+
 .notice{
   margin-top:10px;
   font-size:12px;
@@ -97,13 +216,42 @@ h1{margin:0;font-size:20px}
   border-radius:14px;
   padding:10px 12px;
 }
-.back{margin-top:14px;text-align:center}
+
+/* Bottom back links (保険) */
+.back{margin-top:14px; text-align:center; display:flex; justify-content:center; gap:14px; flex-wrap:wrap}
 .back a{font-size:13px;color:#888;text-decoration:none}
+.back a:hover{text-decoration:underline}
+
+/* New message floating button */
+.fab{
+  position:fixed;
+  right:14px;
+  bottom:14px;
+  z-index:30;
+  display:none;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.08);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 16px 30px rgba(0,0,0,.12);
+  font-weight:1000;
+  cursor:pointer;
+}
+.fab .miniDot{
+  width:8px;height:8px;border-radius:999px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 0 0 4px rgba(255,215,230,.65);
+}
+
+/* Modal */
 .modal{
   position:fixed; inset:0;
   background:rgba(0,0,0,.4);
   display:none; align-items:center; justify-content:center;
   padding:18px;
+  z-index:50;
 }
 .modal .box{
   width:min(420px,100%);
@@ -111,6 +259,7 @@ h1{margin:0;font-size:20px}
   border-radius:20px;
   padding:14px;
   border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 22px 40px rgba(0,0,0,.18);
 }
 .modal label{display:block;font-weight:1000;margin-bottom:6px}
 .modal input{width:100%;padding:12px;border-radius:14px;border:1px solid #ddd;font-size:14px}
@@ -129,21 +278,41 @@ h1{margin:0;font-size:20px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div>
+
+<header>
+  <div class="bar">
+    <div class="left">
       <h1>面子募集チャット</h1>
       <div class="sub">集合方法・ルール確認などを相談できます（締切後は閲覧のみ）</div>
     </div>
-    <div class="badge">PO・TORO / Mahjong</div>
-  </header>
 
+    <div class="btns" aria-label="ナビゲーション">
+      <a class="btn" id="toLobby" href="#" title="募集ロビーへ戻る">
+        <span class="dot" aria-hidden="true"></span> ロビー
+      </a>
+      <a class="btn" href="mahjong-room-list.html" title="募集一覧へ戻る">
+        <span class="dot" aria-hidden="true"></span> 一覧
+      </a>
+      <span class="badge">PO・TORO / Mahjong</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
   <div class="card">
-    <div class="roommeta" id="roommeta">読み込み中…</div>
+    <!-- roommeta: ここはJSで書き換え -->
+    <details class="details" id="roomDetails" open>
+      <summary>
+        <span>部屋情報</span>
+        <span id="roomStatusPill" class="pill"><span class="pDot" aria-hidden="true"></span>読み込み中</span>
+      </summary>
+      <div class="meta" id="roommeta">読み込み中…</div>
+      <div class="kpi" id="kpi"></div>
+    </details>
 
-    <div class="chatbox" id="chat"></div>
+    <div class="chatbox" id="chat" aria-label="チャットログ"></div>
 
-    <div class="form">
+    <div class="form" aria-label="送信フォーム">
       <input id="text" maxlength="300" placeholder="メッセージ（300文字まで）" />
       <button id="sendBtn" type="button">送信</button>
     </div>
@@ -157,14 +326,19 @@ h1{margin:0;font-size:20px}
   </div>
 
   <div class="back">
+    <a id="toLobby2" href="#">← 募集ロビーへ戻る</a>
     <a href="mahjong-room-list.html">← 一覧へ戻る</a>
   </div>
 </div>
 
+<button class="fab" id="newBtn" type="button" aria-label="新着メッセージへ移動">
+  <span class="miniDot" aria-hidden="true"></span> 新着（最下部へ）
+</button>
+
 <!-- 表示名モーダル -->
-<div class="modal" id="nameModal">
+<div class="modal" id="nameModal" role="dialog" aria-modal="true" aria-label="表示名入力">
   <div class="box">
-    <label>表示名（20文字まで）</label>
+    <label for="displayName">表示名（20文字まで）</label>
     <input id="displayName" maxlength="20" placeholder="例：ご主人様1234 / お嬢様ミント" />
     <button id="saveNameBtn" type="button">この名前で入室</button>
     <div class="small">※この端末に保存されます（次回も同じ名前で入室）</div>
@@ -178,6 +352,10 @@ import {
   getFirestore, doc, getDoc, setDoc, collection, addDoc,
   query, orderBy, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+/** ===== ここだけあなたの実ファイル名に合わせてOK ===== */
+const LOBBY_URL = "mahjong-lobby.html"; // ← 面子募集ロビー（作成/閲覧の入口）のファイル名に合わせて変更
+const LIST_URL  = "mahjong-room-list.html";
 
 /** ★ここをFirebase Consoleの値に置換（create/listと同じ） */
 const firebaseConfig = {
@@ -198,9 +376,17 @@ const $ = (id)=>document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const roomId = params.get("id");
 
+// ロビー/下部リンクをセット（roomId保持）
+function setNavLinks(){
+  const lobby = `${LOBBY_URL}`;
+  $("toLobby").href = lobby;
+  $("toLobby2").href = lobby;
+}
+setNavLinks();
+
 if(!roomId){
   alert("部屋IDがありません。一覧から入ってください。");
-  location.href = "mahjong-room-list.html";
+  location.href = LIST_URL;
 }
 
 let currentUid = null;
@@ -238,6 +424,7 @@ function escapeHtml(str){
 function showNameModal(){
   $("nameModal").style.display = "flex";
   $("displayName").value = localStorage.getItem("potoro_display_name") || "";
+  $("displayName").focus();
 }
 function hideNameModal(){ $("nameModal").style.display = "none"; }
 
@@ -261,7 +448,7 @@ onAuthStateChanged(auth, async (u)=>{
     await loadRoom();
     if(!roomData){
       alert("部屋が見つかりませんでした。");
-      location.href = "mahjong-room-list.html";
+      location.href = LIST_URL;
       return;
     }
 
@@ -290,9 +477,20 @@ async function loadRoom(){
 
 async function ensureMember(){
   if(!currentUid || !displayName) return;
-  // membersに自分を登録（任意：出席確認などに使える）
   const ref = doc(db, "rooms", roomId, "members", currentUid);
   await setDoc(ref, { displayName, joinedAt: serverTimestamp() }, { merge:true });
+}
+
+function setStatusPill(closed){
+  const el = $("roomStatusPill");
+  if(!el) return;
+  if(closed){
+    el.className = "pill closed";
+    el.innerHTML = `<span class="pDot" aria-hidden="true"></span>締切済み（閲覧のみ）`;
+  }else{
+    el.className = "pill open";
+    el.innerHTML = `<span class="pDot" aria-hidden="true"></span>募集中（送信OK）`;
+  }
 }
 
 function refreshUI(){
@@ -304,28 +502,50 @@ function refreshUI(){
   const endAtText = r.endAt ? tsToLabel(r.endAt) : "—";
   const rangeText = `${tsToLabel(r.eventAt)} 〜 ${endAtText}`;
 
-  const pill = closed
-    ? `<span class="pill closed">締切済み（閲覧のみ）</span>`
-    : `<span class="pill open">募集中（送信OK）</span>`;
+  setStatusPill(closed);
 
   $("roommeta").innerHTML = `
-    <div><b>部屋ID：</b>${escapeHtml(r.id)} ${pill}</div>
+    <div><b>部屋ID：</b>${escapeHtml(r.id)}</div>
     <div><b>作成者：</b>${escapeHtml(r.creatorName)}　<b>形式：</b>${escapeHtml(r.rule)}</div>
     <div><b>利用時間：</b>${escapeHtml(durationText)}　<b>時間：</b>${escapeHtml(rangeText)}</div>
-    <div><b>締切：</b>${tsToLabel(r.deadlineAt)}　<b>残り：</b>${rem}名（募集${r.slotsTotal} / 参加${r.joinedCount}）</div>
+    <div><b>締切：</b>${tsToLabel(r.deadlineAt)}</div>
+  `;
+
+  $("kpi").innerHTML = `
+    <span class="chip rem"><b>残り：</b>${rem}名（募集${r.slotsTotal} / 参加${r.joinedCount}）</span>
+    <span class="chip deadline"><b>締切：</b>${pad(r.deadlineAt.toDate().getHours())}:${pad(r.deadlineAt.toDate().getMinutes())}</span>
   `;
 
   $("sendBtn").disabled = closed;
   $("text").disabled = closed;
+  $("text").placeholder = closed ? "締切済みのため送信できません（閲覧のみ）" : "メッセージ（300文字まで）";
 }
 
 let unsubMessages = null;
 let lastSendAt = 0;
 
+// スクロール判定：最下部に近いか
+function isNearBottom(el){
+  const threshold = 80; // px
+  return (el.scrollHeight - el.scrollTop - el.clientHeight) < threshold;
+}
+function scrollToBottom(){
+  const chat = $("chat");
+  chat.scrollTop = chat.scrollHeight;
+}
+function showNewBtn(show){
+  $("newBtn").style.display = show ? "inline-flex" : "none";
+}
+
 function setupMessages(){
   if(unsubMessages) unsubMessages();
 
   const qMsg = query(collection(db, "rooms", roomId, "messages"), orderBy("createdAt", "asc"));
+
+  // 手動スクロール中は強制スクロールしない
+  $("chat").addEventListener("scroll", ()=>{
+    if(isNearBottom($("chat"))) showNewBtn(false);
+  });
 
   unsubMessages = onSnapshot(qMsg, async (snap)=>{
     // ルーム情報も都度更新（人数や締切反映）
@@ -334,21 +554,40 @@ function setupMessages(){
     refreshUI();
 
     const chat = $("chat");
+    const wasNear = isNearBottom(chat);
+
     chat.innerHTML = snap.docs.map(d=>{
       const m = d.data();
       const t = m.createdAt?.toDate?.() ? m.createdAt.toDate() : null;
       const time = t ? `${pad(t.getHours())}:${pad(t.getMinutes())}` : "--:--";
+      const who = escapeHtml(m.displayName || "名無しさん");
+      const txt = escapeHtml(m.text || "");
+      const isMe = (m.uid && currentUid && m.uid === currentUid);
       return `
-        <div class="msg">
-          <div class="head">${escapeHtml(m.displayName || "名無しさん")} ・ ${time}</div>
-          <div class="body">${escapeHtml(m.text || "")}</div>
+        <div class="msg ${isMe ? "me" : "other"}">
+          <div class="head">
+            <span class="who">${who}</span>
+            <span class="time">${time}</span>
+          </div>
+          <div class="bubble">${txt}</div>
         </div>
       `;
     }).join("");
 
-    chat.scrollTop = chat.scrollHeight;
+    if(wasNear){
+      scrollToBottom();
+      showNewBtn(false);
+    }else{
+      // 読んでる最中に新着 → ボタンで誘導
+      showNewBtn(true);
+    }
   });
 }
+
+$("newBtn").addEventListener("click", ()=>{
+  scrollToBottom();
+  showNewBtn(false);
+});
 
 $("sendBtn").addEventListener("click", sendMessage);
 $("text").addEventListener("keydown", (e)=>{
@@ -386,6 +625,9 @@ async function sendMessage(){
       createdAt: serverTimestamp()
     });
     $("text").value = "";
+    // 送信後は最下部へ寄せる（ユーザー意図が明確）
+    scrollToBottom();
+    showNewBtn(false);
   }catch(e){
     console.error(e);
     alert("送信に失敗しました。Firestoreルール/設定を確認してください。");
