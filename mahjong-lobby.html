@@ -14,8 +14,11 @@
       --card:#ffffff;
       --ink:#2b2b2b;
       --sub:#666;
-      --accent:#ff79a6;
-      --accent2:#7fc9ff;
+
+      /* brand */
+      --accent:#ff79a6;   /* pink */
+      --accent2:#7fc9ff;  /* blue */
+
       --ring:#ffd7e6;
       --chip:#fff0f6;
       --shadow:0 14px 30px rgba(0,0,0,.07);
@@ -38,8 +41,13 @@
     }
 
     a{color:inherit; text-decoration:none}
+    a:focus-visible, button:focus-visible{
+      outline:3px solid rgba(255,121,166,.35);
+      outline-offset:3px;
+      border-radius:16px;
+    }
 
-    /* Sticky header: 4打ち/3打ちと統一 */
+    /* Sticky header */
     header{
       position:sticky; top:0; z-index:10;
       background:linear-gradient(to bottom, rgba(255,247,251,.95), rgba(255,247,251,.65));
@@ -161,13 +169,8 @@
     }
 
     .muted{color:var(--sub)}
-    .em{
-      font-weight:900;
-      color:#2f1a22;
-      background:linear-gradient(to bottom, transparent 58%, rgba(255,121,166,.16) 58%);
-    }
 
-    /* Action cards (visual upgrade) */
+    /* Action cards */
     .actions{
       display:grid;
       grid-template-columns:1fr;
@@ -178,19 +181,20 @@
       .actions{grid-template-columns:1fr 1fr}
     }
 
+    /* ===== 役割ごとに“見た目の文法”を分ける =====
+       作成：ピンク寄せ（開始/投稿）
+       閲覧：ブルー寄せ（検索/参加）
+    */
     .action{
       border:1px solid rgba(255,215,230,.9);
       border-radius:20px;
-      background:
-        radial-gradient(420px 220px at 12% 5%, rgba(255,121,166,.10), transparent 60%),
-        radial-gradient(420px 220px at 92% 15%, rgba(127,201,255,.10), transparent 60%),
-        rgba(255,255,255,.92);
+      background:rgba(255,255,255,.92);
       box-shadow:0 12px 24px rgba(0,0,0,.06);
       padding:14px;
       display:flex;
       flex-direction:column;
       gap:10px;
-      min-height:190px;
+      min-height:198px;
       position:relative;
       overflow:hidden;
       transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
@@ -198,9 +202,39 @@
     .action:hover{
       transform:translateY(-1px);
       box-shadow:0 16px 28px rgba(0,0,0,.08);
-      border-color:rgba(255,121,166,.26);
     }
     .action:active{transform:translateY(0)}
+
+    .action--create{
+      border-color:rgba(255,121,166,.35);
+      background:
+        radial-gradient(520px 260px at 10% 0%, rgba(255,121,166,.18), transparent 60%),
+        radial-gradient(520px 260px at 100% 25%, rgba(255,121,166,.08), transparent 55%),
+        rgba(255,255,255,.92);
+      box-shadow:0 14px 28px rgba(255,121,166,.10), 0 12px 24px rgba(0,0,0,.05);
+    }
+    .action--create::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(255,121,166,.85), rgba(255,121,166,.35));
+    }
+
+    .action--browse{
+      border-color:rgba(127,201,255,.40);
+      background:
+        radial-gradient(520px 260px at 90% 0%, rgba(127,201,255,.18), transparent 60%),
+        radial-gradient(520px 260px at 0% 25%, rgba(127,201,255,.08), transparent 55%),
+        rgba(255,255,255,.92);
+      box-shadow:0 14px 28px rgba(127,201,255,.10), 0 12px 24px rgba(0,0,0,.05);
+    }
+    .action--browse::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(127,201,255,.85), rgba(127,201,255,.35));
+    }
+
     .actionHead{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
@@ -210,27 +244,58 @@
       font-size:16px;
       letter-spacing:.1px;
     }
+
+    /* 左の丸ドット：カード別に色を固定 */
     .dotBig{
       width:12px; height:12px; border-radius:999px;
-      background:linear-gradient(135deg, var(--accent), var(--accent2));
       box-shadow:0 0 0 6px rgba(255,215,230,.55);
       flex:0 0 auto;
     }
+    .action--create .dotBig{ background:rgba(255,121,166,.95) }
+    .action--browse .dotBig{ background:rgba(127,201,255,.95); box-shadow:0 0 0 6px rgba(210,235,255,.55) }
+
+    /* 右上に“大アイコン”を置いて瞬間識別 */
+    .bigIc{
+      width:34px; height:34px;
+      display:grid; place-items:center;
+      border-radius:14px;
+      border:1px solid rgba(255,215,230,.9);
+      background:rgba(255,255,255,.86);
+      box-shadow:0 10px 20px rgba(0,0,0,.06);
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .action--create .bigIc{ border-color:rgba(255,121,166,.30) }
+    .action--browse .bigIc{ border-color:rgba(127,201,255,.34) }
+
     .tagMini{
       font-size:12px;
       padding:6px 10px;
       border-radius:999px;
-      background:rgba(255,255,255,.85);
+      background:rgba(255,255,255,.88);
       border:1px solid rgba(255,215,230,.9);
       color:#5a3b46;
       font-weight:900;
       white-space:nowrap;
     }
+    .action--browse .tagMini{
+      border-color:rgba(127,201,255,.28);
+      color:#2b4a62;
+    }
+
     .desc{
       margin:0;
       color:var(--sub);
       font-size:13px;
       line-height:1.7;
+    }
+    .desc b{
+      color:#2f1a22;
+      font-weight:1000;
+      background:linear-gradient(to bottom, transparent 58%, rgba(255,121,166,.14) 58%);
+    }
+    .action--browse .desc b{
+      background:linear-gradient(to bottom, transparent 58%, rgba(127,201,255,.16) 58%);
     }
 
     .cta{
@@ -241,7 +306,7 @@
       gap:10px;
       padding:12px 14px;
       border-radius:16px;
-      border:1px solid rgba(255,121,166,.28);
+      border:1px solid rgba(0,0,0,.08);
       background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.80));
       box-shadow:0 10px 18px rgba(0,0,0,.06);
       cursor:pointer;
@@ -249,16 +314,25 @@
       transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
       user-select:none;
     }
-    .cta:hover{transform:translateY(-1px); box-shadow:0 14px 22px rgba(0,0,0,.08); border-color:rgba(255,121,166,.38)}
+    .cta:hover{transform:translateY(-1px); box-shadow:0 14px 22px rgba(0,0,0,.08)}
     .cta:active{transform:translateY(0px)}
-    .cta.primary{
-      background:linear-gradient(135deg, rgba(255,121,166,.20), rgba(127,201,255,.20));
-      border-color:rgba(127,201,255,.35);
+
+    /* CTAも役割で色分け */
+    .cta--create{
+      border-color:rgba(255,121,166,.40);
+      background:linear-gradient(135deg, rgba(255,121,166,.20), rgba(255,121,166,.10));
     }
+    .cta--create:hover{border-color:rgba(255,121,166,.55)}
+    .cta--browse{
+      border-color:rgba(127,201,255,.48);
+      background:linear-gradient(135deg, rgba(127,201,255,.20), rgba(127,201,255,.10));
+    }
+    .cta--browse:hover{border-color:rgba(127,201,255,.65)}
+
     .arrow{
       width:18px; height:18px; display:inline-block;
       border-radius:999px;
-      background:rgba(255,255,255,.85);
+      background:rgba(255,255,255,.88);
       border:1px solid rgba(0,0,0,.06);
       position:relative;
       flex:0 0 auto;
@@ -333,7 +407,7 @@
       text-align:center;
     }
 
-    /* Skip-to-content for accessibility */
+    /* Skip-to-content */
     .skip{
       position:absolute;
       left:-9999px;
@@ -402,40 +476,48 @@
 
         <div class="actions">
           <!-- 作成 -->
-          <article class="action" aria-label="面子募集の部屋を作成">
+          <article class="action action--create" aria-label="面子募集の部屋を作成">
             <div class="actionHead">
               <div class="actionLabel">
                 <span class="dotBig" aria-hidden="true"></span>
                 面子募集の部屋を作成
               </div>
-              <span class="tagMini">はじめる</span>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <span class="tagMini">はじめる</span>
+                <span class="bigIc" aria-hidden="true">📝</span>
+              </div>
             </div>
 
             <p class="desc">
-              募集内容（日時・人数・ルール・ひとこと等）を入力して、募集部屋を作成します。
+              <b>募集内容を入力して部屋を作る</b><br />
+              日時・人数・ルール・ひとこと等を記入して、募集部屋を作成します。
             </p>
 
-            <a class="cta primary" href="mahjong-room-create.html" aria-label="面子募集の部屋を作成ページへ">
-              作成ページへ進む <span class="arrow" aria-hidden="true"></span>
+            <a class="cta cta--create" href="mahjong-room-create.html" aria-label="募集部屋の作成ページへ">
+              募集を作る（作成ページへ） <span class="arrow" aria-hidden="true"></span>
             </a>
           </article>
 
           <!-- 閲覧 -->
-          <article class="action" aria-label="面子募集の部屋を見る">
+          <article class="action action--browse" aria-label="面子募集の部屋を見る">
             <div class="actionHead">
               <div class="actionLabel">
                 <span class="dotBig" aria-hidden="true"></span>
                 面子募集の部屋を見る
               </div>
-              <span class="tagMini">一覧／検索</span>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <span class="tagMini">一覧／検索</span>
+                <span class="bigIc" aria-hidden="true">🔎</span>
+              </div>
             </div>
 
             <p class="desc">
+              <b>募集中の部屋を探して参加する</b><br />
               すでに作成された募集部屋を一覧／検索して、参加希望の部屋を確認します。
             </p>
 
-            <a class="cta" href="mahjong-room-list.html" aria-label="面子募集の部屋を見るページへ">
-              閲覧ページへ進む <span class="arrow" aria-hidden="true"></span>
+            <a class="cta cta--browse" href="mahjong-room-list.html" aria-label="募集部屋の閲覧ページへ">
+              募集を探す（一覧を見る） <span class="arrow" aria-hidden="true"></span>
             </a>
           </article>
         </div>
@@ -484,6 +566,9 @@
               </div>
             </div>
           </div>
+        </div>
+      </aside>
+    </div>
 
     <footer>
       © PO・TORO / Mahjong — Menco Matching
