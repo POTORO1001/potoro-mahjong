@@ -21,8 +21,13 @@ textarea{min-height:88px;resize:vertical}
 .radio{display:flex;gap:14px;flex-wrap:wrap}
 .radio label{display:flex;align-items:center;gap:6px;margin:0;font-weight:800}
 .btn{width:100%;padding:14px;border:none;border-radius:14px;font-weight:1000;font-size:15px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btn-sub{width:100%;padding:12px;border:1px solid rgba(255,121,166,.25);border-radius:14px;font-weight:1000;font-size:14px;cursor:pointer;background:#fff;color:var(--ink)}
 .ok{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;background:#f6fff8;border:1px solid rgba(46,204,113,.35)}
-.small{font-size:12px;color:var(--sub);margin-top:6px}
+.ng{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;background:#fff5f7;border:1px solid rgba(255,121,166,.35)}
+.small{font-size:12px;color:var(--sub);margin-top:6px;line-height:1.5}
+.hr{height:1px;background:rgba(255,215,230,.9);margin:18px 0;border:0}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid rgba(255,121,166,.25);background:#fff;font-size:12px;font-weight:900}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:900}
 </style>
 </head>
 <body>
@@ -76,22 +81,77 @@ textarea{min-height:88px;resize:vertical}
     </div>
   </div>
 
-  <div class="field">
-    <label>ひとこと（任意）</label>
-    <textarea id="comment" maxlength="140" placeholder="例：初心者歓迎です！楽しく打てる方お待ちしています。"></textarea>
-    <div class="small"><span id="count">0</span>/140</div>
+  <!-- ★追加：削除キー -->
+  <div class="row">
+    <div class="field">
+      <label>削除キー（4桁の数字）<span class="badge">必須</span></label>
+      <input
+        id="deleteKey"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="例：1234"
+        autocomplete="off"
+      />
+      <div class="small">
+        このキーがないと削除できません。<br>
+        <b>控えてください（再発行不可）</b>。保存時はキーそのものではなく「ハッシュ」で保存します。
+      </div>
+    </div>
+
+    <div class="field">
+      <label>ひとこと（任意）</label>
+      <textarea id="comment" maxlength="140" placeholder="例：初心者歓迎です！楽しく打てる方お待ちしています。"></textarea>
+      <div class="small"><span id="count">0</span>/140</div>
+    </div>
   </div>
 
   <button class="btn" onclick="createRoom()">部屋を作成</button>
 
   <div id="ok" class="ok"></div>
+  <div id="ng" class="ng"></div>
+
+  <hr class="hr">
+
+  <!-- ★追加：既存の部屋を削除 -->
+  <div class="field">
+    <label>既存の部屋を削除（部屋ID＋削除キー）</label>
+    <div class="small" style="margin-bottom:10px;">
+      「作成者UID」ではなく、<b>4桁キー</b>で削除できます。
+    </div>
+
+    <div class="row">
+      <div class="field" style="margin:0;">
+        <label style="font-weight:900;font-size:13px;margin-bottom:6px;">部屋ID</label>
+        <input id="delRoomId" placeholder="例：RM-240101-1900-ABCD" />
+      </div>
+      <div class="field" style="margin:0;">
+        <label style="font-weight:900;font-size:13px;margin-bottom:6px;">削除キー（4桁）</label>
+        <input id="delKey" type="password" inputmode="numeric" maxlength="4" placeholder="例：1234" autocomplete="off" />
+      </div>
+    </div>
+
+    <button class="btn-sub" onclick="deleteRoomByInputs()">この部屋を削除</button>
+    <div class="small">
+      ※削除は取り消せません。削除後は一覧・チャットからも消えます。
+    </div>
+  </div>
+
 </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp,
+  Timestamp,
+  getDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /** ここをFirebase Consoleの値に置換 */
 const firebaseConfig = {
@@ -146,6 +206,28 @@ function generateRoomId(eventAtISO){
 
 const $ = (id)=>document.getElementById(id);
 
+function showOk(html){
+  $("ng").style.display = "none";
+  $("ok").style.display = "block";
+  $("ok").innerHTML = html;
+}
+function showNg(html){
+  $("ok").style.display = "none";
+  $("ng").style.display = "block";
+  $("ng").innerHTML = html;
+}
+
+function is4DigitNumber(s){
+  return /^\d{4}$/.test(String(s || "").trim());
+}
+
+// ===== 4桁削除キーは「ハッシュ」で保存（キー自体は保存しない） =====
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
 window.createRoom = async function(){
   if(!currentUid){
     alert("認証中です。少し待ってもう一度お試しください。");
@@ -160,8 +242,15 @@ window.createRoom = async function(){
   const ruleEl = document.querySelector('input[name="rule"]:checked');
   const comment = ($("comment").value || "").trim();
 
+  // ★削除キー
+  const deleteKey = $("deleteKey").value.trim();
+
   if(!creatorName || !eventAtLocal || !durationMinutes || !slotsTotal || !ruleEl){
     alert("未入力の項目があります。");
+    return;
+  }
+  if(!is4DigitNumber(deleteKey)){
+    alert("削除キーは「4桁の数字」で入力してください。");
     return;
   }
 
@@ -176,73 +265,186 @@ window.createRoom = async function(){
   const roomId = generateRoomId(eventAtLocal);
 
   try{
+    const deleteKeyHash = await sha256Hex(deleteKey);
+
     await setDoc(doc(db,"rooms",roomId),{
       id: roomId,
-      creatorUid: currentUid,
+      creatorUid: currentUid,         // 参考用（キー削除があるので必須ではない）
       creatorName,
       eventAt: Timestamp.fromDate(eventDate),
       endAt: Timestamp.fromDate(endDate),
-      durationMinutes,                // ★ 2〜5時間を30分刻み（分で保存）
+      durationMinutes,                // 2〜5時間を30分刻み（分で保存）
       deadlineAt: Timestamp.fromDate(deadlineDate),
       slotsTotal,
       joinedCount: 0,
       rule: ruleEl.value,
       comment: comment.slice(0,140),
       closed: false,
+
+      // ★追加：削除キー（ハッシュ）
+      deleteKeyHash,
+
       createdAt: serverTimestamp()
     });
 
-   $("ok").style.display = "block";
-$("ok").innerHTML = `
-  <b>部屋を作成しました！</b><br><br>
-  部屋ID：<b>${roomId}</b><br>
-  終了予定：${endDate.toLocaleString()}<br><br>
+    // ここで削除キーは「今だけ」表示（控えてもらう）
+    showOk(`
+      <b>部屋を作成しました！</b><br><br>
+      部屋ID：<b>${roomId}</b><br>
+      終了予定：${endDate.toLocaleString()}<br><br>
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="padding:10px 12px;border-radius:14px;border:1px dashed rgba(255,121,166,.45);background:#fff;">
+        <div style="font-weight:1000;margin-bottom:6px;">削除キー（控えてください）</div>
+        <div class="kbd" style="font-size:18px;letter-spacing:.12em;">${deleteKey}</div>
+        <div class="small" style="margin-top:6px;">※キーは保存されず、ハッシュで登録されています。再表示はできません。</div>
+      </div>
 
-    <a href="mahjong-room-list.html"
-       style="
-         flex:1;
-         text-align:center;
-         padding:12px;
-         border-radius:14px;
-         border:1px solid rgba(255,121,166,.25);
-         background:#fff;
-         text-decoration:none;
-         font-weight:1000;
-         font-size:14px;
-         box-shadow:0 6px 14px rgba(0,0,0,.08);
-       ">
-      一覧へ
-    </a>
+      <br>
 
-    <a href="mahjong-room-chat.html?id=${encodeURIComponent(roomId)}"
-       style="
-         flex:1;
-         text-align:center;
-         padding:12px;
-         border-radius:14px;
-         border:none;
-         background:linear-gradient(135deg,#ff79a6,#7fc9ff);
-         color:#fff;
-         text-decoration:none;
-         font-weight:1000;
-         font-size:14px;
-         box-shadow:0 6px 14px rgba(0,0,0,.12);
-       ">
-      チャットへ
-    </a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="mahjong-room-list.html"
+           style="
+             flex:1;
+             text-align:center;
+             padding:12px;
+             border-radius:14px;
+             border:1px solid rgba(255,121,166,.25);
+             background:#fff;
+             text-decoration:none;
+             font-weight:1000;
+             font-size:14px;
+             box-shadow:0 6px 14px rgba(0,0,0,.08);
+           ">
+          一覧へ
+        </a>
 
-  </div>
-`;
+        <a href="mahjong-room-chat.html?id=${encodeURIComponent(roomId)}"
+           style="
+             flex:1;
+             text-align:center;
+             padding:12px;
+             border-radius:14px;
+             border:none;
+             background:linear-gradient(135deg,#ff79a6,#7fc9ff);
+             color:#fff;
+             text-decoration:none;
+             font-weight:1000;
+             font-size:14px;
+             box-shadow:0 6px 14px rgba(0,0,0,.12);
+           ">
+          チャットへ
+        </a>
+      </div>
 
-window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
-    window.scrollTo({top: document.body.scrollHeight, behavior:"smooth"});
+      <br>
+
+      <button
+        onclick="deleteRoomInline('${roomId}')"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:14px;
+          border:1px solid rgba(255,121,166,.25);
+          background:#fff5f7;
+          color:#b2234a;
+          font-weight:1000;
+          cursor:pointer;
+        "
+      >
+        この部屋を削除（キー確認あり）
+      </button>
+
+      <div class="small" style="margin-top:8px;">
+        削除する場合：上のボタン → 削除キー4桁を入力
+      </div>
+    `);
+
+    // 削除欄に部屋IDを自動反映（便利）
+    $("delRoomId").value = roomId;
+    $("delKey").value = "";
+    $("deleteKey").value = "";
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
   }catch(e){
     console.error(e);
     alert("保存に失敗しました。Firestoreルール/設定を確認してください。");
   }
 };
+
+// ★ 画面内（作成直後）削除
+window.deleteRoomInline = async function(roomId){
+  try{
+    const key = prompt("削除キー（4桁）を入力してください：");
+    if(key === null) return; // キャンセル
+    if(!is4DigitNumber(key)){
+      alert("削除キーは4桁の数字です。");
+      return;
+    }
+    await deleteRoomWithKey(roomId, key);
+  }catch(e){
+    console.error(e);
+    alert("削除に失敗しました。");
+  }
+};
+
+// ★ 入力欄（既存部屋）削除
+window.deleteRoomByInputs = async function(){
+  const roomId = $("delRoomId").value.trim();
+  const key = $("delKey").value.trim();
+
+  if(!roomId){
+    alert("部屋IDを入力してください。");
+    return;
+  }
+  if(!is4DigitNumber(key)){
+    alert("削除キーは4桁の数字で入力してください。");
+    return;
+  }
+  await deleteRoomWithKey(roomId, key);
+};
+
+async function deleteRoomWithKey(roomId, deleteKey){
+  if(!currentUid){
+    alert("認証中です。少し待ってもう一度お試しください。");
+    return;
+  }
+
+  const ref = doc(db, "rooms", roomId);
+  const snap = await getDoc(ref);
+  if(!snap.exists()){
+    showNg(`<b>見つかりません</b><br>部屋IDが正しいか確認してください。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+    return;
+  }
+
+  const data = snap.data() || {};
+  if(!data.deleteKeyHash){
+    showNg(`<b>削除キー未対応の部屋です</b><br>この部屋は削除キーが登録されていません。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+    return;
+  }
+
+  const hash = await sha256Hex(deleteKey);
+  if(hash !== data.deleteKeyHash){
+    showNg(`<b>削除キーが違います</b><br>4桁の数字をもう一度ご確認ください。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+    return;
+  }
+
+  const ok = confirm(`本当に削除しますか？\n\n部屋ID：${roomId}\n※削除は取り消せません。`);
+  if(!ok) return;
+
+  try{
+    await deleteDoc(ref);
+    showOk(`<b>削除しました</b><br><br>部屋ID：<b>${roomId}</b>`);
+    $("delKey").value = "";
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+  }catch(e){
+    console.error(e);
+    showNg(`<b>削除に失敗しました</b><br>Firestoreの権限（ルール）をご確認ください。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+  }
+}
 
 // 文字数
 $("comment").addEventListener("input", ()=>{ $("count").textContent = String($("comment").value.length); });
