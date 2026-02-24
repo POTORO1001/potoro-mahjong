@@ -197,6 +197,25 @@ hr.sep{border:none;border-top:1px dashed rgba(0,0,0,.12);margin:10px 0}
 .modalN input{width:100%;padding:12px;border-radius:14px;border:1px solid #ddd;font-size:14px}
 .modalN .foot{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
 .modalN .btn{box-shadow:none}
+
+/* ★ edit key modal */
+.modalN .krow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.modalN .krow input{flex:1}
+.pill{
+  display:inline-flex; align-items:center;
+  font-size:12px; font-weight:1000;
+  padding:6px 10px; border-radius:999px;
+  background:rgba(127,201,255,.12);
+  border:1px solid rgba(127,201,255,.25);
+  color:#2b4a62;
+}
+.warn{
+  font-size:12px; color:#8a4b55; line-height:1.6;
+  background:rgba(255,91,106,.08);
+  border:1px solid rgba(255,91,106,.18);
+  padding:10px 12px; border-radius:16px;
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -238,7 +257,8 @@ hr.sep{border:none;border-top:1px dashed rgba(0,0,0,.12);margin:10px 0}
   </div>
   <div class="note">
     ※削除キーは Firestore に「ハッシュ」で保存されている前提です（部屋作成ページで登録した方式）。<br>
-    ※削除は取り消せません。
+    ※削除は取り消せません。<br>
+    ※編集も同じ削除キーで保護しています。
   </div>
 
   <div id="list" class="grid"></div>
@@ -265,6 +285,41 @@ hr.sep{border:none;border-top:1px dashed rgba(0,0,0,.12);margin:10px 0}
     <div class="foot">
       <button class="btn ghost" type="button" id="jnCancel">キャンセル</button>
       <button class="btn primary" type="button" id="jnOk">この名前で参加</button>
+    </div>
+  </div>
+</div>
+
+<!-- ★編集（edit）用：削除キー入力モーダル -->
+<div class="modalN" id="editKeyModal" role="dialog" aria-modal="true" aria-label="編集の削除キー入力">
+  <div class="box">
+    <div class="head">
+      <div>
+        <h2>編集する（削除キー確認）</h2>
+        <div class="subt">
+          <span class="pill">4桁削除キーを入力</span>
+          一致した場合のみ編集画面へ進めます。
+        </div>
+      </div>
+      <button class="btn ghost" type="button" id="ekClose">閉じる</button>
+    </div>
+
+    <label for="ekRoomId">部屋ID</label>
+    <input id="ekRoomId" readonly />
+
+    <label for="ekKey">削除キー（4桁）</label>
+    <div class="krow">
+      <input id="ekKey" type="password" inputmode="numeric" maxlength="4" placeholder="4桁の数字" autocomplete="off" />
+      <button class="btn ghost" type="button" id="ekClear">クリア</button>
+    </div>
+
+    <div class="warn">
+      ※キーはURLに載せません（ログ等に残る可能性があるため）。<br>
+      ※認証OKの場合のみ「編集ページ」で操作できます。
+    </div>
+
+    <div class="foot">
+      <button class="btn ghost" type="button" id="ekCancel">キャンセル</button>
+      <button class="btn primary" type="button" id="ekOk">キーを確認して編集へ</button>
     </div>
   </div>
 </div>
@@ -533,6 +588,79 @@ $("jnOk").addEventListener("click", async ()=>{
   location.href = `mahjong-room-chat.html?id=${encodeURIComponent(joinTargetRoomId)}&joined=1&name=${encodeURIComponent(name)}`;
 });
 
+/* ===== edit key modal ===== */
+let editTargetRoomId = null;
+
+function openEditKeyModal(roomId){
+  editTargetRoomId = roomId;
+  $("ekRoomId").value = roomId;
+  $("ekKey").value = "";
+  $("editKeyModal").style.display = "flex";
+  setTimeout(()=>$("ekKey").focus(), 30);
+}
+function closeEditKeyModal(){
+  $("editKeyModal").style.display = "none";
+  editTargetRoomId = null;
+  $("ekKey").value = "";
+}
+$("ekClose").addEventListener("click", closeEditKeyModal);
+$("ekCancel").addEventListener("click", closeEditKeyModal);
+$("ekClear").addEventListener("click", ()=>{ $("ekKey").value=""; $("ekKey").focus(); });
+$("editKeyModal").addEventListener("click", (e)=>{ if(e.target === $("editKeyModal")) closeEditKeyModal(); });
+$("ekKey").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    $("ekOk").click();
+  }
+});
+
+async function verifyEditKeyAndGo(roomId, key){
+  if(!currentUid){ alert("認証中です。"); return; }
+  if(!roomId){ alert("部屋IDが不正です。"); return; }
+  if(!is4DigitNumber(key)){ alert("削除キーは4桁の数字で入力してください。"); return; }
+
+  const ref = doc(db, "rooms", roomId);
+  try{
+    const snap = await getDoc(ref);
+    if(!snap.exists()){ alert("部屋が見つかりません。"); return; }
+
+    const data = snap.data() || {};
+    if(!data.deleteKeyHash){
+      alert("この部屋は削除キー未対応（deleteKeyHash未登録）です。編集できません。");
+      return;
+    }
+
+    const hash = await sha256Hex(key);
+    if(hash !== data.deleteKeyHash){
+      alert("削除キーが違います。");
+      return;
+    }
+
+    // ★キーをURLに載せず、編集許可だけを sessionStorage に保存
+    // （編集ページ側でこのフラグをチェックして、なければキー入力要求にできます）
+    const token = await sha256Hex(`${roomId}:${hash}:${Date.now()}`);
+    sessionStorage.setItem(`potoro_edit_ok:${roomId}`, JSON.stringify({
+      ok: true,
+      at: Date.now(),
+      token
+    }));
+
+    closeEditKeyModal();
+
+    // ★編集ページへ（あなたの編集ページ名に合わせて変更OK）
+    location.href = `mahjong-room-edit.html?id=${encodeURIComponent(roomId)}`;
+  }catch(e){
+    console.error(e);
+    alert("照合に失敗しました。Firestoreルール/権限を確認してください。");
+  }
+}
+
+$("ekOk").addEventListener("click", async ()=>{
+  if(!editTargetRoomId) return;
+  const key = $("ekKey").value.trim();
+  await verifyEditKeyAndGo(editTargetRoomId, key);
+});
+
 /* ===== list events ===== */
 list.addEventListener("click", async (ev)=>{
   const btn = ev.target.closest("[data-act]");
@@ -542,11 +670,27 @@ list.addEventListener("click", async (ev)=>{
 
   if(act==="joinFlow"){
     openJoinNameModal(roomId);
+    return;
   }
   if(act==="cancel") {
     if(confirm("参加数を -1 しますか？")) txUpdateCount(roomId, -1);
+    return;
   }
-  // edit/deleteKey はあなたの元HTML通り（必要ならここに残してOK）
+
+  if(act==="edit"){
+    // ★編集もキー必須化（deleteKeyHashで照合）
+    openEditKeyModal(roomId);
+    return;
+  }
+
+  if(act==="deleteKey"){
+    // カード内の削除ボタン（キー入力は上の削除バーを使う設計ならここで案内）
+    // ここでは利便性のため、削除バーへ部屋IDを入れるだけ行う
+    $("delRoomId").value = roomId;
+    $("delKey").focus();
+    alert("削除は上部の「部屋の削除（4桁削除キー）」から行ってください。\n部屋IDを入力しました。");
+    return;
+  }
 });
 
 /* toolbar */
