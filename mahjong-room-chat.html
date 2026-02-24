@@ -134,6 +134,55 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
 .kpi .chip.rem{border-color:rgba(127,201,255,.38)}
 .kpi .chip.deadline{border-color:rgba(255,121,166,.30)}
 
+/* ★参加者一覧（members） */
+.members{
+  margin-top:10px;
+  border-top:1px dashed rgba(0,0,0,.10);
+  padding-top:10px;
+}
+.members .label{
+  font-size:12px;
+  color:#7a6a70;
+  font-weight:1000;
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.members .label .count{
+  font-weight:1000;
+  color:#5d5258;
+}
+.memberChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.memberChip{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.92);
+  font-size:12px;
+  font-weight:1000;
+  color:#5d5258;
+  max-width:100%;
+}
+.memberChip .mDot{
+  width:8px;height:8px;border-radius:999px;
+  background:linear-gradient(135deg, rgba(127,201,255,.95), rgba(255,121,166,.85));
+  box-shadow:0 0 0 3px rgba(255,215,230,.55);
+}
+.memberChip.me{
+  border-color:rgba(127,201,255,.35);
+  background:linear-gradient(135deg, rgba(127,201,255,.10), rgba(255,121,166,.06));
+  color:#2b4a62;
+}
+
 /* Chat */
 .chatbox{
   margin-top:12px;
@@ -178,7 +227,7 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   border-color:rgba(255,121,166,.14);
 }
 
-/* ★追加：systemメッセージ（入室/退室など） */
+/* system messages */
 .sys{
   margin:10px 0 12px;
   text-align:center;
@@ -313,14 +362,26 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
 
 <div class="wrap">
   <div class="card">
-    <!-- roommeta: ここはJSで書き換え -->
     <details class="details" id="roomDetails" open>
       <summary>
         <span>部屋情報</span>
         <span id="roomStatusPill" class="pill"><span class="pDot" aria-hidden="true"></span>読み込み中</span>
       </summary>
+
       <div class="meta" id="roommeta">読み込み中…</div>
       <div class="kpi" id="kpi"></div>
+
+      <!-- ★参加者一覧 -->
+      <div class="members" id="membersBox" style="display:none">
+        <div class="label">
+          <span>参加者一覧</span>
+          <span class="count" id="membersCount">—</span>
+        </div>
+        <div class="memberChips" id="membersChips"></div>
+        <div class="small" style="margin-top:8px">
+          ※「参加する」経由で名前が確定した端末のみ表示されます（閲覧だけの方は表示されません）。
+        </div>
+      </div>
     </details>
 
     <div class="chatbox" id="chat" aria-label="チャットログ"></div>
@@ -335,7 +396,7 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
       ・個人情報（電話番号・住所など）の送信は控えてください。<br>
       ・迷惑行為は運用側で対応します。<br>
       ・締切後 / 満員 / closed の場合は送信できません。<br>
-      ・参加ボタン経由の方は入室時に「○○が入室しました。」が表示されます。
+      ・チャットは誰でも閲覧できます（参加者一覧は名前確定端末のみ表示）。
     </div>
   </div>
 
@@ -390,8 +451,8 @@ const $ = (id)=>document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const roomId = params.get("id");
 
-// ★参加フローで渡されるパラメータ（一覧の「参加する」ボタン経由）
-const joinNameParam = params.get("name");      // 表示名
+// 参加フロー（一覧の参加ボタン経由）
+const joinNameParam = params.get("name");
 const joinedParam = params.get("joined") === "1";
 
 function setNavLinks(){
@@ -470,7 +531,6 @@ $("saveNameBtn").addEventListener("click", async ()=>{
 
 onAuthStateChanged(auth, async (u)=>{
   if(!u) return;
-
   currentUid = u.uid;
 
   await loadRoom();
@@ -480,16 +540,19 @@ onAuthStateChanged(auth, async (u)=>{
     return;
   }
 
-  // ★閲覧は常にOK（名前未設定でもメッセージは読む）
+  // 閲覧は常にOK（名前未設定でも読む）
   setupMessages();
   refreshUI();
 
-  // 1) 参加フロー（URLにname&joined=1が付いている場合はそれを優先）
+  // ★参加者一覧は members サブコレクションを監視
+  setupMembers();
+
+  // 参加フローで name が渡されている場合は優先して確定
   if(joinedParam && joinNameParam){
     const n = sanitizeName(joinNameParam);
     if(n){
       displayName = n;
-      localStorage.setItem("potoro_display_name", n); // 次回以降も同じ名前
+      localStorage.setItem("potoro_display_name", n);
       await ensureMemberIfNamed();
       await postEnterMessageIfNeeded(n);
       cleanJoinParamsFromUrl();
@@ -497,7 +560,7 @@ onAuthStateChanged(auth, async (u)=>{
     return;
   }
 
-  // 2) 通常閲覧：localStorageがあればセット（送信の準備だけ）
+  // 通常閲覧：保存済み名があればセット（membersにも載せる）
   const saved = localStorage.getItem("potoro_display_name");
   if(saved){
     displayName = sanitizeName(saved);
@@ -505,7 +568,7 @@ onAuthStateChanged(auth, async (u)=>{
   }
 });
 
-// catch（エラーコードを表示）
+// 認証
 signInAnonymously(auth).catch((e)=>{
   console.error(e);
   alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
@@ -517,7 +580,7 @@ async function loadRoom(){
 }
 
 async function ensureMemberIfNamed(){
-  // 閲覧だけなら不要。名前が確定しているときだけmembersを作る。
+  // 閲覧だけなら不要。名前が確定しているときだけ members を作る。
   if(!currentUid || !displayName) return;
   const ref = doc(db, "rooms", roomId, "members", currentUid);
   await setDoc(ref, { displayName, joinedAt: serverTimestamp() }, { merge:true });
@@ -558,12 +621,41 @@ function refreshUI(){
     <span class="chip deadline"><b>締切：</b>${pad(r.deadlineAt.toDate().getHours())}:${pad(r.deadlineAt.toDate().getMinutes())}</span>
   `;
 
-  // 閉鎖なら送信不可。開いていても「名前がない」は送信クリック時に促す。
   $("sendBtn").disabled = closed;
   $("text").disabled = closed;
   $("text").placeholder = closed ? "締切済みのため送信できません（閲覧のみ）" : "メッセージ（300文字まで）";
 }
 
+/* ===== members (参加者一覧) ===== */
+let unsubMembers = null;
+function setupMembers(){
+  if(unsubMembers) unsubMembers();
+
+  const qMem = query(collection(db, "rooms", roomId, "members"), orderBy("joinedAt", "asc"));
+
+  unsubMembers = onSnapshot(qMem, (snap)=>{
+    const items = snap.docs.map(d=>{
+      const m = d.data() || {};
+      return { uid: d.id, displayName: sanitizeName(m.displayName || "名無しさん") };
+    }).filter(x=>x.displayName);
+
+    // 表示/非表示
+    $("membersBox").style.display = items.length ? "block" : "none";
+    $("membersCount").textContent = `${items.length}名`;
+
+    $("membersChips").innerHTML = items.map(x=>{
+      const isMe = (currentUid && x.uid === currentUid);
+      return `
+        <span class="memberChip ${isMe ? "me" : ""}">
+          <span class="mDot" aria-hidden="true"></span>
+          ${escapeHtml(x.displayName)}${isMe ? "（あなた）" : ""}
+        </span>
+      `;
+    }).join("");
+  });
+}
+
+/* ===== messages ===== */
 let unsubMessages = null;
 let lastSendAt = 0;
 
@@ -601,7 +693,6 @@ function setupMessages(){
       const t = m.createdAt?.toDate?.() ? m.createdAt.toDate() : null;
       const time = t ? `${pad(t.getHours())}:${pad(t.getMinutes())}` : "--:--";
 
-      // ★systemメッセージ
       if(m.type === "system"){
         const txt = escapeHtml(m.text || "");
         return `<div class="sys"><span class="pillSys">${txt}</span></div>`;
@@ -643,11 +734,10 @@ $("text").addEventListener("keydown", (e)=>{
   }
 });
 
-// ★参加ボタン経由の入室メッセージ：最初の1回だけ
+/* ===== 入室メッセージ（参加ボタン経由のみ、最初の1回だけ） ===== */
 async function postEnterMessageIfNeeded(name){
   const n = sanitizeName(name);
   if(!n) return;
-  if(!roomId) return;
 
   const key = `entered:${roomId}:${n}`;
   if(sessionStorage.getItem(key) === "1") return;
@@ -661,7 +751,7 @@ async function postEnterMessageIfNeeded(name){
   sessionStorage.setItem(key, "1");
 }
 
-// URLをきれいに（共有リンクを汚さない）
+/* URLをきれいに */
 function cleanJoinParamsFromUrl(){
   const p = new URLSearchParams(location.search);
   p.delete("name");
@@ -678,7 +768,7 @@ async function sendMessage(){
     return;
   }
 
-  // ★名前未設定なら、送信時だけ促す（閲覧は止めない）
+  // 名前未設定なら送信時だけ促す（閲覧は止めない）
   if(!displayName){
     pendingSendAfterName = true;
     showNameModal();
