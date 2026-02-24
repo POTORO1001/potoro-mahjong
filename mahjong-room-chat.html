@@ -48,9 +48,7 @@ header{
   padding:10px 14px;
   display:flex; align-items:center; justify-content:space-between; gap:10px;
 }
-.left{
-  min-width:0;
-}
+.left{min-width:0;}
 h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .sub{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .badge{
@@ -178,6 +176,21 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
 .msg.other .bubble{
   background:rgba(255,121,166,.06);
   border-color:rgba(255,121,166,.14);
+}
+
+/* ★追加：systemメッセージ（入室/退室など） */
+.sys{
+  margin:10px 0 12px;
+  text-align:center;
+  font-size:12px;
+  color:#7a6a70;
+}
+.sys .pillSys{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.08);
+  background:linear-gradient(135deg, rgba(127,201,255,.10), rgba(255,121,166,.10));
 }
 
 /* Form */
@@ -321,7 +334,8 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
       <b>注意</b><br>
       ・個人情報（電話番号・住所など）の送信は控えてください。<br>
       ・迷惑行為は運用側で対応します。<br>
-      ・締切後 / 満員 / closed の場合は送信できません。
+      ・締切後 / 満員 / closed の場合は送信できません。<br>
+      ・参加ボタン経由の方は入室時に「○○が入室しました。」が表示されます。
     </div>
   </div>
 
@@ -335,13 +349,13 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   <span class="miniDot" aria-hidden="true"></span> 新着（最下部へ）
 </button>
 
-<!-- 表示名モーダル -->
+<!-- 表示名モーダル（送信時にだけ使う／閲覧は止めない） -->
 <div class="modal" id="nameModal" role="dialog" aria-modal="true" aria-label="表示名入力">
   <div class="box">
     <label for="displayName">表示名（20文字まで）</label>
     <input id="displayName" maxlength="20" placeholder="例：ご主人様1234 / お嬢様ミント" />
-    <button id="saveNameBtn" type="button">この名前で入室</button>
-    <div class="small">※この端末に保存されます（次回も同じ名前で入室）</div>
+    <button id="saveNameBtn" type="button">この名前でOK</button>
+    <div class="small">※この端末に保存されます（次回も同じ名前でOK）</div>
   </div>
 </div>
 
@@ -354,10 +368,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /** ===== ここだけあなたの実ファイル名に合わせてOK ===== */
-const LOBBY_URL = "mahjong-lobby.html"; // ← 面子募集ロビー（作成/閲覧の入口）のファイル名に合わせて変更
+const LOBBY_URL = "mahjong-lobby.html";
 const LIST_URL  = "mahjong-room-list.html";
 
-/** ★ここをFirebase Consoleの値に置換（create/listと同じ） */
+/** Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyAm1EIxmK_UWmRM7VMP7LREbMQhSYmylko",
   authDomain: "potoro-mahjong.firebaseapp.com",
@@ -376,7 +390,10 @@ const $ = (id)=>document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const roomId = params.get("id");
 
-// ロビー/下部リンクをセット（roomId保持）
+// ★参加フローで渡されるパラメータ（一覧の「参加する」ボタン経由）
+const joinNameParam = params.get("name");      // 表示名
+const joinedParam = params.get("joined") === "1";
+
 function setNavLinks(){
   const lobby = `${LOBBY_URL}`;
   $("toLobby").href = lobby;
@@ -420,6 +437,10 @@ function escapeHtml(str){
     .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#39;");
 }
+function sanitizeName(s){
+  const t = String(s||"").trim().replace(/\s+/g," ").replace(/[\u0000-\u001f\u007f]/g,"");
+  return t.slice(0,20);
+}
 
 function showNameModal(){
   $("nameModal").style.display = "flex";
@@ -428,43 +449,63 @@ function showNameModal(){
 }
 function hideNameModal(){ $("nameModal").style.display = "none"; }
 
+let pendingSendAfterName = false;
+
 $("saveNameBtn").addEventListener("click", async ()=>{
-  const name = $("displayName").value.trim();
-  if(!name || name.length > 20){
+  const name = sanitizeName($("displayName").value);
+  if(!name){
     alert("表示名を入力してください（20文字以内）。");
     return;
   }
   localStorage.setItem("potoro_display_name", name);
   displayName = name;
   hideNameModal();
-  await ensureMember();
-  setupMessages();
-  refreshUI();
-});
+  await ensureMemberIfNamed();
 
-onAuthStateChanged(auth, async (u)=>{
-  if(u){
-    currentUid = u.uid;
-    await loadRoom();
-    if(!roomData){
-      alert("部屋が見つかりませんでした。");
-      location.href = LIST_URL;
-      return;
-    }
-
-    displayName = localStorage.getItem("potoro_display_name");
-    if(!displayName){
-      showNameModal();
-      return;
-    }
-
-    await ensureMember();
-    setupMessages();
-    refreshUI();
+  if(pendingSendAfterName){
+    pendingSendAfterName = false;
+    sendMessage();
   }
 });
 
-// ★原因特定しやすいcatch（エラーコードを表示）
+onAuthStateChanged(auth, async (u)=>{
+  if(!u) return;
+
+  currentUid = u.uid;
+
+  await loadRoom();
+  if(!roomData){
+    alert("部屋が見つかりませんでした。");
+    location.href = LIST_URL;
+    return;
+  }
+
+  // ★閲覧は常にOK（名前未設定でもメッセージは読む）
+  setupMessages();
+  refreshUI();
+
+  // 1) 参加フロー（URLにname&joined=1が付いている場合はそれを優先）
+  if(joinedParam && joinNameParam){
+    const n = sanitizeName(joinNameParam);
+    if(n){
+      displayName = n;
+      localStorage.setItem("potoro_display_name", n); // 次回以降も同じ名前
+      await ensureMemberIfNamed();
+      await postEnterMessageIfNeeded(n);
+      cleanJoinParamsFromUrl();
+    }
+    return;
+  }
+
+  // 2) 通常閲覧：localStorageがあればセット（送信の準備だけ）
+  const saved = localStorage.getItem("potoro_display_name");
+  if(saved){
+    displayName = sanitizeName(saved);
+    await ensureMemberIfNamed();
+  }
+});
+
+// catch（エラーコードを表示）
 signInAnonymously(auth).catch((e)=>{
   console.error(e);
   alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
@@ -475,7 +516,8 @@ async function loadRoom(){
   roomData = snap.exists() ? snap.data() : null;
 }
 
-async function ensureMember(){
+async function ensureMemberIfNamed(){
+  // 閲覧だけなら不要。名前が確定しているときだけmembersを作る。
   if(!currentUid || !displayName) return;
   const ref = doc(db, "rooms", roomId, "members", currentUid);
   await setDoc(ref, { displayName, joinedAt: serverTimestamp() }, { merge:true });
@@ -516,6 +558,7 @@ function refreshUI(){
     <span class="chip deadline"><b>締切：</b>${pad(r.deadlineAt.toDate().getHours())}:${pad(r.deadlineAt.toDate().getMinutes())}</span>
   `;
 
+  // 閉鎖なら送信不可。開いていても「名前がない」は送信クリック時に促す。
   $("sendBtn").disabled = closed;
   $("text").disabled = closed;
   $("text").placeholder = closed ? "締切済みのため送信できません（閲覧のみ）" : "メッセージ（300文字まで）";
@@ -524,9 +567,8 @@ function refreshUI(){
 let unsubMessages = null;
 let lastSendAt = 0;
 
-// スクロール判定：最下部に近いか
 function isNearBottom(el){
-  const threshold = 80; // px
+  const threshold = 80;
   return (el.scrollHeight - el.scrollTop - el.clientHeight) < threshold;
 }
 function scrollToBottom(){
@@ -542,13 +584,11 @@ function setupMessages(){
 
   const qMsg = query(collection(db, "rooms", roomId, "messages"), orderBy("createdAt", "asc"));
 
-  // 手動スクロール中は強制スクロールしない
   $("chat").addEventListener("scroll", ()=>{
     if(isNearBottom($("chat"))) showNewBtn(false);
   });
 
   unsubMessages = onSnapshot(qMsg, async (snap)=>{
-    // ルーム情報も都度更新（人数や締切反映）
     await loadRoom();
     if(!roomData) return;
     refreshUI();
@@ -557,9 +597,16 @@ function setupMessages(){
     const wasNear = isNearBottom(chat);
 
     chat.innerHTML = snap.docs.map(d=>{
-      const m = d.data();
+      const m = d.data() || {};
       const t = m.createdAt?.toDate?.() ? m.createdAt.toDate() : null;
       const time = t ? `${pad(t.getHours())}:${pad(t.getMinutes())}` : "--:--";
+
+      // ★systemメッセージ
+      if(m.type === "system"){
+        const txt = escapeHtml(m.text || "");
+        return `<div class="sys"><span class="pillSys">${txt}</span></div>`;
+      }
+
       const who = escapeHtml(m.displayName || "名無しさん");
       const txt = escapeHtml(m.text || "");
       const isMe = (m.uid && currentUid && m.uid === currentUid);
@@ -578,7 +625,6 @@ function setupMessages(){
       scrollToBottom();
       showNewBtn(false);
     }else{
-      // 読んでる最中に新着 → ボタンで誘導
       showNewBtn(true);
     }
   });
@@ -597,18 +643,53 @@ $("text").addEventListener("keydown", (e)=>{
   }
 });
 
+// ★参加ボタン経由の入室メッセージ：最初の1回だけ
+async function postEnterMessageIfNeeded(name){
+  const n = sanitizeName(name);
+  if(!n) return;
+  if(!roomId) return;
+
+  const key = `entered:${roomId}:${n}`;
+  if(sessionStorage.getItem(key) === "1") return;
+
+  await addDoc(collection(db, "rooms", roomId, "messages"), {
+    type: "system",
+    text: `${n}が入室しました。`,
+    createdAt: serverTimestamp()
+  });
+
+  sessionStorage.setItem(key, "1");
+}
+
+// URLをきれいに（共有リンクを汚さない）
+function cleanJoinParamsFromUrl(){
+  const p = new URLSearchParams(location.search);
+  p.delete("name");
+  p.delete("joined");
+  const qs = p.toString();
+  const clean = qs ? `${location.pathname}?${qs}` : `${location.pathname}`;
+  history.replaceState(null, "", clean);
+}
+
 async function sendMessage(){
   const now = Date.now();
   if(now - lastSendAt < 3000){
     alert("連投防止のため、少し待ってから送信してください。");
     return;
   }
+
+  // ★名前未設定なら、送信時だけ促す（閲覧は止めない）
+  if(!displayName){
+    pendingSendAfterName = true;
+    showNameModal();
+    return;
+  }
+
   lastSendAt = now;
 
   const text = $("text").value.trim();
   if(!text) return;
 
-  // 最新状態チェック
   await loadRoom();
   if(!roomData) return;
   if(computeClosed(roomData)){
@@ -625,7 +706,6 @@ async function sendMessage(){
       createdAt: serverTimestamp()
     });
     $("text").value = "";
-    // 送信後は最下部へ寄せる（ユーザー意図が明確）
     scrollToBottom();
     showNewBtn(false);
   }catch(e){
