@@ -174,7 +174,7 @@ textarea{min-height:92px;resize:vertical}
 
     <div class="row" style="margin-top:10px">
       <div class="kv" style="flex:1 1 220px">
-        <label for="durationSel">利用時間（30分ごと）</label>
+        <label for="durationSel">利用時間（2時間〜5時間 / 30分刻み）</label>
         <select id="durationSel"></select>
         <div class="help">「○時間○分」表記。変更すると終了時刻が自動更新されます。</div>
         <div class="mini">
@@ -296,6 +296,10 @@ function nearest30(min){
   return Math.round(Number(min)/30)*30;
 }
 
+/* ★ 利用時間の範囲（2h〜5h） */
+const DUR_MIN = 120;
+const DUR_MAX = 300;
+
 /* ===== read room ===== */
 const params = new URLSearchParams(location.search);
 const roomId = (params.get("id") || "").trim();
@@ -327,13 +331,11 @@ function unlockEditor(){
   $("editor").classList.remove("hidden");
 }
 
-/* ===== duration select options =====
-   30分〜12時間（必要なら増やしてOK）
-*/
+/* ===== duration select options (2h〜5h, 30m step) ===== */
 function buildDurationOptions(){
   const sel = $("durationSel");
   sel.innerHTML = "";
-  for(let m=30; m<=720; m+=30){
+  for(let m=DUR_MIN; m<=DUR_MAX; m+=30){
     const opt = document.createElement("option");
     opt.value = String(m);
     opt.textContent = durationLabel(m);
@@ -388,6 +390,13 @@ function refreshTags(){
 
 let lockSync = false;
 
+function clampDur(m){
+  const mm = nearest30(m);
+  if(mm < DUR_MIN) return DUR_MIN;
+  if(mm > DUR_MAX) return DUR_MAX;
+  return mm;
+}
+
 function syncEndFromDuration(){
   if(lockSync) return;
   const ev = parseLocalInputValue($("eventLocal").value);
@@ -410,13 +419,15 @@ function syncDurationFromEnd(){
   const raw = (en.getTime() - ev.getTime())/60000;
   if(!Number.isFinite(raw) || raw<=0) return;
 
-  const dm = Math.max(30, nearest30(raw));
-  // 範囲内に丸め
-  const capped = Math.min(720, dm);
+  const dm = clampDur(raw);
 
   lockSync = true;
-  $("durationSel").value = String(capped);
+  $("durationSel").value = String(dm);
+  // durationを範囲内に強制するので、endも合わせる（ズレ防止）
+  const end2 = new Date(ev.getTime() + dm*60000);
+  $("endLocal").value = toLocalInputValue(end2);
   lockSync = false;
+
   refreshTags();
 }
 
@@ -429,7 +440,7 @@ function fillForm(r){
   if(rule === "四人打ち" || rule === "三人打ち"){
     $("ruleSel").value = rule;
   }else{
-    $("ruleSel").value = ""; // 既存が不正なら空
+    $("ruleSel").value = "";
   }
 
   // times
@@ -442,13 +453,11 @@ function fillForm(r){
   // duration: 既存durationがあれば優先。なければevent/endから算出。
   const dm0 = Number(r.durationMinutes);
   if(Number.isFinite(dm0) && dm0>0){
-    const dm = Math.min(720, Math.max(30, nearest30(dm0)));
+    const dm = clampDur(dm0);
     $("durationSel").value = String(dm);
-    // duration優先でendを合わせる（eventがある場合）
-    syncEndFromDuration();
+    syncEndFromDuration(); // eventがある場合にendを合わせる
   }else{
-    // endから算出
-    syncDurationFromEnd();
+    syncDurationFromEnd(); // event/endから丸めて設定
   }
 
   // deadline
@@ -617,12 +626,16 @@ $("btnSave").addEventListener("click", async ()=>{
     return;
   }
 
-  // durationMinutes (30分刻みに丸めたセレクト値を採用)
+  // durationMinutes (2h〜5h, 30分刻み)
   const durationMinutes = Number($("durationSel").value);
-  if(!Number.isFinite(durationMinutes) || durationMinutes < 30 || durationMinutes > 720 || (durationMinutes % 30 !== 0)){
-    showMsg($("saveMsg"), "利用時間は30分刻みで選択してください。", true);
+  if(!Number.isFinite(durationMinutes) || durationMinutes < DUR_MIN || durationMinutes > DUR_MAX || (durationMinutes % 30 !== 0)){
+    showMsg($("saveMsg"), `利用時間は ${durationLabel(DUR_MIN)}〜${durationLabel(DUR_MAX)} の30分刻みで選択してください。`, true);
     return;
   }
+
+  // ★ズレ防止：durationを優先して endAt を確定させる
+  const endFixed = new Date(ev.getTime() + durationMinutes*60000);
+  $("endLocal").value = toLocalInputValue(endFixed);
 
   // deadlineAt
   const dlStr = $("deadlineLocal").value;
@@ -640,7 +653,7 @@ $("btnSave").addEventListener("click", async ()=>{
   const closed = !!$("closed").checked;
 
   // warning only
-  if(dl.getTime() > en.getTime()){
+  if(dl.getTime() > endFixed.getTime()){
     const ok = confirm("締切が終了時刻より後になっています。\nこのまま保存しますか？");
     if(!ok) return;
   }
@@ -650,7 +663,7 @@ $("btnSave").addEventListener("click", async ()=>{
     slotsTotal,
     rule,
     eventAt: Timestamp.fromDate(ev),
-    endAt: Timestamp.fromDate(en),
+    endAt: Timestamp.fromDate(endFixed),
     durationMinutes,
     deadlineAt: Timestamp.fromDate(dl),
     closed
@@ -668,6 +681,7 @@ $("btnSave").addEventListener("click", async ()=>{
 });
 
 /* init */
+buildDurationOptions();
 ensureAuthed();
 </script>
 </body>
