@@ -96,9 +96,7 @@ input{min-width:220px; flex:1}
   font-size:12px;color:#7a6a70;line-height:1.5;
   flex: 1 1 260px;
 }
-.delbar input{
-  min-width:210px;
-}
+.delbar input{ min-width:210px; }
 .delbar .btn.danger{
   border-color:rgba(255,91,106,.35);
   color:#a51d2c;
@@ -261,6 +259,27 @@ kbd{
 .kRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 @media (max-width:640px){.kRow{grid-template-columns:1fr}}
 .kFoot{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px}
+
+/* ★追加：参加時の名前入力モーダル */
+.modalJoin{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.42);
+  display:none;
+  align-items:center; justify-content:center;
+  padding:18px;
+  z-index:70;
+}
+.modalJoin .box{
+  width:min(520px,100%);
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  border:1px solid rgba(0,0,0,.10);
+  box-shadow:0 22px 40px rgba(0,0,0,.18);
+}
+.jTitle{margin:0;font-size:16px}
+.jSub{font-size:12px;color:#7a6a70;line-height:1.6;margin-top:6px}
+.jFoot{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px}
 </style>
 </head>
 
@@ -291,7 +310,7 @@ kbd{
     <button class="btn primary" type="button" onclick="location.href='mahjong-room-create.html'">部屋を作成</button>
   </div>
 
-  <!-- ★追加：一覧ページから削除（部屋ID＋4桁キー） -->
+  <!-- 一覧ページから削除（部屋ID＋4桁キー） -->
   <div class="delbar" aria-label="削除バー">
     <div class="hint">
       <b style="color:#a51d2c">部屋の削除（4桁削除キー）</b><br>
@@ -386,7 +405,6 @@ kbd{
 
     <div class="mFoot">
       <button class="btn" type="button" id="mCopyLink">チャットURLをコピー</button>
-      <!-- ★ここは「キー削除」が主なので、作成者削除ボタンは残すが、キー入力モーダルを開く挙動に変更 -->
       <button class="btn dangerBtn btn" type="button" id="mDelete"
         style="border-color:rgba(255,91,106,.35); color:#a51d2c; background:rgba(255,91,106,.08)">
         この部屋を削除
@@ -400,7 +418,7 @@ kbd{
   </div>
 </div>
 
-<!-- ★追加：削除キー入力モーダル（カードの削除ボタン/編集モーダル削除からも利用） -->
+<!-- 削除キー入力モーダル -->
 <div class="modal2" id="keyModal" role="dialog" aria-modal="true" aria-label="削除キーの入力">
   <div class="box">
     <div class="mHead" style="margin-bottom:0">
@@ -432,6 +450,37 @@ kbd{
         style="border-color:rgba(255,91,106,.35); color:#a51d2c; background:rgba(255,91,106,.08)">
         削除する
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ★追加：参加（名前入力）モーダル -->
+<div class="modalJoin" id="joinModal" role="dialog" aria-modal="true" aria-label="参加（名前入力）">
+  <div class="box">
+    <div class="mHead" style="margin-bottom:0">
+      <div>
+        <h3 class="jTitle">参加する</h3>
+        <div class="jSub">部屋ID：<span id="jRoomId" style="font-weight:1000"></span></div>
+      </div>
+      <button class="mClose" type="button" id="jClose">閉じる</button>
+    </div>
+
+    <div class="mBody">
+      <div class="warn" style="margin:0">
+        参加するとチャットへ移動します。<br>
+        名前はチャット内で「○○が入室しました。」として表示されます。
+      </div>
+
+      <div class="field" style="margin-top:10px">
+        <label for="jName">表示名（ニックネーム）</label>
+        <input id="jName" maxlength="16" placeholder="例：たろう / みか / ご主人様" autocomplete="off" />
+        <div class="small">※16文字まで（絵文字もOK）</div>
+      </div>
+    </div>
+
+    <div class="jFoot">
+      <button class="btn" type="button" id="jCancel">キャンセル</button>
+      <button class="btn primary" type="button" id="jGo">チャットへ進む</button>
     </div>
   </div>
 </div>
@@ -511,12 +560,20 @@ function computeEndAt(eventAtDate, durationMinutes){
   return new Date(eventAtDate.getTime() + ms);
 }
 
-/* ★追加：4桁キー検証 */
+/* ★削除キー検証 */
 function is4DigitNumber(s){ return /^\d{4}$/.test(String(s||"").trim()); }
 async function sha256Hex(text){
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest("SHA-256", enc);
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+/* ★追加：名前サニタイズ（チャット入室表示用） */
+function sanitizeDisplayName(name){
+  const s = String(name||"").trim().replace(/\s+/g," ");
+  // 制御文字などを軽く除外
+  const cleaned = s.replace(/[\u0000-\u001f\u007f]/g,"");
+  return cleaned.slice(0,16);
 }
 
 /* ===== state ===== */
@@ -591,17 +648,15 @@ function render(){
         <div class="comment ${isMine ? "blue" : ""}">${escapeHtml(comment)}</div>
 
         <div class="actions">
-          ${closed ? "" : `<button class="smallbtn join" data-act="join" data-id="${escapeHtml(r.id)}">参加する（+1）</button>`}
+          ${closed ? "" : `<button class="smallbtn join" data-act="joinFlow" data-id="${escapeHtml(r.id)}">参加する</button>`}
           <button class="smallbtn" data-act="cancel" data-id="${escapeHtml(r.id)}">キャンセル（-1）</button>
-          <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id)}">チャットへ</a>
+
+          <!-- ★閲覧は誰でも：このボタンは従来通り残す -->
+          <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id)}">チャットを見る</a>
+
           ${isMine ? `<button class="smallbtn" data-act="edit" data-id="${escapeHtml(r.id)}">編集</button>` : ""}
 
-          <!-- ★変更：削除は「キー入力モーダル」へ（作成者限定を外してもOKだが、UI上は自分の部屋に表示） -->
           ${isMine ? `<button class="smallbtn danger" data-act="deleteKey" data-id="${escapeHtml(r.id)}">削除（キー）</button>` : ""}
-
-          <!-- 作成者じゃなくても「部屋ID＋キー」で消したい場合は↓を有効化
-          <button class="smallbtn danger" data-act="deleteKey" data-id="${escapeHtml(r.id)}">削除（キー）</button>
-          -->
         </div>
 
         <div class="small">※締切超過 or 残り0で自動的に締切扱いになります。</div>
@@ -635,14 +690,16 @@ async function txUpdateCount(roomId, delta){
 
       tx.update(ref, { joinedCount: next, closed: nextClosed });
     });
+    return true;
   }catch(e){
     console.error(e);
     if(String(e.message).includes("closed")) alert("この部屋は締切済みです。");
     else alert("更新に失敗しました。");
+    return false;
   }
 }
 
-/* ===== ★追加：削除（部屋ID＋4桁キー） ===== */
+/* ===== ★削除（部屋ID＋4桁キー） ===== */
 async function deleteRoomWithKey(roomId, key){
   if(!currentUid){ alert("認証中です。"); return; }
   if(!roomId){ alert("部屋IDを入力してください。"); return; }
@@ -672,7 +729,6 @@ async function deleteRoomWithKey(roomId, key){
     await deleteDoc(ref);
     alert("部屋を削除しました。");
 
-    // UI上の入力欄も掃除
     if($("delRoomId")) $("delRoomId").value = "";
     if($("delKey")) $("delKey").value = "";
     if($("kKey")) $("kKey").value = "";
@@ -726,10 +782,9 @@ $("mCopyLink").addEventListener("click", async ()=>{
   }
 });
 
-/* ★変更：編集モーダルの削除ボタン → キー入力モーダルを開く */
+/* 編集モーダルの削除 → キー入力モーダル */
 $("mDelete").addEventListener("click", ()=>{
   if(!editingRoomId) return;
-  // 編集画面は閉じて、キー入力へ
   closeEditModal();
   openKeyModal(editingRoomId);
 });
@@ -787,7 +842,7 @@ $("mSave").addEventListener("click", async ()=>{
   }
 });
 
-/* ===== ★追加：削除キー入力モーダル制御 ===== */
+/* ===== 削除キー入力モーダル制御 ===== */
 let keyTargetRoomId = null;
 
 function openKeyModal(roomId){
@@ -811,26 +866,73 @@ $("kDoDelete").addEventListener("click", async ()=>{
   await deleteRoomWithKey(keyTargetRoomId, key);
 });
 
+/* ===== ★参加（名前入力）モーダル制御 ===== */
+let joinTargetRoomId = null;
+
+function openJoinModal(roomId){
+  joinTargetRoomId = roomId;
+  $("jRoomId").textContent = roomId;
+  $("jName").value = "";
+  $("joinModal").style.display = "flex";
+  setTimeout(()=>$("jName").focus(), 50);
+}
+function closeJoinModal(){
+  $("joinModal").style.display = "none";
+  joinTargetRoomId = null;
+}
+$("jClose").addEventListener("click", closeJoinModal);
+$("jCancel").addEventListener("click", closeJoinModal);
+$("joinModal").addEventListener("click", (e)=>{ if(e.target === $("joinModal")) closeJoinModal(); });
+
+$("jName").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    $("jGo").click();
+  }
+});
+
+$("jGo").addEventListener("click", ()=>{
+  if(!joinTargetRoomId) return;
+  const name = sanitizeDisplayName($("jName").value);
+  if(!name){
+    alert("表示名を入力してください。");
+    $("jName").focus();
+    return;
+  }
+  const url = `mahjong-room-chat.html?id=${encodeURIComponent(joinTargetRoomId)}&name=${encodeURIComponent(name)}&joined=1`;
+  location.href = url;
+});
+
 /* ===== events ===== */
-list.addEventListener("click", (ev)=>{
+list.addEventListener("click", async (ev)=>{
   const btn = ev.target.closest("[data-act]");
   if(!btn) return;
   const act = btn.dataset.act;
   const roomId = btn.dataset.id;
 
-  if(act==="join") txUpdateCount(roomId, +1);
+  if(act==="joinFlow"){
+    // 1) 先に+1（成功したら） 2) 名前入力 3) チャットへ
+    const ok = await txUpdateCount(roomId, +1);
+    if(ok) openJoinModal(roomId);
+    return;
+  }
+
   if(act==="cancel") {
     if(confirm("参加数を -1 しますか？")) txUpdateCount(roomId, -1);
+    return;
   }
+
   if(act==="edit"){
     const room = latestRooms.find(r => r.id === roomId);
     if(!room){ alert("部屋情報の取得に失敗しました。"); return; }
     if(room.creatorUid !== currentUid){ alert("作成者ではないため編集できません。"); return; }
     openEditModal(room);
+    return;
   }
+
   if(act==="deleteKey"){
-    // 作成者限定のままにするなら上で isMine のときだけボタンが出る
     openKeyModal(roomId);
+    return;
   }
 });
 
@@ -845,14 +947,12 @@ $("mineOnly").addEventListener("click", ()=>{
   render();
 });
 
-/* ★追加：上部削除バーの削除ボタン */
+/* 上部削除バー */
 $("btnDeleteByKey").addEventListener("click", async ()=>{
   const roomId = $("delRoomId").value.trim();
   const key = $("delKey").value.trim();
   await deleteRoomWithKey(roomId, key);
 });
-
-// Enterで削除（便利）
 $("delKey").addEventListener("keydown", (e)=>{
   if(e.key === "Enter"){
     e.preventDefault();
