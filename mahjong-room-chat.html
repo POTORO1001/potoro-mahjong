@@ -10,12 +10,10 @@
   --bg:#fff7fb; --ink:#2b2b2b; --sub:#666;
   --accent:#ff79a6; --accent2:#7fc9ff; --ring:#ffd7e6;
   --shadow:0 12px 28px rgba(0,0,0,.08); --radius:20px;
-
   --danger:#ff5b6a; --ok:#2ecc71;
   --card:#ffffff;
   --line:rgba(0,0,0,.08);
 }
-
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -27,7 +25,6 @@ body{
     linear-gradient(180deg,var(--bg),#fff 60%);
   color:var(--ink);
 }
-
 a{color:inherit; text-decoration:none}
 a:focus-visible, button:focus-visible, input:focus-visible{
   outline:3px solid rgba(255,121,166,.35);
@@ -35,7 +32,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   border-radius:14px;
 }
 
-/* ===== Sticky Header (戻る導線を常設) ===== */
+/* Header */
 header{
   position:sticky; top:0; z-index:20;
   background:linear-gradient(to bottom, rgba(255,247,251,.96), rgba(255,247,251,.72));
@@ -48,8 +45,8 @@ header{
   padding:10px 14px;
   display:flex; align-items:center; justify-content:space-between; gap:10px;
 }
-.left{min-width:0;}
-h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.left{min-width:0}
+h1{margin:0;font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .sub{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .badge{
   font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.75);
@@ -67,10 +64,7 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   font-weight:1000;
   cursor:pointer;
   user-select:none;
-  transition:transform .08s ease, box-shadow .15s ease, border-color .15s ease;
 }
-.btn:hover{transform:translateY(-1px); box-shadow:0 14px 24px rgba(0,0,0,.08); border-color:rgba(255,121,166,.35)}
-.btn:active{transform:translateY(0)}
 .btn .dot{
   width:8px; height:8px; border-radius:99px;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
@@ -79,8 +73,6 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
 
 /* Layout */
 .wrap{max-width:920px;margin:0 auto;padding:14px 14px 24px}
-
-/* Card */
 .card{
   background:rgba(255,255,255,.92);
   border:1px solid var(--ring);
@@ -89,7 +81,7 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   box-shadow:var(--shadow);
 }
 
-/* Room meta (折りたたみ) */
+/* Room meta */
 .details{
   border:1px solid rgba(0,0,0,.06);
   background:rgba(255,255,255,.75);
@@ -119,10 +111,7 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
 .pill.open .pDot{background:rgba(46,204,113,.95)}
 .pill.closed{color:#a51d2c;border-color:rgba(255,91,106,.40);background:rgba(255,91,106,.12)}
 .pill.closed .pDot{background:rgba(255,91,106,.95)}
-.kpi{
-  display:flex; flex-wrap:wrap; gap:8px;
-  margin-top:10px;
-}
+.kpi{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
 .kpi .chip{
   font-size:12px; font-weight:1000;
   padding:8px 10px;
@@ -130,11 +119,10 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   border:1px solid rgba(0,0,0,.06);
   background:rgba(255,255,255,.85);
 }
-.kpi .chip b{color:var(--ink)}
 .kpi .chip.rem{border-color:rgba(127,201,255,.38)}
 .kpi .chip.deadline{border-color:rgba(255,121,166,.30)}
 
-/* ★参加者一覧（members） */
+/* members (joinのみ表示) */
 .members{
   margin-top:10px;
   border-top:1px dashed rgba(0,0,0,.10);
@@ -150,27 +138,13 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   justify-content:space-between;
   gap:10px;
 }
-.members .label .count{
-  font-weight:1000;
-  color:#5d5258;
-}
-.memberChips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
+.memberChips{display:flex;flex-wrap:wrap;gap:6px}
 .memberChip{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 10px;
-  border-radius:999px;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 10px;border-radius:999px;
   border:1px solid rgba(0,0,0,.06);
   background:rgba(255,255,255,.92);
-  font-size:12px;
-  font-weight:1000;
-  color:#5d5258;
-  max-width:100%;
+  font-size:12px;font-weight:1000;color:#5d5258;
 }
 .memberChip .mDot{
   width:8px;height:8px;border-radius:999px;
@@ -196,110 +170,57 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
 }
 .msg{margin:0 0 10px; display:flex; flex-direction:column; gap:4px}
 .msg .head{
-  font-size:12px;
-  color:#777;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  font-size:12px;color:#777;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-.msg .who{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.msg .time{flex:0 0 auto; color:#9a8f95}
 .bubble{
   display:inline-block;
-  padding:9px 10px;
-  border-radius:14px;
-  font-size:14px;
-  line-height:1.5;
-  white-space:pre-wrap;
-  word-break:break-word;
+  padding:9px 10px;border-radius:14px;
+  font-size:14px;line-height:1.5;
+  white-space:pre-wrap;word-break:break-word;
   border:1px solid rgba(0,0,0,.06);
   background:rgba(0,0,0,.02);
   max-width:min(560px, 92%);
 }
 .msg.me{align-items:flex-end}
-.msg.me .bubble{
-  background:rgba(127,201,255,.12);
-  border-color:rgba(127,201,255,.28);
-}
-.msg.other .bubble{
-  background:rgba(255,121,166,.06);
-  border-color:rgba(255,121,166,.14);
-}
-
-/* system messages */
-.sys{
-  margin:10px 0 12px;
-  text-align:center;
-  font-size:12px;
-  color:#7a6a70;
-}
+.msg.me .bubble{background:rgba(127,201,255,.12);border-color:rgba(127,201,255,.28)}
+.msg.other .bubble{background:rgba(255,121,166,.06);border-color:rgba(255,121,166,.14)}
+.sys{margin:10px 0 12px;text-align:center;font-size:12px;color:#7a6a70}
 .sys .pillSys{
-  display:inline-block;
-  padding:8px 12px;
-  border-radius:999px;
+  display:inline-block;padding:8px 12px;border-radius:999px;
   border:1px solid rgba(0,0,0,.08);
   background:linear-gradient(135deg, rgba(127,201,255,.10), rgba(255,121,166,.10));
 }
 
 /* Form */
 .form{margin-top:10px;display:flex;gap:8px}
-.form input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid #ddd;
-  font-size:14px;
-  background:#fff;
-}
-.form input:disabled{
-  background:rgba(0,0,0,.03);
-  color:#777;
-}
+.form input{flex:1;padding:12px;border-radius:14px;border:1px solid #ddd;font-size:14px;background:#fff}
+.form input:disabled{background:rgba(0,0,0,.03);color:#777}
 .form button{
-  padding:12px 14px;
-  border:none;
-  border-radius:14px;
-  font-weight:1000;
-  cursor:pointer;
-  color:#fff;
+  padding:12px 14px;border:none;border-radius:14px;
+  font-weight:1000;cursor:pointer;color:#fff;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   box-shadow:0 12px 22px rgba(0,0,0,.08);
 }
-.form button:disabled{opacity:.5;cursor:not-allowed; box-shadow:none}
+.form button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 
 .notice{
-  margin-top:10px;
-  font-size:12px;
-  color:#7a6a70;
-  line-height:1.6;
-  background:rgba(255,255,255,.7);
-  border:1px solid rgba(0,0,0,.06);
-  border-radius:14px;
-  padding:10px 12px;
+  margin-top:10px;font-size:12px;color:#7a6a70;line-height:1.6;
+  background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.06);
+  border-radius:14px;padding:10px 12px;
 }
 
-/* Bottom back links (保険) */
 .back{margin-top:14px; text-align:center; display:flex; justify-content:center; gap:14px; flex-wrap:wrap}
 .back a{font-size:13px;color:#888;text-decoration:none}
 .back a:hover{text-decoration:underline}
 
-/* New message floating button */
+/* New msg button */
 .fab{
-  position:fixed;
-  right:14px;
-  bottom:14px;
-  z-index:30;
-  display:none;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,.08);
-  background:rgba(255,255,255,.92);
-  box-shadow:0 16px 30px rgba(0,0,0,.12);
-  font-weight:1000;
-  cursor:pointer;
+  position:fixed;right:14px;bottom:14px;z-index:30;
+  display:none;align-items:center;gap:10px;
+  padding:12px 14px;border-radius:999px;border:1px solid rgba(0,0,0,.08);
+  background:rgba(255,255,255,.92);box-shadow:0 16px 30px rgba(0,0,0,.12);
+  font-weight:1000;cursor:pointer;
 }
 .fab .miniDot{
   width:8px;height:8px;border-radius:999px;
@@ -307,33 +228,25 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   box-shadow:0 0 0 4px rgba(255,215,230,.65);
 }
 
-/* Modal */
+/* Name modal */
 .modal{
   position:fixed; inset:0;
   background:rgba(0,0,0,.4);
   display:none; align-items:center; justify-content:center;
-  padding:18px;
-  z-index:50;
+  padding:18px; z-index:50;
 }
 .modal .box{
   width:min(420px,100%);
-  background:#fff;
-  border-radius:20px;
-  padding:14px;
+  background:#fff;border-radius:20px;padding:14px;
   border:1px solid rgba(0,0,0,.08);
   box-shadow:0 22px 40px rgba(0,0,0,.18);
 }
 .modal label{display:block;font-weight:1000;margin-bottom:6px}
 .modal input{width:100%;padding:12px;border-radius:14px;border:1px solid #ddd;font-size:14px}
 .modal button{
-  margin-top:10px;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:14px;
-  font-weight:1000;
-  color:#fff;
-  cursor:pointer;
+  margin-top:10px;width:100%;
+  padding:12px;border:none;border-radius:14px;
+  font-weight:1000;color:#fff;cursor:pointer;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
 }
 .small{font-size:12px;color:#888;margin-top:8px;line-height:1.5}
@@ -345,16 +258,11 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   <div class="bar">
     <div class="left">
       <h1>面子募集チャット</h1>
-      <div class="sub">集合方法・ルール確認などを相談できます（締切後は閲覧のみ）</div>
+      <div class="sub">集合方法・ルール確認などを相談できます（参加は一覧の「参加する」から）</div>
     </div>
-
     <div class="btns" aria-label="ナビゲーション">
-      <a class="btn" id="toLobby" href="#" title="募集ロビーへ戻る">
-        <span class="dot" aria-hidden="true"></span> ロビー
-      </a>
-      <a class="btn" href="mahjong-room-list.html" title="募集一覧へ戻る">
-        <span class="dot" aria-hidden="true"></span> 一覧
-      </a>
+      <a class="btn" id="toLobby" href="#" title="募集ロビーへ戻る"><span class="dot" aria-hidden="true"></span> ロビー</a>
+      <a class="btn" href="mahjong-room-list.html" title="募集一覧へ戻る"><span class="dot" aria-hidden="true"></span> 一覧</a>
       <span class="badge">PO・TORO / Mahjong</span>
     </div>
   </div>
@@ -367,20 +275,16 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
         <span>部屋情報</span>
         <span id="roomStatusPill" class="pill"><span class="pDot" aria-hidden="true"></span>読み込み中</span>
       </summary>
-
       <div class="meta" id="roommeta">読み込み中…</div>
       <div class="kpi" id="kpi"></div>
 
-      <!-- ★参加者一覧 -->
       <div class="members" id="membersBox" style="display:none">
         <div class="label">
-          <span>参加者一覧</span>
-          <span class="count" id="membersCount">—</span>
+          <span>参加者一覧（参加した方のみ）</span>
+          <span id="membersCount">—</span>
         </div>
         <div class="memberChips" id="membersChips"></div>
-        <div class="small" style="margin-top:8px">
-          ※「参加する」経由で名前が確定した端末のみ表示されます（閲覧だけの方は表示されません）。
-        </div>
+        <div class="small" style="margin-top:8px">※質問（ask）モードの方は一覧に表示されません。</div>
       </div>
     </details>
 
@@ -391,12 +295,11 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
       <button id="sendBtn" type="button">送信</button>
     </div>
 
-    <div class="notice">
-      <b>注意</b><br>
-      ・個人情報（電話番号・住所など）の送信は控えてください。<br>
-      ・迷惑行為は運用側で対応します。<br>
-      ・締切後 / 満員 / closed の場合は送信できません。<br>
-      ・チャットは誰でも閲覧できます（参加者一覧は名前確定端末のみ表示）。
+    <div class="notice" id="modeNotice">
+      <b>案内</b><br>
+      ・このチャットは誰でも閲覧できます。<br>
+      ・質問してから参加してOKです（参加は一覧の「参加する」から）。<br>
+      ・締切後 / 満員 / closed の場合は送信できません。
     </div>
   </div>
 
@@ -410,7 +313,6 @@ h1{margin:0;font-size:16px; letter-spacing:.2px; white-space:nowrap; overflow:hi
   <span class="miniDot" aria-hidden="true"></span> 新着（最下部へ）
 </button>
 
-<!-- 表示名モーダル（送信時にだけ使う／閲覧は止めない） -->
 <div class="modal" id="nameModal" role="dialog" aria-modal="true" aria-label="表示名入力">
   <div class="box">
     <label for="displayName">表示名（20文字まで）</label>
@@ -428,11 +330,9 @@ import {
   query, orderBy, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/** ===== ここだけあなたの実ファイル名に合わせてOK ===== */
 const LOBBY_URL = "mahjong-lobby.html";
 const LIST_URL  = "mahjong-room-list.html";
 
-/** Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyAm1EIxmK_UWmRM7VMP7LREbMQhSYmylko",
   authDomain: "potoro-mahjong.firebaseapp.com",
@@ -451,14 +351,16 @@ const $ = (id)=>document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const roomId = params.get("id");
 
-// 参加フロー（一覧の参加ボタン経由）
-const joinNameParam = params.get("name");
+const askParam = params.get("ask") === "1";
 const joinedParam = params.get("joined") === "1";
+const joinNameParam = params.get("name");
+
+// モード定義：join / ask / view
+const MODE = joinedParam ? "join" : (askParam ? "ask" : "view");
 
 function setNavLinks(){
-  const lobby = `${LOBBY_URL}`;
-  $("toLobby").href = lobby;
-  $("toLobby2").href = lobby;
+  $("toLobby").href = `${LOBBY_URL}`;
+  $("toLobby2").href = `${LOBBY_URL}`;
 }
 setNavLinks();
 
@@ -521,12 +423,19 @@ $("saveNameBtn").addEventListener("click", async ()=>{
   localStorage.setItem("potoro_display_name", name);
   displayName = name;
   hideNameModal();
-  await ensureMemberIfNamed();
+
+  // ask/join の時だけ members を作る（view は作らない）
+  await ensureMemberIfWritable();
 
   if(pendingSendAfterName){
     pendingSendAfterName = false;
     sendMessage();
   }
+});
+
+signInAnonymously(auth).catch((e)=>{
+  console.error(e);
+  alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
 });
 
 onAuthStateChanged(auth, async (u)=>{
@@ -540,38 +449,32 @@ onAuthStateChanged(auth, async (u)=>{
     return;
   }
 
-  // 閲覧は常にOK（名前未設定でも読む）
   setupMessages();
+  setupMembers();
   refreshUI();
 
-  // ★参加者一覧は members サブコレクションを監視
-  setupMembers();
-
-  // 参加フローで name が渡されている場合は優先して確定
-  if(joinedParam && joinNameParam){
+  // joinフロー：joined=1&name=... を優先
+  if(MODE === "join" && joinNameParam){
     const n = sanitizeName(joinNameParam);
     if(n){
       displayName = n;
       localStorage.setItem("potoro_display_name", n);
-      await ensureMemberIfNamed();
-      await postEnterMessageIfNeeded(n);
-      cleanJoinParamsFromUrl();
+      await ensureMemberIfWritable();
+      await postEnterMessageOnce(n);
+      cleanJoinParamsFromUrl(); // joined/name を消して見た目を綺麗に
+      refreshUI();
     }
     return;
   }
 
-  // 通常閲覧：保存済み名があればセット（membersにも載せる）
-  const saved = localStorage.getItem("potoro_display_name");
-  if(saved){
-    displayName = sanitizeName(saved);
-    await ensureMemberIfNamed();
+  // askモード：保存名があれば使える（質問者として保存してOK）
+  if(MODE === "ask"){
+    const saved = localStorage.getItem("potoro_display_name");
+    if(saved){
+      displayName = sanitizeName(saved);
+      await ensureMemberIfWritable();
+    }
   }
-});
-
-// 認証
-signInAnonymously(auth).catch((e)=>{
-  console.error(e);
-  alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
 });
 
 async function loadRoom(){
@@ -579,22 +482,23 @@ async function loadRoom(){
   roomData = snap.exists() ? snap.data() : null;
 }
 
-async function ensureMemberIfNamed(){
-  // 閲覧だけなら不要。名前が確定しているときだけ members を作る。
+async function ensureMemberIfWritable(){
   if(!currentUid || !displayName) return;
+  if(MODE === "view") return;
+
+  // mode を保存：join だけ参加者一覧に表示
   const ref = doc(db, "rooms", roomId, "members", currentUid);
-  await setDoc(ref, { displayName, joinedAt: serverTimestamp() }, { merge:true });
+  await setDoc(ref, { displayName, joinedAt: serverTimestamp(), mode: MODE }, { merge:true });
 }
 
 function setStatusPill(closed){
   const el = $("roomStatusPill");
-  if(!el) return;
   if(closed){
     el.className = "pill closed";
     el.innerHTML = `<span class="pDot" aria-hidden="true"></span>締切済み（閲覧のみ）`;
   }else{
     el.className = "pill open";
-    el.innerHTML = `<span class="pDot" aria-hidden="true"></span>募集中（送信OK）`;
+    el.innerHTML = `<span class="pDot" aria-hidden="true"></span>募集中`;
   }
 }
 
@@ -621,25 +525,38 @@ function refreshUI(){
     <span class="chip deadline"><b>締切：</b>${pad(r.deadlineAt.toDate().getHours())}:${pad(r.deadlineAt.toDate().getMinutes())}</span>
   `;
 
-  $("sendBtn").disabled = closed;
-  $("text").disabled = closed;
-  $("text").placeholder = closed ? "締切済みのため送信できません（閲覧のみ）" : "メッセージ（300文字まで）";
+  // 送信可否：view は常に不可、closed も不可
+  const writable = (MODE !== "view") && !closed;
+  $("sendBtn").disabled = !writable;
+  $("text").disabled = !writable;
+
+  if(MODE === "view"){
+    $("text").placeholder = "閲覧のみです（質問は一覧の「質問する」から）";
+    $("modeNotice").innerHTML =
+      `<b>閲覧のみ</b><br>このチャットは誰でも閲覧できます。<br>質問する場合は一覧の「質問する」から入ってください。`;
+  }else if(MODE === "ask"){
+    $("text").placeholder = closed ? "締切済みのため送信できません（閲覧のみ）" : "質問を入力（300文字まで）";
+    $("modeNotice").innerHTML =
+      `<b>質問モード</b><br>質問してOKです。参加者一覧・参加数には影響しません。<br>参加表明は一覧の「参加する」からお願いします。`;
+  }else{
+    $("text").placeholder = closed ? "締切済みのため送信できません（閲覧のみ）" : "メッセージ（300文字まで）";
+    $("modeNotice").innerHTML =
+      `<b>参加モード</b><br>参加者一覧に表示されます。集合方法などをご相談ください。`;
+  }
 }
 
-/* ===== members (参加者一覧) ===== */
+/* members：joinのみ表示 */
 let unsubMembers = null;
 function setupMembers(){
   if(unsubMembers) unsubMembers();
-
   const qMem = query(collection(db, "rooms", roomId, "members"), orderBy("joinedAt", "asc"));
 
   unsubMembers = onSnapshot(qMem, (snap)=>{
     const items = snap.docs.map(d=>{
       const m = d.data() || {};
-      return { uid: d.id, displayName: sanitizeName(m.displayName || "名無しさん") };
-    }).filter(x=>x.displayName);
+      return { uid: d.id, displayName: sanitizeName(m.displayName||""), mode: (m.mode||"") };
+    }).filter(x=>x.displayName && x.mode === "join"); // ★joinのみ
 
-    // 表示/非表示
     $("membersBox").style.display = items.length ? "block" : "none";
     $("membersCount").textContent = `${items.length}名`;
 
@@ -655,7 +572,7 @@ function setupMembers(){
   });
 }
 
-/* ===== messages ===== */
+/* messages */
 let unsubMessages = null;
 let lastSendAt = 0;
 
@@ -673,7 +590,6 @@ function showNewBtn(show){
 
 function setupMessages(){
   if(unsubMessages) unsubMessages();
-
   const qMsg = query(collection(db, "rooms", roomId, "messages"), orderBy("createdAt", "asc"));
 
   $("chat").addEventListener("scroll", ()=>{
@@ -694,8 +610,7 @@ function setupMessages(){
       const time = t ? `${pad(t.getHours())}:${pad(t.getMinutes())}` : "--:--";
 
       if(m.type === "system"){
-        const txt = escapeHtml(m.text || "");
-        return `<div class="sys"><span class="pillSys">${txt}</span></div>`;
+        return `<div class="sys"><span class="pillSys">${escapeHtml(m.text||"")}</span></div>`;
       }
 
       const who = escapeHtml(m.displayName || "名無しさん");
@@ -734,11 +649,10 @@ $("text").addEventListener("keydown", (e)=>{
   }
 });
 
-/* ===== 入室メッセージ（参加ボタン経由のみ、最初の1回だけ） ===== */
-async function postEnterMessageIfNeeded(name){
+/* join入室メッセージ：参加ボタン経由のみ/同タブ1回 */
+async function postEnterMessageOnce(name){
   const n = sanitizeName(name);
   if(!n) return;
-
   const key = `entered:${roomId}:${n}`;
   if(sessionStorage.getItem(key) === "1") return;
 
@@ -751,7 +665,7 @@ async function postEnterMessageIfNeeded(name){
   sessionStorage.setItem(key, "1");
 }
 
-/* URLをきれいに */
+/* URL clean */
 function cleanJoinParamsFromUrl(){
   const p = new URLSearchParams(location.search);
   p.delete("name");
@@ -762,13 +676,17 @@ function cleanJoinParamsFromUrl(){
 }
 
 async function sendMessage(){
+  if(MODE === "view"){
+    alert("閲覧のみです。質問は一覧の「質問する」から入ってください。");
+    return;
+  }
+
   const now = Date.now();
   if(now - lastSendAt < 3000){
     alert("連投防止のため、少し待ってから送信してください。");
     return;
   }
 
-  // 名前未設定なら送信時だけ促す（閲覧は止めない）
   if(!displayName){
     pendingSendAfterName = true;
     showNameModal();
@@ -789,6 +707,7 @@ async function sendMessage(){
   }
 
   try{
+    await ensureMemberIfWritable(); // ask/join のどちらでも members を更新
     await addDoc(collection(db, "rooms", roomId, "messages"), {
       uid: currentUid,
       displayName,
