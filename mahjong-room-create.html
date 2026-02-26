@@ -1,429 +1,547 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>PO・TORO｜麻雀 面子募集｜部屋を作成</title>
-  <meta name="theme-color" content="#f6b7d2" />
-  <meta name="description" content="PO・TORO 麻雀システムの面子募集：部屋を作成します。" />
-  <style>
-    :root{
-      --bg:#fff7fb;--card:#fff;--ink:#2b2b2b;--sub:#666;
-      --accent:#ff79a6;--accent2:#7fc9ff;--ring:#ffd7e6;
-      --shadow:0 12px 28px rgba(0,0,0,.08);
-      --radius:18px;--ease:cubic-bezier(.2,.8,.2,1);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;background:linear-gradient(135deg,#f6b7d2,#a9d6f7);color:var(--ink)}
-    body::before{
-      content:"";position:fixed;inset:-20%;pointer-events:none;z-index:-1;opacity:.75;
-      background:
-        radial-gradient(600px 420px at 15% 25%, rgba(255,255,255,.55), transparent 60%),
-        radial-gradient(700px 520px at 85% 70%, rgba(255,255,255,.45), transparent 62%),
-        radial-gradient(420px 320px at 55% 10%, rgba(255,250,252,.55), transparent 65%);
-      filter: blur(2px);
-    }
-    a{color:#0b69d5;text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{width:min(980px,92vw);margin:0 auto;padding:18px 0 40px}
-    header{
-      position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);
-      backdrop-filter:saturate(140%) blur(10px);box-shadow:0 2px 12px rgba(0,0,0,.08)
-    }
-    .nav{width:min(980px,92vw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 0}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{
-      width:40px;height:40px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%, #fff, #ffe2ee 60%, #ffd3ea 100%);
-      display:grid;place-items:center;box-shadow:var(--shadow);font-weight:1000;color:#ff5ea8
-    }
-    .title{font-weight:1000;line-height:1.2}
-    .title small{display:block;color:#666;font-weight:900}
-    .btn{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 14px;border-radius:999px;border:1px solid rgba(0,0,0,.08);
-      background:#fff;font-weight:1000;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.08);
-      transition:transform .18s var(--ease), box-shadow .18s var(--ease);
-    }
-    .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(0,0,0,.12)}
-    .btn.primary{
-      border:none;color:#fff;background:linear-gradient(135deg,#ff81c0,#8ed2ff);
-      box-shadow:0 16px 34px rgba(255,120,170,.30);
-    }
-    .btn.ghost{background:rgba(255,255,255,.95)}
-    .card{
-      background:rgba(255,255,255,.92);
-      border:1px solid rgba(255,255,255,.7);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:16px;
-    }
-    h1{margin:18px 0 10px;font-size:1.35rem;font-weight:1000}
-    .lead{color:#444;font-weight:900;line-height:1.7;margin:0 0 14px}
-    .grid{display:grid;gap:12px}
-    @media (min-width:800px){ .grid.two{grid-template-columns:1fr 1fr} }
-    label{display:block;font-weight:1000;margin:0 0 6px}
-    .hint{color:var(--sub);font-weight:900;font-size:.86rem;line-height:1.6;margin-top:6px}
-    input,select,textarea{
-      width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(0,0,0,.12);
-      background:#fff;font-size:1rem;outline:none;
-    }
-    input:focus,select:focus,textarea:focus{border-color:rgba(255,121,166,.7);box-shadow:0 0 0 3px rgba(255,215,230,.75)}
-    textarea{min-height:92px;resize:vertical}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;
-      border:1px solid rgba(255,121,166,.20);
-      background:linear-gradient(135deg, rgba(255,121,166,.14), rgba(127,201,255,.14));
-      font-weight:1000;color:#333;
-    }
-    .radio{
-      display:flex;gap:10px;flex-wrap:wrap
-    }
-    .radio label{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);
-      box-shadow:0 6px 14px rgba(0,0,0,.08);cursor:pointer;margin:0;
-    }
-    .radio input{width:auto}
-    .footer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .status{
-      margin-top:12px;padding:10px 12px;border-radius:14px;
-      background:rgba(17,17,17,.88);color:#fff;font-weight:900;line-height:1.6;
-      display:none;
-    }
-    .status.show{display:block}
-    .mini{font-size:.86rem;color:#666;font-weight:900}
-    code{background:#fff;border:1px solid #eee;border-radius:10px;padding:2px 8px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PO・TORO｜面子募集の部屋を作成</title>
+<meta name="theme-color" content="#f6b7d2" />
+<style>
+:root{--bg:#fff7fb;--card:#fff;--ink:#2b2b2b;--sub:#666;--accent:#ff79a6;--accent2:#7fc9ff;--ring:#ffd7e6;--radius:20px;--shadow:0 12px 28px rgba(0,0,0,.08)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui;background:linear-gradient(180deg,var(--bg),#fff);color:var(--ink)}
+.wrap{max-width:780px;margin:0 auto;padding:20px}
+h1{margin:0 0 14px;font-size:22px}
+.card{background:rgba(255,255,255,.9);border:1px solid var(--ring);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.field{margin-bottom:14px}
+label{display:block;font-weight:900;font-size:14px;margin-bottom:6px}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ddd;font-size:14px;background:#fff;font-family:inherit}
+textarea{min-height:88px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:720px){.row{grid-template-columns:1fr}}
+.radio{display:flex;gap:14px;flex-wrap:wrap}
+.radio label{display:flex;align-items:center;gap:6px;margin:0;font-weight:800}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-weight:1000;font-size:15px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btn-sub{width:100%;padding:12px;border:1px solid rgba(255,121,166,.25);border-radius:14px;font-weight:1000;font-size:14px;cursor:pointer;background:#fff;color:var(--ink)}
+.ok{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;background:#f6fff8;border:1px solid rgba(46,204,113,.35)}
+.ng{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;background:#fff5f7;border:1px solid rgba(255,121,166,.35)}
+.small{font-size:12px;color:var(--sub);margin-top:6px;line-height:1.5}
+.hr{height:1px;background:rgba(255,215,230,.9);margin:18px 0;border:0}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid rgba(255,121,166,.25);background:#fff;font-size:12px;font-weight:900}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:900}
+</style>
 </head>
-
 <body>
-  <header>
-    <div class="nav">
-      <div class="brand">
-        <div class="logo">PT</div>
-        <div class="title">
-          PO・TORO 麻雀｜募集部屋作成
-          <small>Firestore ルール準拠（eventAt/deadlineAt Timestamp / deleteKeyはHashのみ）</small>
-        </div>
-      </div>
-      <div class="row">
-        <a class="btn ghost" href="https://potoro1001.github.io/potoro-mahjong/" target="_blank" rel="noopener noreferrer">🀄 麻雀TOP</a>
-        <a class="btn ghost" href="https://potoro1001.github.io/potoro-mahjong/rooms.html" target="_blank" rel="noopener noreferrer">👀 募集を見る</a>
+<div class="wrap">
+
+<h1>面子募集の部屋を作成</h1>
+
+<div class="card">
+
+  <div class="field">
+    <label>作成者名</label>
+    <input id="creatorName" maxlength="30" placeholder="例：トロご主人様" />
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>開催日時（開始時刻）</label>
+      <input id="eventAt" type="datetime-local" />
+      <div class="small">※過去日時は作成できません</div>
+    </div>
+
+    <div class="field">
+      <label>利用時間（30分刻み）</label>
+      <select id="durationSelect"></select>
+      <div class="small">2時間〜5時間（30分刻み）</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>募集締切（任意）</label>
+      <input id="deadlineAt" type="datetime-local" />
+      <div class="small">未入力なら「開催30分前」を自動設定します（Firestoreには必ず保存されます）</div>
+    </div>
+
+    <div class="field">
+      <label>募集人数</label>
+      <select id="slotsTotal">
+        <option value="">選択してください</option>
+        <option value="1">1名</option>
+        <option value="2">2名</option>
+        <option value="3">3名</option>
+      </select>
+      <div class="small" id="slotsHint">三人打ち：2名 / 四人打ち：3名（目安）</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>三人打ち or 四人打ち</label>
+    <div class="radio">
+      <!-- ★重要：Firestore ルールと一致させる -->
+      <label><input type="radio" name="rule" value="三人打ち">三人打ち</label>
+      <label><input type="radio" name="rule" value="四人打ち">四人打ち</label>
+    </div>
+    <div class="small">※ルール選択で募集人数のおすすめが自動で入ります（変更も可能）</div>
+  </div>
+
+  <!-- ★削除キー -->
+  <div class="row">
+    <div class="field">
+      <label>削除キー（4桁の数字）<span class="badge">必須</span></label>
+      <input
+        id="deleteKey"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="例：1234"
+        autocomplete="off"
+      />
+      <div class="small">
+        このキーがないと削除できません。<br>
+        <b>控えてください（再発行不可）</b>。保存時はキーそのものではなく「ハッシュ」で保存します。
       </div>
     </div>
-  </header>
 
-  <main class="wrap">
-    <h1>部屋を作成</h1>
-    <p class="lead">入力 → 「作成する」で Firestore <code>rooms</code> に保存します。<br>※削除キーは<strong>生データを保存せず</strong>、SHA-256でハッシュ化した <code>deleteKeyHash</code> のみ保存します。</p>
+    <div class="field">
+      <label>ひとこと（任意）</label>
+      <textarea id="comment" maxlength="140" placeholder="例：初心者歓迎です！楽しく打てる方お待ちしています。"></textarea>
+      <div class="small"><span id="count">0</span>/140</div>
+    </div>
+  </div>
 
-    <section class="card grid">
-      <div class="grid two">
-        <div>
-          <label for="creatorName">作成者名（30文字まで）</label>
-          <input id="creatorName" type="text" maxlength="30" placeholder="例：トロ ポ" autocomplete="name" />
-          <div class="hint">Firestoreルール：<code>creatorName</code> は必須（1〜30文字）</div>
-        </div>
+  <button class="btn" onclick="createRoom()">部屋を作成</button>
 
-        <div>
-          <label>対局ルール</label>
-          <div class="radio" role="radiogroup" aria-label="対局ルール">
-            <label><input type="radio" name="rule" value="四人打ち" checked /> 四人打ち</label>
-            <label><input type="radio" name="rule" value="三人打ち" /> 三人打ち</label>
-          </div>
-          <div class="hint">Firestoreルール：<code>rule</code> は「三人打ち / 四人打ち」のみ</div>
-        </div>
+  <div id="ok" class="ok"></div>
+  <div id="ng" class="ng"></div>
+
+  <hr class="hr">
+
+  <!-- ★既存の部屋を削除（UIは残すが、ルール上「作成者のみ削除可」） -->
+  <div class="field">
+    <label>既存の部屋を削除（部屋ID＋削除キー）</label>
+    <div class="small" style="margin-bottom:10px;">
+      現在のFirestoreルールでは <b>作成者UIDの端末のみ削除可能</b> です。<br>
+      「4桁キーだけで削除」を実現するには Cloud Functions 等のサーバー側処理が必要です。
+    </div>
+
+    <div class="row">
+      <div class="field" style="margin:0;">
+        <label style="font-weight:900;font-size:13px;margin-bottom:6px;">部屋ID</label>
+        <input id="delRoomId" placeholder="例：RM-240101-1900-ABCD" />
       </div>
-
-      <div class="grid two">
-        <div>
-          <label for="eventAt">開始日時（必須）</label>
-          <input id="eventAt" type="datetime-local" />
-          <div class="hint">Firestoreルール：<code>eventAt</code> は Timestamp 必須</div>
-        </div>
-
-        <div>
-          <label for="durationMinutes">予定時間（分）</label>
-          <select id="durationMinutes">
-            <option value="60">60分</option>
-            <option value="90">90分</option>
-            <option value="120" selected>120分</option>
-            <option value="150">150分</option>
-            <option value="180">180分</option>
-          </select>
-          <div class="hint">任意：保存するなら <code>durationMinutes</code> は int</div>
-        </div>
+      <div class="field" style="margin:0;">
+        <label style="font-weight:900;font-size:13px;margin-bottom:6px;">削除キー（4桁）</label>
+        <input id="delKey" type="password" inputmode="numeric" maxlength="4" placeholder="例：1234" autocomplete="off" />
       </div>
+    </div>
 
-      <div class="grid two">
-        <div>
-          <label for="deadlineAt">締切日時（必須）</label>
-          <input id="deadlineAt" type="datetime-local" />
-          <div class="hint">Firestoreルール：<code>deadlineAt</code> は Timestamp 必須</div>
-        </div>
+    <button class="btn-sub" onclick="deleteRoomByInputs()">この部屋を削除</button>
+    <div class="small">
+      ※削除は取り消せません。削除後は一覧・チャットからも消えます。
+    </div>
+  </div>
 
-        <div>
-          <label for="slotsTotal">募集人数（参加者枠）</label>
-          <select id="slotsTotal">
-            <option value="1">1人</option>
-            <option value="2">2人</option>
-            <option value="3" selected>3人</option>
-          </select>
-          <div class="hint">
-            Firestoreルール：四人打ちは最大3 / 三人打ちは最大2（<code>slotsTotal</code> は int）
-          </div>
-        </div>
-      </div>
+</div>
+</div>
 
-      <div>
-        <label for="comment">コメント（任意・140文字まで）</label>
-        <textarea id="comment" maxlength="140" placeholder="例：初心者歓迎／19時開始／途中参加OK など"></textarea>
-        <div class="hint">Firestoreルール：入れる場合 <code>comment</code> は文字列 &amp; 140文字以内</div>
-      </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  Timestamp,
+  getDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-      <div class="grid two">
-        <div>
-          <label for="deleteKey">4桁削除キー（任意）</label>
-          <input id="deleteKey" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="例：1234" />
-          <div class="hint">
-            ⚠️ <strong>生のdeleteKeyはFirestoreに保存しません</strong>（保存するとルール違反になりがち）<br>
-            保存するのは <code>deleteKeyHash</code>（SHA-256 / 64文字）のみです
-          </div>
-        </div>
+/** Firebase Consoleの値（そのまま） */
+const firebaseConfig = {
+  apiKey: "AIzaSyAm1EIxmK_UWmRM7VMP7LREbMQhSYmylko",
+  authDomain: "potoro-mahjong.firebaseapp.com",
+  projectId: "potoro-mahjong",
+  storageBucket: "potoro-mahjong.firebasestorage.app",
+  messagingSenderId: "467297785940",
+  appId: "1:467297785940:web:b1a0ed4cfa5ecd29a575c1",
+  measurementId: "G-KTFZDLG5TL"
+};
 
-        <div>
-          <label>ログイン状態</label>
-          <div class="row">
-            <span class="pill">🔐 uid：<span id="uidText">認証中…</span></span>
-          </div>
-          <div class="hint">Firestoreルール：read/create/update は <code>request.auth != null</code> が必要（匿名ログイン対応）</div>
-        </div>
-      </div>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-      <div class="footer-actions">
-        <button class="btn primary" id="btnCreate" type="button">✨ 作成する</button>
-        <button class="btn ghost" id="btnFillSample" type="button">🧪 テスト入力</button>
-        <button class="btn ghost" id="btnClear" type="button">🧹 クリア</button>
-      </div>
+let currentUid = null;
+onAuthStateChanged(auth, u => { if(u) currentUid = u.uid; });
+signInAnonymously(auth).catch((e)=>{
+  console.error(e);
+  alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
+});
 
-      <div id="status" class="status" role="status" aria-live="polite"></div>
-      <div class="mini">※このページは「ルールに通るpayload」を最優先で作ってあります。</div>
-    </section>
-  </main>
+const $ = (id)=>document.getElementById(id);
 
-  <!-- Firebase（v10系） -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+function showOk(html){
+  $("ng").style.display = "none";
+  $("ok").style.display = "block";
+  $("ok").innerHTML = html;
+}
+function showNg(html){
+  $("ok").style.display = "none";
+  $("ng").style.display = "block";
+  $("ng").innerHTML = html;
+}
 
-    // ====== ここをあなたのプロジェクトに合わせてください ======
-    // 既にポータル等で使っているのと同じでOK
-    const FIREBASE_CONFIG = window.MAHJONG_FIREBASE_CONFIG || {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID"
+function is4DigitNumber(s){
+  return /^\d{4}$/.test(String(s || "").trim());
+}
+
+// ===== 4桁入力のUX：数字以外を除外 =====
+function enforce4DigitNumeric(el){
+  el.addEventListener("input", ()=>{
+    const v = (el.value || "").replace(/\D/g,"").slice(0,4);
+    el.value = v;
+  });
+}
+enforce4DigitNumeric($("deleteKey"));
+enforce4DigitNumeric($("delKey"));
+
+// ===== 利用時間セレクト（2時間〜5時間 / 30分刻み） =====
+const durationSelect = $("durationSelect");
+function formatDuration(minutes){
+  const h = Math.floor(minutes/60);
+  const m = minutes%60;
+  return m === 0 ? `${h}時間` : `${h}時間30分`;
+}
+for(let minutes = 120; minutes <= 300; minutes += 30){
+  const opt = document.createElement("option");
+  opt.value = String(minutes);
+  opt.textContent = formatDuration(minutes);
+  durationSelect.appendChild(opt);
+}
+durationSelect.value = "120";
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function generateRoomId(eventAtISO){
+  const d = new Date(eventAtISO);
+  const yy = String(d.getFullYear()).slice(-2);
+  const mm = pad(d.getMonth()+1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  const rnd = Math.random().toString(16).slice(2,6).toUpperCase();
+  return `RM-${yy}${mm}${dd}-${hh}${mi}-${rnd}`;
+}
+
+// ===== ルール選択で募集人数をおすすめ自動入力 =====
+// Firestoreルール上の上限：三人打ち <=2 / 四人打ち <=3
+function applySlotsSuggestion(){
+  const ruleEl = document.querySelector('input[name="rule"]:checked');
+  if(!ruleEl) return;
+  const suggested = ruleEl.value === "三人打ち" ? "2" : "3";
+
+  if(!$("slotsTotal").value){
+    $("slotsTotal").value = suggested;
+  }
+  $("slotsHint").textContent = `おすすめ：${ruleEl.value}なら ${suggested}名（上限：三人打ち2 / 四人打ち3）`;
+}
+document.querySelectorAll('input[name="rule"]').forEach(r=>{
+  r.addEventListener("change", applySlotsSuggestion);
+});
+
+// ===== 締切の入力補助：開催日時が入ったら未入力時に30分前をセット =====
+function toLocalInputValue(d){
+  const yyyy = d.getFullYear();
+  const mm = pad(d.getMonth()+1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+}
+$("eventAt").addEventListener("change", ()=>{
+  const v = $("eventAt").value;
+  if(!v) return;
+
+  const eventDate = new Date(v);
+  const now = new Date();
+  if(eventDate.getTime() < now.getTime() - 60*1000){
+    showNg(`<b>開催日時が過去です</b><br>未来の日時を選択してください。`);
+  }else{
+    $("ng").style.display = "none";
+  }
+
+  if(!$("deadlineAt").value){
+    const dl = new Date(eventDate.getTime() - 30*60000);
+    $("deadlineAt").value = toLocalInputValue(dl);
+  }
+});
+
+// ===== 4桁削除キーは「ハッシュ」で保存（キー自体は保存しない） =====
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+window.createRoom = async function(){
+  if(!currentUid){
+    alert("認証中です。少し待ってもう一度お試しください。");
+    return;
+  }
+
+  const creatorName = $("creatorName").value.trim();
+  const eventAtLocal = $("eventAt").value;
+  const durationMinutes = Number(durationSelect.value);
+  const deadlineAtLocalInput = $("deadlineAt").value;
+  const slotsTotalStr = $("slotsTotal").value;
+  const slotsTotal = Number(slotsTotalStr);
+  const ruleEl = document.querySelector('input[name="rule"]:checked');
+  const comment = ($("comment").value || "").trim();
+  const deleteKey = $("deleteKey").value.trim();
+
+  if(!creatorName || !eventAtLocal || !durationMinutes || !slotsTotalStr || !ruleEl){
+    alert("未入力の項目があります。");
+    return;
+  }
+  if(!is4DigitNumber(deleteKey)){
+    alert("削除キーは「4桁の数字」で入力してください。");
+    return;
+  }
+
+  // ★重要：Firestoreルールと一致する値
+  const rule = ruleEl.value; // "三人打ち" or "四人打ち"
+  if(rule !== "三人打ち" && rule !== "四人打ち"){
+    alert("ルール選択が不正です。");
+    return;
+  }
+
+  // slotsTotal ルール上限チェック（ここで弾く）
+  if(rule === "三人打ち" && slotsTotal > 2){
+    alert("三人打ちは募集人数の上限が2名です。");
+    return;
+  }
+  if(rule === "四人打ち" && slotsTotal > 3){
+    alert("四人打ちは募集人数の上限が3名です。");
+    return;
+  }
+
+  const eventDate = new Date(eventAtLocal);
+  const now = new Date();
+  if(eventDate.getTime() < now.getTime() - 60*1000){
+    alert("開催日時が過去です。未来の日時を選択してください。");
+    return;
+  }
+
+  const endDate = new Date(eventDate.getTime() + durationMinutes * 60000);
+
+  // 締切：未入力なら開催30分前（Firestoreルールでは deadlineAt 必須なので必ず入れる）
+  let deadlineDate = deadlineAtLocalInput ? new Date(deadlineAtLocalInput) : new Date(eventDate.getTime() - 30*60000);
+  if(deadlineDate > eventDate) deadlineDate = new Date(eventDate);
+
+  const roomId = generateRoomId(eventAtLocal);
+
+  try{
+    const deleteKeyHash = await sha256Hex(deleteKey);
+
+    // ===== Firestoreルール準拠 payload（不要なキーは入れない） =====
+    const payload = {
+      creatorUid: currentUid,
+      creatorName,
+      eventAt: Timestamp.fromDate(eventDate),
+      deadlineAt: Timestamp.fromDate(deadlineDate),
+      slotsTotal: Number(slotsTotal),        // int想定
+      joinedCount: 0,                        // 0固定
+      rule,                                  // "三人打ち" or "四人打ち"
+      closed: false,
     };
-    // ==============================================
 
-    const $ = (id)=>document.getElementById(id);
-    const statusEl = $("status");
-    const uidText = $("uidText");
+    // 任意フィールド（ルール許可範囲）
+    payload.endAt = Timestamp.fromDate(endDate);
+    payload.durationMinutes = Number(durationMinutes);
+    if(comment) payload.comment = comment.slice(0,140);
+    payload.deleteKeyHash = deleteKeyHash; // 64文字（SHA-256 hex）
 
-    const setStatus = (msg, isError=false)=>{
-      statusEl.textContent = msg;
-      statusEl.classList.add("show");
-      statusEl.style.background = isError ? "rgba(150,0,40,.92)" : "rgba(17,17,17,.88)";
-    };
+    await setDoc(doc(db,"rooms",roomId), payload);
+    // =======================================================
 
-    const clearStatus = ()=> statusEl.classList.remove("show");
+    showOk(`
+      <b>部屋を作成しました！</b><br><br>
+      部屋ID：<b>${roomId}</b><br>
+      終了予定：${endDate.toLocaleString()}<br><br>
 
-    const toDateFromLocalInput = (v)=>{
-      // datetime-local はローカル時刻文字列なので new Date(v) でローカル解釈される
-      const d = new Date(v);
-      return (d instanceof Date && !isNaN(d)) ? d : null;
-    };
+      <div style="padding:10px 12px;border-radius:14px;border:1px dashed rgba(255,121,166,.45);background:#fff;">
+        <div style="font-weight:1000;margin-bottom:6px;">削除キー（控えてください）</div>
+        <div class="kbd" style="font-size:18px;letter-spacing:.12em;">${deleteKey}</div>
+        <div class="small" style="margin-top:6px;">※キーは保存されず、ハッシュで登録されています。再表示はできません。</div>
+      </div>
 
-    const sha256Hex = async (text)=>{
-      const enc = new TextEncoder().encode(text);
-      const buf = await crypto.subtle.digest("SHA-256", enc);
-      const arr = Array.from(new Uint8Array(buf));
-      return arr.map(b=>b.toString(16).padStart(2,"0")).join("");
-    };
+      <br>
 
-    const ensureInt = (n)=> Number.isInteger(n) ? n : null;
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="mahjong-room-list.html"
+           style="
+             flex:1;
+             text-align:center;
+             padding:12px;
+             border-radius:14px;
+             border:1px solid rgba(255,121,166,.25);
+             background:#fff;
+             text-decoration:none;
+             font-weight:1000;
+             font-size:14px;
+             box-shadow:0 6px 14px rgba(0,0,0,.08);
+           ">
+          一覧へ
+        </a>
 
-    // 初期化
-    if(!FIREBASE_CONFIG.projectId || FIREBASE_CONFIG.projectId === "YOUR_PROJECT_ID"){
-      setStatus("Firebase設定（apiKey/authDomain/projectId）が未設定です。上の FIREBASE_CONFIG を差し替えてください。", true);
-      uidText.textContent = "未設定";
-      throw new Error("Firebase config missing");
+        <a href="mahjong-room-chat.html?id=${encodeURIComponent(roomId)}"
+           style="
+             flex:1;
+             text-align:center;
+             padding:12px;
+             border-radius:14px;
+             border:none;
+             background:linear-gradient(135deg,#ff79a6,#7fc9ff);
+             color:#fff;
+             text-decoration:none;
+             font-weight:1000;
+             font-size:14px;
+             box-shadow:0 6px 14px rgba(0,0,0,.12);
+           ">
+          チャットへ
+        </a>
+      </div>
+
+      <br>
+
+      <button
+        onclick="deleteRoomInline('${roomId}')"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:14px;
+          border:1px solid rgba(255,121,166,.25);
+          background:#fff5f7;
+          color:#b2234a;
+          font-weight:1000;
+          cursor:pointer;
+        "
+      >
+        この部屋を削除（キー確認あり）
+      </button>
+
+      <div class="small" style="margin-top:8px;">
+        ※現在のFirestoreルールでは「作成者UIDの端末のみ削除可能」です。
+      </div>
+    `);
+
+    $("delRoomId").value = roomId;
+    $("delKey").value = "";
+    $("deleteKey").value = "";
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+  }catch(e){
+    console.error(e);
+    // 権限エラーを分かりやすく
+    const msg = String(e?.message || e || "");
+    const isPerm = /permission|PERMISSION_DENIED|insufficient/i.test(msg);
+    showNg(
+      isPerm
+        ? `<b>保存に失敗しました（権限）</b><br>Firestoreルールにより拒否されました。<br>rule値（「三人打ち/四人打ち」）・timestamp型・slotsTotal上限をご確認ください。`
+        : `<b>保存に失敗しました</b><br>${msg}`
+    );
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+  }
+};
+
+// ★ 画面内（作成直後）削除
+window.deleteRoomInline = async function(roomId){
+  try{
+    const key = prompt("削除キー（4桁）を入力してください：");
+    if(key === null) return;
+    if(!is4DigitNumber(key)){
+      alert("削除キーは4桁の数字です。");
+      return;
     }
+    await deleteRoomWithKey(roomId, key);
+  }catch(e){
+    console.error(e);
+    alert("削除に失敗しました。");
+  }
+};
 
-    const app = initializeApp(FIREBASE_CONFIG);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+// ★ 入力欄（既存部屋）削除
+window.deleteRoomByInputs = async function(){
+  const roomId = $("delRoomId").value.trim();
+  const key = $("delKey").value.trim();
 
-    // 認証（匿名）
-    let currentUid = null;
-    onAuthStateChanged(auth, async (user)=>{
-      if(user){
-        currentUid = user.uid;
-        uidText.textContent = user.uid.slice(0,8) + "…";
-        clearStatus();
-      }else{
-        uidText.textContent = "認証中…";
-        try{
-          await signInAnonymously(auth);
-        }catch(e){
-          currentUid = null;
-          uidText.textContent = "失敗";
-          setStatus("匿名ログインに失敗しました。Firebase Auth（匿名）を有効化してください。", true);
-        }
-      }
-    });
+  if(!roomId){
+    alert("部屋IDを入力してください。");
+    return;
+  }
+  if(!is4DigitNumber(key)){
+    alert("削除キーは4桁の数字で入力してください。");
+    return;
+  }
+  await deleteRoomWithKey(roomId, key);
+};
 
-    // テスト入力
-    $("btnFillSample").addEventListener("click", ()=>{
-      $("creatorName").value = "トロ ポ";
-      const now = new Date();
-      const pad2 = (x)=>String(x).padStart(2,"0");
-      const toLocal = (d)=>{
-        const y=d.getFullYear();
-        const m=pad2(d.getMonth()+1);
-        const da=pad2(d.getDate());
-        const h=pad2(d.getHours());
-        const mi=pad2(d.getMinutes());
-        return `${y}-${m}-${da}T${h}:${mi}`;
-      };
-      const start = new Date(now.getTime() + 60*60*1000);
-      const deadline = new Date(now.getTime() + 30*60*1000);
-      $("eventAt").value = toLocal(start);
-      $("deadlineAt").value = toLocal(deadline);
-      $("durationMinutes").value = "120";
-      $("slotsTotal").value = "3";
-      document.querySelector('input[name="rule"][value="四人打ち"]').checked = true;
-      $("comment").value = "テスト募集：初心者歓迎です♡";
-      $("deleteKey").value = "1234";
-      setStatus("テスト入力を入れました。作成を押すと保存します。");
-    });
+async function deleteRoomWithKey(roomId, deleteKey){
+  if(!currentUid){
+    alert("認証中です。少し待ってもう一度お試しください。");
+    return;
+  }
 
-    // クリア
-    $("btnClear").addEventListener("click", ()=>{
-      ["creatorName","eventAt","deadlineAt","comment","deleteKey"].forEach(id=>$(id).value="");
-      $("durationMinutes").value = "120";
-      $("slotsTotal").value = "3";
-      document.querySelector('input[name="rule"][value="四人打ち"]').checked = true;
-      clearStatus();
-    });
+  const ref = doc(db, "rooms", roomId);
+  const snap = await getDoc(ref);
+  if(!snap.exists()){
+    showNg(`<b>見つかりません</b><br>部屋IDが正しいか確認してください。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+    return;
+  }
 
-    // 作成
-    $("btnCreate").addEventListener("click", async ()=>{
-      if(!currentUid){
-        setStatus("認証中です。数秒待ってからもう一度お試しください。", true);
-        return;
-      }
+  const data = snap.data() || {};
+  if(!data.deleteKeyHash){
+    showNg(`<b>削除キー未対応の部屋です</b><br>この部屋は削除キーが登録されていません。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+    return;
+  }
 
-      const creatorName = $("creatorName").value.trim();
-      const rule = (document.querySelector('input[name="rule"]:checked')?.value || "").trim();
-      const eventAtLocal = $("eventAt").value;
-      const deadlineAtLocal = $("deadlineAt").value;
+  const hash = await sha256Hex(deleteKey);
+  if(hash !== data.deleteKeyHash){
+    showNg(`<b>削除キーが違います</b><br>4桁の数字をもう一度ご確認ください。`);
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+    return;
+  }
 
-      const durationMinutesNum = Number($("durationMinutes").value);
-      const slotsTotalNum = Number($("slotsTotal").value);
+  const ok = confirm(`本当に削除しますか？\n\n部屋ID：${roomId}\n※削除は取り消せません。`);
+  if(!ok) return;
 
-      const commentRaw = ($("comment").value || "").trim();
-      const deleteKey = ($("deleteKey").value || "").trim();
+  try{
+    await deleteDoc(ref);
 
-      // バリデーション（ルール準拠）
-      if(!creatorName || creatorName.length > 30){
-        setStatus("作成者名を1〜30文字で入力してください。", true); return;
-      }
-      if(rule !== "三人打ち" && rule !== "四人打ち"){
-        setStatus("ルールを選択してください。", true); return;
-      }
-      const eventDate = toDateFromLocalInput(eventAtLocal);
-      const deadlineDate = toDateFromLocalInput(deadlineAtLocal);
-      if(!eventDate){ setStatus("開始日時（eventAt）を入力してください。", true); return; }
-      if(!deadlineDate){ setStatus("締切日時（deadlineAt）を入力してください。", true); return; }
+    showOk(`<b>削除しました</b><br><br>部屋ID：<b>${roomId}</b>`);
+    $("delKey").value = "";
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+  }catch(e){
+    console.error(e);
+    const msg = String(e?.message || e || "");
+    const isPerm = /permission|PERMISSION_DENIED|insufficient/i.test(msg);
 
-      const durationMinutes = ensureInt(durationMinutesNum);
-      const slotsTotal = ensureInt(slotsTotalNum);
-      if(durationMinutes === null || durationMinutes <= 0){
-        setStatus("予定時間（durationMinutes）が不正です。", true); return;
-      }
-      if(slotsTotal === null || slotsTotal < 1){
-        setStatus("募集人数（slotsTotal）が不正です。", true); return;
-      }
+    showNg(
+      isPerm
+        ? `<b>削除に失敗しました（権限）</b><br>現在のFirestoreルールでは「作成者UIDの端末のみ削除可能」です。<br>4桁キーだけで削除したい場合は Cloud Functions 等の導入が必要です。`
+        : `<b>削除に失敗しました</b><br>${msg}`
+    );
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+  }
+}
 
-      if(rule === "四人打ち" && slotsTotal > 3){
-        setStatus("四人打ちは募集人数（参加者枠）は最大3です。", true); return;
-      }
-      if(rule === "三人打ち" && slotsTotal > 2){
-        setStatus("三人打ちは募集人数（参加者枠）は最大2です。", true); return;
-      }
+// 文字数
+$("comment").addEventListener("input", ()=>{ $("count").textContent = String($("comment").value.length); });
 
-      if(commentRaw.length > 140){
-        setStatus("コメントは140文字以内にしてください。", true); return;
-      }
-
-      // deleteKey は保存しない。保存するのは hash のみ（任意）
-      let deleteKeyHash = null;
-      if(deleteKey){
-        if(!/^\d{4}$/.test(deleteKey)){
-          setStatus("削除キーは4桁の数字で入力してください。", true); return;
-        }
-        deleteKeyHash = await sha256Hex(deleteKey); // 64文字
-      }
-
-      // endAt は任意（あなたのルールで許可されてる）
-      const endDate = new Date(eventDate.getTime() + durationMinutes * 60 * 1000);
-
-      // ====== ルールに通る payload（ここが超重要）======
-      const payload = {
-        creatorName,
-        creatorUid: currentUid,                    // ルール必須
-        eventAt: Timestamp.fromDate(eventDate),    // timestamp必須
-        deadlineAt: Timestamp.fromDate(deadlineDate), // timestamp必須
-        slotsTotal,                                // int必須
-        joinedCount: 0,                            // int必須（0固定）
-        rule,                                      // 必須
-        closed: false                              // bool必須
-      };
-
-      // 任意項目（入れるなら型を守る）
-      if(commentRaw) payload.comment = commentRaw;
-      payload.durationMinutes = durationMinutes;                 // 任意だが入れてOK（int）
-      payload.endAt = Timestamp.fromDate(endDate);               // 任意（timestamp）
-      if(deleteKeyHash) payload.deleteKeyHash = deleteKeyHash;   // 任意（64文字）
-
-      // ⚠️ 生の deleteKey は絶対に payload に入れない（ルール違反になりやすい）
-      // ===============================================
-
-      try{
-        setStatus("保存中…");
-        const ref = await addDoc(collection(db, "rooms"), payload);
-        setStatus(`保存しました！ roomId：${ref.id}`);
-
-        // ここで遷移したければ有効化
-        // location.href = "rooms.html";
-      }catch(e){
-        // Firestore権限エラーはだいたいこれ
-        const msg = String(e?.message || e || "");
-        const isPerm = /permission|PERMISSION_DENIED|Missing or insufficient permissions/i.test(msg);
-        setStatus(
-          isPerm
-            ? "保存に失敗しました：権限（Firestore Rules）により拒否されました。payloadの型/キーがルールと一致しているか確認してください。"
-            : ("保存に失敗しました：" + msg),
-          true
-        );
-        console.error(e);
-      }
-    });
-  </script>
-
-  <noscript>JavaScriptが無効になっています。部屋作成にはJavaScriptが必要です。</noscript>
+// 初期表示：ルール→募集人数のおすすめ反映
+applySlotsSuggestion();
+</script>
 </body>
 </html>
