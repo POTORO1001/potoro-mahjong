@@ -329,7 +329,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
   getFirestore, collection, onSnapshot, query, orderBy,
-  doc, runTransaction, deleteDoc, updateDoc, Timestamp, getDoc
+  doc, runTransaction, deleteDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -360,19 +360,34 @@ function tsToLabel(ts){
   const w = ["日","月","火","水","木","金","土"][d.getDay()];
   return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())}(${w}) ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
+
+/* ★安定化：Timestamp欠けでも落ちない */
+function toMs(ts){
+  try{ return ts?.toDate?.().getTime?.() ?? 0; }catch{ return 0; }
+}
+function safeTsLabel(ts){
+  const ms = toMs(ts);
+  if(!ms) return "—";
+  return tsToLabel(ts);
+}
+
+/* ★一般化：分→表示 */
 function formatDurationMinutes(min){
   const m = Number(min);
   if(!Number.isFinite(m) || m <= 0) return "—";
   const h = Math.floor(m/60);
   const mm = m%60;
-  return mm === 0 ? `${h}時間` : `${h}時間30分`;
+  if(h<=0) return `${mm}分`;
+  if(mm===0) return `${h}時間`;
+  return `${h}時間${mm}分`;
 }
+
 function remainingSlots(r){ return Math.max(0, (r.slotsTotal|0) - (r.joinedCount|0)); }
 function computeClosed(r){
   const now = Date.now();
-  const deadline = r.deadlineAt?.toDate?.().getTime?.() ?? 0;
+  const deadline = toMs(r.deadlineAt);
   if(r.closed) return true;
-  if(now > deadline) return true;
+  if(deadline && now > deadline) return true;
   if(remainingSlots(r) <= 0) return true;
   return false;
 }
@@ -430,9 +445,10 @@ function render(){
     const statusClass = closed ? "closed" : "open";
 
     const now = Date.now();
-    const dl = r.deadlineAt.toDate().getTime();
-    const dlText = now > dl
-      ? "締切：過ぎています"
+    const dl = toMs(r.deadlineAt);
+
+    const dlText = !dl ? "締切：未設定"
+      : now > dl ? "締切：過ぎています"
       : (()=> {
           const mins = Math.ceil((dl - now)/60000);
           const h = Math.floor(mins/60);
@@ -442,15 +458,15 @@ function render(){
 
     const comment = (r.comment||"").trim() || "（ひとこと未設定）";
     const durationText = formatDurationMinutes(r.durationMinutes);
-    const endAtText = r.endAt ? tsToLabel(r.endAt) : "—";
-    const timeRange = `${tsToLabel(r.eventAt)} 〜 ${endAtText}`;
+    const endAtText = safeTsLabel(r.endAt);
+    const timeRange = `${safeTsLabel(r.eventAt)} 〜 ${endAtText}`;
 
     const isMine = (currentUid && r.creatorUid === currentUid);
 
     return `
       <div class="card ${isMine ? "mine" : ""}">
         <div class="top">
-          <div class="id">${escapeHtml(r.id)} ${isMine ? `<span class="small" style="margin-left:8px; font-weight:1000; color:#2b4a62">あなたの部屋</span>` : ""}</div>
+          <div class="id">${escapeHtml(r.id||"") || "—"} ${isMine ? `<span class="small" style="margin-left:8px; font-weight:1000; color:#2b4a62">あなたの部屋</span>` : ""}</div>
           <div class="status ${statusClass}">${statusText}</div>
         </div>
 
@@ -459,20 +475,20 @@ function render(){
           <div><b>形式：</b>${escapeHtml(r.rule||"")}　<b>利用時間：</b>${escapeHtml(durationText)}</div>
           <div><b>時間：</b>${escapeHtml(timeRange)}</div>
           <hr class="sep">
-          <div><b>募集：</b>${r.slotsTotal}名　<b>参加：</b>${r.joinedCount}名　<b>残り：</b>${rem}名</div>
-          <div class="small">${tsToLabel(r.deadlineAt)}（${dlText}）</div>
+          <div><b>募集：</b>${r.slotsTotal ?? "—"}名　<b>参加：</b>${r.joinedCount ?? 0}名　<b>残り：</b>${rem}名</div>
+          <div class="small">${escapeHtml(safeTsLabel(r.deadlineAt))}（${escapeHtml(dlText)}）</div>
         </div>
 
         <div class="comment ${isMine ? "blue" : ""}">${escapeHtml(comment)}</div>
 
         <div class="actions">
-          ${closed ? "" : `<button class="smallbtn join" data-act="joinFlow" data-id="${escapeHtml(r.id)}">参加する</button>`}
-          <a class="smallbtn ask" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id)}&ask=1">質問する</a>
-          <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id)}">チャットを見る</a>
+          ${closed ? "" : `<button class="smallbtn join" data-act="joinFlow" data-id="${escapeHtml(r.id||"")}">参加する</button>`}
+          <a class="smallbtn ask" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id||"")}&ask=1">質問する</a>
+          <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id||"")}">チャットを見る</a>
 
-          <button class="smallbtn" data-act="cancel" data-id="${escapeHtml(r.id)}">キャンセル（-1）</button>
-          ${isMine ? `<button class="smallbtn" data-act="edit" data-id="${escapeHtml(r.id)}">編集</button>` : ""}
-          ${isMine ? `<button class="smallbtn danger" data-act="deleteKey" data-id="${escapeHtml(r.id)}">削除（キー）</button>` : ""}
+          <button class="smallbtn" data-act="cancel" data-id="${escapeHtml(r.id||"")}">キャンセル（-1）</button>
+          ${isMine ? `<button class="smallbtn" data-act="edit" data-id="${escapeHtml(r.id||"")}">編集</button>` : ""}
+          ${isMine ? `<button class="smallbtn danger" data-act="deleteKey" data-id="${escapeHtml(r.id||"")}">削除（キー）</button>` : ""}
         </div>
 
         <div class="small">※質問は「質問する」から。参加表明は「参加する」からお願いします。</div>
@@ -484,6 +500,7 @@ function render(){
 /* ===== join/cancel transaction ===== */
 async function txUpdateCount(roomId, delta){
   if(!currentUid){ alert("認証中です。"); return false; }
+  if(!roomId){ alert("部屋IDが不正です。"); return false; }
 
   const ref = doc(db, "rooms", roomId);
   try{
@@ -493,16 +510,16 @@ async function txUpdateCount(roomId, delta){
       const r = snap.data();
 
       const now = Date.now();
-      const dl = r.deadlineAt.toDate().getTime();
+      const dl = toMs(r.deadlineAt);
       const rem = Math.max(0, (r.slotsTotal|0) - (r.joinedCount|0));
-      const closed = r.closed || now > dl || rem <= 0;
+      const closed = r.closed || (dl ? now > dl : false) || rem <= 0;
       if(delta > 0 && closed) throw new Error("closed");
 
       let next = (r.joinedCount|0) + delta;
       if(next < 0) next = 0;
-      if(next > r.slotsTotal) next = r.slotsTotal;
+      if(next > (r.slotsTotal|0)) next = (r.slotsTotal|0);
 
-      const nextClosed = (now > dl) || (Math.max(0, r.slotsTotal - next) <= 0);
+      const nextClosed = (dl ? (now > dl) : false) || (Math.max(0, (r.slotsTotal|0) - next) <= 0);
       tx.update(ref, { joinedCount: next, closed: nextClosed });
     });
     return true;
@@ -637,7 +654,6 @@ async function verifyEditKeyAndGo(roomId, key){
     }
 
     // ★キーをURLに載せず、編集許可だけを sessionStorage に保存
-    // （編集ページ側でこのフラグをチェックして、なければキー入力要求にできます）
     const token = await sha256Hex(`${roomId}:${hash}:${Date.now()}`);
     sessionStorage.setItem(`potoro_edit_ok:${roomId}`, JSON.stringify({
       ok: true,
@@ -647,7 +663,7 @@ async function verifyEditKeyAndGo(roomId, key){
 
     closeEditKeyModal();
 
-    // ★編集ページへ（あなたの編集ページ名に合わせて変更OK）
+    // ★編集ページへ
     location.href = `mahjong-room-edit.html?id=${encodeURIComponent(roomId)}`;
   }catch(e){
     console.error(e);
@@ -678,14 +694,11 @@ list.addEventListener("click", async (ev)=>{
   }
 
   if(act==="edit"){
-    // ★編集もキー必須化（deleteKeyHashで照合）
     openEditKeyModal(roomId);
     return;
   }
 
   if(act==="deleteKey"){
-    // カード内の削除ボタン（キー入力は上の削除バーを使う設計ならここで案内）
-    // ここでは利便性のため、削除バーへ部屋IDを入れるだけ行う
     $("delRoomId").value = roomId;
     $("delKey").focus();
     alert("削除は上部の「部屋の削除（4桁削除キー）」から行ってください。\n部屋IDを入力しました。");
@@ -696,7 +709,9 @@ list.addEventListener("click", async (ev)=>{
 /* toolbar */
 $("filterStatus").addEventListener("change", render);
 $("q").addEventListener("input", render);
-$("btnRefresh").addEventListener("click", render);
+
+/* ★更新ボタン：確実な更新＝リロード */
+$("btnRefresh").addEventListener("click", ()=>location.reload());
 
 $("mineOnly").addEventListener("click", ()=>{
   mineOnly = !mineOnly;
