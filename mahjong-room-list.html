@@ -134,7 +134,12 @@ input{min-width:220px; flex:1}
   background:linear-gradient(180deg, rgba(127,201,255,.85), rgba(255,121,166,.25));
 }
 .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.id{font-weight:1000;font-size:13px;letter-spacing:.02em}
+.id{font-weight:1000;font-size:13px;letter-spacing:.02em; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:1000}
+.copy{
+  padding:6px 10px;border-radius:999px;border:1px solid rgba(255,121,166,.25);
+  background:#fff; cursor:pointer; font-weight:1000; font-size:12px;
+}
 .status{
   font-size:12px;font-weight:1000;padding:7px 10px;border-radius:999px;
   border:1px solid rgba(0,0,0,.06);background:#fff;white-space:nowrap
@@ -347,7 +352,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUid = null;
-onAuthStateChanged(auth, (u)=>{ if(u) currentUid = u.uid; });
+
+/* ★重要：匿名認証が完了してから購読開始（rulesでreadにisSignedInが必要なため） */
+let unsubscribeRooms = null;
+
+onAuthStateChanged(auth, (u)=>{
+  if(u){
+    currentUid = u.uid;
+    // 認証完了後に onSnapshot 開始（未開始なら）
+    if(!unsubscribeRooms){
+      startRoomsListener();
+    }
+  }
+});
+
 signInAnonymously(auth).catch(()=>alert("Firebase認証に失敗しました（Anonymous Authを有効化してください）"));
 
 const $ = (id)=>document.getElementById(id);
@@ -396,6 +414,10 @@ function escapeHtml(str){
     .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#39;");
 }
+function escapeAttr(str){
+  // attribute用（最低限）
+  return escapeHtml(str).replaceAll("`","&#96;");
+}
 function sanitizeName(s){
   const t = String(s||"").trim().replace(/\s+/g," ").replace(/[\u0000-\u001f\u007f]/g,"");
   return t.slice(0,20);
@@ -407,6 +429,30 @@ async function sha256Hex(text){
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest("SHA-256", enc);
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+/* ★数字以外を除去（4桁入力UX） */
+function enforce4DigitNumeric(el){
+  if(!el) return;
+  el.addEventListener("input", ()=>{
+    el.value = String(el.value||"").replace(/\D/g,"").slice(0,4);
+  });
+}
+enforce4DigitNumeric($("delKey"));
+enforce4DigitNumeric($("ekKey"));
+
+/* ★コピー */
+async function copyText(text, btn){
+  try{
+    await navigator.clipboard.writeText(text);
+    if(btn){
+      const prev = btn.textContent;
+      btn.textContent = "コピー済";
+      setTimeout(()=>btn.textContent = prev, 800);
+    }
+  }catch{
+    alert("コピーに失敗しました。手動で選択してコピーしてください。");
+  }
 }
 
 /* ===== state ===== */
@@ -424,7 +470,7 @@ function render(){
   const q = ($("q").value || "").trim().toLowerCase();
   if(q){
     rooms = rooms.filter(r=>{
-      const hay = `${r.id} ${r.creatorName||""} ${r.comment||""}`.toLowerCase();
+      const hay = `${r.id || ""} ${r.creatorName||""} ${r.comment||""}`.toLowerCase();
       return hay.includes(q);
     });
   }
@@ -462,11 +508,17 @@ function render(){
     const timeRange = `${safeTsLabel(r.eventAt)} 〜 ${endAtText}`;
 
     const isMine = (currentUid && r.creatorUid === currentUid);
+    const roomId = r.id || "";
 
     return `
       <div class="card ${isMine ? "mine" : ""}">
         <div class="top">
-          <div class="id">${escapeHtml(r.id||"") || "—"} ${isMine ? `<span class="small" style="margin-left:8px; font-weight:1000; color:#2b4a62">あなたの部屋</span>` : ""}</div>
+          <div class="id">
+            <span>部屋ID：</span>
+            <span class="kbd">${escapeHtml(roomId) || "—"}</span>
+            <button class="copy" type="button" data-act="copyId" data-id="${escapeAttr(roomId)}">コピー</button>
+            ${isMine ? `<span class="small" style="margin-left:4px; font-weight:1000; color:#2b4a62">あなたの部屋</span>` : ""}
+          </div>
           <div class="status ${statusClass}">${statusText}</div>
         </div>
 
@@ -482,13 +534,13 @@ function render(){
         <div class="comment ${isMine ? "blue" : ""}">${escapeHtml(comment)}</div>
 
         <div class="actions">
-          ${closed ? "" : `<button class="smallbtn join" data-act="joinFlow" data-id="${escapeHtml(r.id||"")}">参加する</button>`}
-          <a class="smallbtn ask" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id||"")}&ask=1">質問する</a>
-          <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(r.id||"")}">チャットを見る</a>
+          ${closed ? "" : `<button class="smallbtn join" data-act="joinFlow" data-id="${escapeAttr(roomId)}">参加する</button>`}
+          <a class="smallbtn ask" href="mahjong-room-chat.html?id=${encodeURIComponent(roomId)}&ask=1">質問する</a>
+          <a class="smallbtn" href="mahjong-room-chat.html?id=${encodeURIComponent(roomId)}">チャットを見る</a>
 
-          <button class="smallbtn" data-act="cancel" data-id="${escapeHtml(r.id||"")}">キャンセル（-1）</button>
-          ${isMine ? `<button class="smallbtn" data-act="edit" data-id="${escapeHtml(r.id||"")}">編集</button>` : ""}
-          ${isMine ? `<button class="smallbtn danger" data-act="deleteKey" data-id="${escapeHtml(r.id||"")}">削除（キー）</button>` : ""}
+          <button class="smallbtn" data-act="cancel" data-id="${escapeAttr(roomId)}">キャンセル（-1）</button>
+          ${isMine ? `<button class="smallbtn" data-act="edit" data-id="${escapeAttr(roomId)}">編集</button>` : ""}
+          ${isMine ? `<button class="smallbtn danger" data-act="deleteKey" data-id="${escapeAttr(roomId)}">削除（キー）</button>` : ""}
         </div>
 
         <div class="small">※質問は「質問する」から。参加表明は「参加する」からお願いします。</div>
@@ -682,7 +734,12 @@ list.addEventListener("click", async (ev)=>{
   const btn = ev.target.closest("[data-act]");
   if(!btn) return;
   const act = btn.dataset.act;
-  const roomId = btn.dataset.id;
+  const roomId = btn.dataset.id || "";
+
+  if(act==="copyId"){
+    if(roomId) await copyText(roomId, btn);
+    return;
+  }
 
   if(act==="joinFlow"){
     openJoinNameModal(roomId);
@@ -733,12 +790,21 @@ $("delKey").addEventListener("keydown", (e)=>{
   }
 });
 
-/* realtime */
-const qRooms = query(collection(db, "rooms"), orderBy("eventAt", "asc"));
-onSnapshot(qRooms, (snap)=>{
-  latestRooms = snap.docs.map(d=>d.data());
-  render();
-});
+/* realtime (auth完了後に開始) */
+function startRoomsListener(){
+  const qRooms = query(collection(db, "rooms"), orderBy("eventAt", "asc"));
+  unsubscribeRooms = onSnapshot(qRooms, (snap)=>{
+    // ★最重要：必ず doc.id を r.id として持つ
+    latestRooms = snap.docs.map(d=>{
+      const data = d.data() || {};
+      return { ...data, id: d.id };
+    });
+    render();
+  }, (err)=>{
+    console.error(err);
+    list.innerHTML = `<div class="empty">読み込みに失敗しました。<br><span class="small">Firestore ルール（read）/ 認証状態をご確認ください。</span></div>`;
+  });
+}
 </script>
 </body>
 </html>
