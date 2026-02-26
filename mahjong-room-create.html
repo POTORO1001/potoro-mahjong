@@ -46,6 +46,7 @@ textarea{min-height:88px;resize:vertical}
     <div class="field">
       <label>開催日時（開始時刻）</label>
       <input id="eventAt" type="datetime-local" />
+      <div class="small">※過去日時は作成できません</div>
     </div>
 
     <div class="field">
@@ -70,6 +71,7 @@ textarea{min-height:88px;resize:vertical}
         <option value="2">2名</option>
         <option value="3">3名</option>
       </select>
+      <div class="small" id="slotsHint">三打ち：2名 / 四打ち：3名（目安）</div>
     </div>
   </div>
 
@@ -79,6 +81,7 @@ textarea{min-height:88px;resize:vertical}
       <label><input type="radio" name="rule" value="三打ち">三打ち</label>
       <label><input type="radio" name="rule" value="四打ち">四打ち</label>
     </div>
+    <div class="small">※ルール選択で募集人数のおすすめが自動で入ります（変更も可能）</div>
   </div>
 
   <!-- ★追加：削除キー -->
@@ -175,35 +178,6 @@ signInAnonymously(auth).catch((e)=>{
   alert(`Firebase認証に失敗: ${e.code}\n${e.message}`);
 });
 
-// ===== 利用時間セレクト（2時間〜5時間 / 30分刻み） =====
-const durationSelect = document.getElementById("durationSelect");
-function formatDuration(minutes){
-  const h = Math.floor(minutes/60);
-  const m = minutes%60;
-  return m === 0 ? `${h}時間` : `${h}時間30分`;
-}
-// 2h(120)〜5h(300)を30分刻み
-for(let minutes = 120; minutes <= 300; minutes += 30){
-  const opt = document.createElement("option");
-  opt.value = String(minutes);
-  opt.textContent = formatDuration(minutes);
-  durationSelect.appendChild(opt);
-}
-// 既定値：2時間
-durationSelect.value = "120";
-
-function pad(n){ return String(n).padStart(2,"0"); }
-function generateRoomId(eventAtISO){
-  const d = new Date(eventAtISO);
-  const yy = String(d.getFullYear()).slice(-2);
-  const mm = pad(d.getMonth()+1);
-  const dd = pad(d.getDate());
-  const hh = pad(d.getHours());
-  const mi = pad(d.getMinutes());
-  const rnd = Math.random().toString(16).slice(2,6).toUpperCase();
-  return `RM-${yy}${mm}${dd}-${hh}${mi}-${rnd}`;
-}
-
 const $ = (id)=>document.getElementById(id);
 
 function showOk(html){
@@ -220,6 +194,93 @@ function showNg(html){
 function is4DigitNumber(s){
   return /^\d{4}$/.test(String(s || "").trim());
 }
+
+// ===== 4桁入力のUX：数字以外を除外 =====
+function enforce4DigitNumeric(el){
+  el.addEventListener("input", ()=>{
+    const v = (el.value || "").replace(/\D/g,"").slice(0,4);
+    el.value = v;
+  });
+}
+enforce4DigitNumeric($("deleteKey"));
+enforce4DigitNumeric($("delKey"));
+
+// ===== 利用時間セレクト（2時間〜5時間 / 30分刻み） =====
+const durationSelect = $("durationSelect");
+function formatDuration(minutes){
+  const h = Math.floor(minutes/60);
+  const m = minutes%60;
+  return m === 0 ? `${h}時間` : `${h}時間30分`;
+}
+for(let minutes = 120; minutes <= 300; minutes += 30){
+  const opt = document.createElement("option");
+  opt.value = String(minutes);
+  opt.textContent = formatDuration(minutes);
+  durationSelect.appendChild(opt);
+}
+durationSelect.value = "120";
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function generateRoomId(eventAtISO){
+  const d = new Date(eventAtISO);
+  const yy = String(d.getFullYear()).slice(-2);
+  const mm = pad(d.getMonth()+1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  const rnd = Math.random().toString(16).slice(2,6).toUpperCase();
+  return `RM-${yy}${mm}${dd}-${hh}${mi}-${rnd}`;
+}
+
+// ===== ルール選択で募集人数をおすすめ自動入力 =====
+// （募集人数＝「作成者以外に必要な人数」の想定）
+// 三打ち → 2名 / 四打ち → 3名
+function applySlotsSuggestion(){
+  const ruleEl = document.querySelector('input[name="rule"]:checked');
+  if(!ruleEl) return;
+  const suggested = ruleEl.value === "三打ち" ? "2" : "3";
+
+  // まだ未選択なら自動入力（ユーザーが既に選んでいたら尊重）
+  if(!$("slotsTotal").value){
+    $("slotsTotal").value = suggested;
+  }
+  $("slotsHint").textContent = `おすすめ：${ruleEl.value}なら ${suggested}名（必要人数の目安）`;
+}
+document.querySelectorAll('input[name="rule"]').forEach(r=>{
+  r.addEventListener("change", applySlotsSuggestion);
+});
+
+// ===== 締切の入力補助：開催日時が入ったら未入力時に30分前をセット =====
+function toLocalInputValue(d){
+  // datetime-local 用: YYYY-MM-DDTHH:MM
+  const yyyy = d.getFullYear();
+  const mm = pad(d.getMonth()+1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+}
+$("eventAt").addEventListener("change", ()=>{
+  const v = $("eventAt").value;
+  if(!v) return;
+
+  // 過去を避ける（作成時にもチェックするが、入力時点でも軽く案内）
+  const eventDate = new Date(v);
+  const now = new Date();
+  if(eventDate.getTime() < now.getTime() - 60*1000){
+    // 1分の猶予
+    showNg(`<b>開催日時が過去です</b><br>未来の日時を選択してください。`);
+  }else{
+    // NG表示が出ていたら消す（作業中に邪魔になりがちなので）
+    $("ng").style.display = "none";
+  }
+
+  // 締切が空なら30分前を自動セット
+  if(!$("deadlineAt").value){
+    const dl = new Date(eventDate.getTime() - 30*60000);
+    $("deadlineAt").value = toLocalInputValue(dl);
+  }
+});
 
 // ===== 4桁削除キーは「ハッシュ」で保存（キー自体は保存しない） =====
 async function sha256Hex(text){
@@ -238,14 +299,14 @@ window.createRoom = async function(){
   const eventAtLocal = $("eventAt").value;
   const durationMinutes = Number(durationSelect.value);
   const deadlineAtLocalInput = $("deadlineAt").value;
-  const slotsTotal = Number($("slotsTotal").value);
+  const slotsTotalStr = $("slotsTotal").value;
+  const slotsTotal = Number(slotsTotalStr);
   const ruleEl = document.querySelector('input[name="rule"]:checked');
   const comment = ($("comment").value || "").trim();
 
-  // ★削除キー
   const deleteKey = $("deleteKey").value.trim();
 
-  if(!creatorName || !eventAtLocal || !durationMinutes || !slotsTotal || !ruleEl){
+  if(!creatorName || !eventAtLocal || !durationMinutes || !slotsTotalStr || !ruleEl){
     alert("未入力の項目があります。");
     return;
   }
@@ -255,11 +316,16 @@ window.createRoom = async function(){
   }
 
   const eventDate = new Date(eventAtLocal);
+  const now = new Date();
+  if(eventDate.getTime() < now.getTime() - 60*1000){
+    alert("開催日時が過去です。未来の日時を選択してください。");
+    return;
+  }
+
   const endDate = new Date(eventDate.getTime() + durationMinutes * 60000);
 
-  // 締切：未入力なら開催30分前
+  // 締切：未入力なら開催30分前（入力補助はあるが、最終的にも担保）
   let deadlineDate = deadlineAtLocalInput ? new Date(deadlineAtLocalInput) : new Date(eventDate.getTime() - 30*60000);
-  // 締切が開催より後なら開催に丸め
   if(deadlineDate > eventDate) deadlineDate = new Date(eventDate);
 
   const roomId = generateRoomId(eventAtLocal);
@@ -269,25 +335,21 @@ window.createRoom = async function(){
 
     await setDoc(doc(db,"rooms",roomId),{
       id: roomId,
-      creatorUid: currentUid,         // 参考用（キー削除があるので必須ではない）
+      creatorUid: currentUid,
       creatorName,
       eventAt: Timestamp.fromDate(eventDate),
       endAt: Timestamp.fromDate(endDate),
-      durationMinutes,                // 2〜5時間を30分刻み（分で保存）
+      durationMinutes,
       deadlineAt: Timestamp.fromDate(deadlineDate),
       slotsTotal,
       joinedCount: 0,
       rule: ruleEl.value,
       comment: comment.slice(0,140),
       closed: false,
-
-      // ★追加：削除キー（ハッシュ）
       deleteKeyHash,
-
       createdAt: serverTimestamp()
     });
 
-    // ここで削除キーは「今だけ」表示（控えてもらう）
     showOk(`
       <b>部屋を作成しました！</b><br><br>
       部屋ID：<b>${roomId}</b><br>
@@ -359,7 +421,6 @@ window.createRoom = async function(){
       </div>
     `);
 
-    // 削除欄に部屋IDを自動反映（便利）
     $("delRoomId").value = roomId;
     $("delKey").value = "";
     $("deleteKey").value = "";
@@ -375,7 +436,7 @@ window.createRoom = async function(){
 window.deleteRoomInline = async function(roomId){
   try{
     const key = prompt("削除キー（4桁）を入力してください：");
-    if(key === null) return; // キャンセル
+    if(key === null) return;
     if(!is4DigitNumber(key)){
       alert("削除キーは4桁の数字です。");
       return;
@@ -448,6 +509,9 @@ async function deleteRoomWithKey(roomId, deleteKey){
 
 // 文字数
 $("comment").addEventListener("input", ()=>{ $("count").textContent = String($("comment").value.length); });
+
+// 初期表示：ルール→募集人数のおすすめ反映（既に選択されていれば）
+applySlotsSuggestion();
 </script>
 </body>
 </html>
