@@ -266,11 +266,11 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 }
 .seg input{ transform:scale(1.05); }
 
-/* disabled 表現 */
 .is-disabled{
   opacity:.55;
   filter:grayscale(.05);
 }
+
 footer{
   text-align:center;
   color:var(--muted);
@@ -304,7 +304,6 @@ footer{
     <div class="sim">
       <p class="price" style="margin:0 0 8px;">💰 料金シミュレーター</p>
 
-      <!-- 同卓オプション -->
       <div class="field" style="margin-bottom:10px;">
         <label>同卓オプション</label>
         <div class="seg" role="radiogroup" aria-label="同卓オプション">
@@ -317,11 +316,10 @@ footer{
             うま利用（19:00〜21:00・同卓料なし）
           </label>
         </div>
-        <div class="mini">※うま利用中は同卓料が発生しません（メイド同卓人数は0固定）</div>
+        <div class="mini">※うま利用中は同卓料が発生しません（メイド同卓人数は0名固定）</div>
       </div>
 
       <div class="sim-grid">
-        <!-- ご主人様の人数（select） -->
         <div class="field">
           <label for="guests">ご主人様の人数</label>
           <select id="guests" aria-describedby="guestsHelp">
@@ -521,7 +519,6 @@ footer{
     const mode = getMode();
     const isUma = (mode === "uma");
 
-    // うま利用時はメイド同卓人数を0固定＆入力不可
     if(isUma){
       maidsEl.value = "0";
       maidsEl.setAttribute("disabled","disabled");
@@ -553,7 +550,6 @@ footer{
       warnEl.style.display = "block";
     }
 
-    // うま利用は同卓料なし（メイド人数=0）
     if(isUma) maids = 0;
 
     if(!Number.isFinite(maids) || maids < 0) maids = 0;
@@ -574,8 +570,6 @@ footer{
 
     const tableFee  = (minutes >= TABLE_FREE_MIN) ? 0 : TABLE_FEE;
     const guestsFee = RATE_PER_30_GUEST * slots * guests;
-
-    // ★ うま利用は同卓料なし
     const maidsFee  = isUma ? 0 : (RATE_PER_30_MAID * slots * maids);
 
     const total = tableFee + guestsFee + maidsFee;
@@ -598,14 +592,12 @@ footer{
 
     setPressedPresetFromMinutes(minutes);
 
-    // 割り勘（ご主人様のみ）
     const per = Math.ceil(total / guests);
     perGuestEl.textContent = yen(per);
     perGuestNoteEl.textContent = `（ご主人様${guests}名で割る）`;
   }
 
   function reset(){
-    // 初期値：メイド同卓1名 / 120分 / ご主人様3名
     partnerRadios.forEach(r=>r.checked = (r.value === "maid"));
     guestsEl.value = "3";
     maidsEl.value = "1";
