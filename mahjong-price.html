@@ -15,7 +15,12 @@
   --border:#ffd6e7;
   --grad1:#f6b7d2;
   --grad2:#a9d6f7;
+
+  --uma:#10b981;          /* うま用アクセント */
+  --umaSoft:#e9fbf3;      /* うま用背景 */
+  --umaBorder:rgba(16,185,129,.35);
 }
+
 *{box-sizing:border-box;}
 body{
   margin:0;
@@ -247,28 +252,25 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   font-weight:800;
 }
 
-/* 同卓オプション（ラジオ） */
-.seg{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+/* ===== うま視認性UP（確実に効く方式：field自体を強調） ===== */
+.uma-on{
+  background:var(--umaSoft) !important;
+  border:2px solid var(--umaBorder) !important;
 }
-.seg label{
-  display:flex;
-  gap:8px;
+.uma-badge{
+  display:inline-flex;
   align-items:center;
-  padding:10px 12px;
+  gap:8px;
+  margin-top:8px;
+  padding:8px 10px;
   border-radius:999px;
-  border:1px solid rgba(222,63,123,.22);
-  background:#fff7fb;
   font-weight:900;
-  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,#34d399,#10b981);
 }
-.seg input{ transform:scale(1.05); }
-
-.is-disabled{
-  opacity:.55;
-  filter:grayscale(.05);
+.uma-badge small{
+  font-weight:800;
+  opacity:.95;
 }
 
 footer{
@@ -304,21 +306,6 @@ footer{
     <div class="sim">
       <p class="price" style="margin:0 0 8px;">💰 料金シミュレーター</p>
 
-      <div class="field" style="margin-bottom:10px;">
-        <label>同卓オプション</label>
-        <div class="seg" role="radiogroup" aria-label="同卓オプション">
-          <label>
-            <input type="radio" name="partnerMode" value="maid" checked>
-            メイド同卓
-          </label>
-          <label>
-            <input type="radio" name="partnerMode" value="uma">
-            うま利用（19:00〜21:00・同卓料なし）
-          </label>
-        </div>
-        <div class="mini">※うま利用中は同卓料が発生しません（メイド同卓人数は0名固定）</div>
-      </div>
-
       <div class="sim-grid">
         <div class="field">
           <label for="guests">ご主人様の人数</label>
@@ -341,8 +328,14 @@ footer{
             <option value="0">0名（同卓なし）</option>
             <option value="1" selected>1名</option>
             <option value="2">2名（最大）</option>
+            <option value="uma">🐴 うま（同卓料なし・19:00〜21:00）</option>
           </select>
-          <div class="mini" id="maidsHelp">同卓は最大2名まで（うま利用中は0名固定）</div>
+          <div class="mini" id="maidsHelp">同卓は最大2名まで／うまは19:00〜21:00限定（同卓料なし）</div>
+
+          <!-- うま選択時のみ表示するバッジ -->
+          <div class="uma-badge" id="umaBadge" style="display:none;">
+            🐴 うま選択中 <small>（同卓料なし・19:00〜21:00）</small>
+          </div>
         </div>
 
         <div class="field">
@@ -388,12 +381,13 @@ footer{
       <div class="mini" style="margin-top:8px;">
         <b>計算ルール：</b>
         卓代 2,000円（初回のみ）／3時間以上で卓代無料／ご主人様 30分1,000円/人／
-        <span id="maidRuleText">メイド同卓 30分1,000円/人（最大2名）</span>／30分単位で切り上げ
+        メイド同卓 30分1,000円/人（最大2名）／うま選択時は同卓料なし（19:00〜21:00）
+        ／30分単位で切り上げ
       </div>
     </div>
 
     <p class="note" style="margin-top:10px;">
-      ※うま利用（19:00〜21:00）は「同卓料なし」で計算されます。<br>
+      ※「🐴うま（同卓料なし）」は 19:00〜21:00 限定です。<br>
       ※21:00以降に継続する場合は、同卓料が発生しメイドさんへバトンタッチできます。
     </p>
   </section>
@@ -481,6 +475,8 @@ footer{
   const TABLE_FREE_MIN    = 180;
   const MAID_MAX          = 2;
 
+  const UMA_WARNING = "🐴うま は 19:00〜21:00 限定です。";
+
   const $ = (id)=>document.getElementById(id);
 
   const guestsEl = $("guests");
@@ -496,17 +492,12 @@ footer{
   const perGuestNoteEl = $("perGuestNote");
 
   const presetButtons = Array.from(document.querySelectorAll(".pbtn"));
-  const partnerRadios = Array.from(document.querySelectorAll('input[name="partnerMode"]'));
 
   const maidsField = $("maidsField");
-  const maidRuleText = $("maidRuleText");
+  const umaBadge = $("umaBadge");
 
   function yen(n){ return n.toLocaleString("ja-JP") + "円"; }
   function ceilTo30(min){ return Math.ceil(min / 30) * 30; }
-
-  function getMode(){
-    return partnerRadios.find(r=>r.checked)?.value || "maid";
-  }
 
   function setPressedPresetFromMinutes(min){
     presetButtons.forEach(btn=>{
@@ -515,19 +506,26 @@ footer{
     });
   }
 
-  function applyModeUI(){
-    const mode = getMode();
-    const isUma = (mode === "uma");
-
-    if(isUma){
-      maidsEl.value = "0";
-      maidsEl.setAttribute("disabled","disabled");
-      maidsField.classList.add("is-disabled");
-      maidRuleText.textContent = "うま利用中は同卓料なし（メイド同卓は0名固定）";
+  function showWarn(msg){
+    if(!msg) return;
+    if(warnEl.style.display === "block" && warnEl.textContent){
+      // 重複を避ける
+      if(!warnEl.textContent.includes(msg)){
+        warnEl.textContent = warnEl.textContent + " " + msg;
+      }
     }else{
-      maidsEl.removeAttribute("disabled");
-      maidsField.classList.remove("is-disabled");
-      maidRuleText.textContent = "メイド同卓 30分1,000円/人（最大2名）";
+      warnEl.textContent = msg;
+      warnEl.style.display = "block";
+    }
+  }
+
+  function applyUmaUI(isUma){
+    if(isUma){
+      maidsField.classList.add("uma-on");
+      umaBadge.style.display = "inline-flex";
+    }else{
+      maidsField.classList.remove("uma-on");
+      umaBadge.style.display = "none";
     }
   }
 
@@ -535,34 +533,35 @@ footer{
     warnEl.style.display = "none";
     warnEl.textContent = "";
 
-    applyModeUI();
-
-    const mode = getMode();
-    const isUma = (mode === "uma");
-
     let guests = Number(guestsEl.value);
-    let maids  = Number(maidsEl.value);
+    const maidsRaw = maidsEl.value; // "0"/"1"/"2"/"uma"
+    const isUma = (maidsRaw === "uma");
+
+    applyUmaUI(isUma);
+
+    // ★ うま選択時は見落とし防止で必ず警告表示
+    if(isUma) showWarn(UMA_WARNING);
+
+    let maids = isUma ? 0 : Number(maidsRaw);
     let minutes= Number(minutesEl.value);
 
     if(!Number.isFinite(guests) || guests < 1){
       guests = 1; guestsEl.value = "1";
-      warnEl.textContent = "ご主人様人数は1名以上で選択してください。";
-      warnEl.style.display = "block";
+      showWarn("ご主人様人数は1名以上で選択してください。");
     }
 
-    if(isUma) maids = 0;
-
-    if(!Number.isFinite(maids) || maids < 0) maids = 0;
-    if(maids > MAID_MAX){
-      maids = MAID_MAX;
-      maidsEl.value = String(MAID_MAX);
-      warnEl.textContent = "メイドさん同卓は最大2名までです。2名に補正しました。";
-      warnEl.style.display = "block";
+    if(!isUma){
+      if(!Number.isFinite(maids) || maids < 0) maids = 0;
+      if(maids > MAID_MAX){
+        maids = MAID_MAX;
+        maidsEl.value = String(MAID_MAX);
+        showWarn("メイドさん同卓は最大2名までです。2名に補正しました。");
+      }
     }
+
     if(!Number.isFinite(minutes) || minutes < 30){
       minutes = 30; minutesEl.value = 30;
-      warnEl.textContent = "ご利用時間は30分以上で入力してください。";
-      warnEl.style.display = "block";
+      showWarn("ご利用時間は30分以上で入力してください。");
     }
 
     const billedMinutes = ceilTo30(minutes);
@@ -570,6 +569,8 @@ footer{
 
     const tableFee  = (minutes >= TABLE_FREE_MIN) ? 0 : TABLE_FEE;
     const guestsFee = RATE_PER_30_GUEST * slots * guests;
+
+    // ★ うま選択時は同卓料なし
     const maidsFee  = isUma ? 0 : (RATE_PER_30_MAID * slots * maids);
 
     const total = tableFee + guestsFee + maidsFee;
@@ -583,24 +584,20 @@ footer{
 
     if(minutes < TABLE_FREE_MIN){
       const remain = TABLE_FREE_MIN - minutes;
-      const msg = `あと${remain}分で「3時間以上」になり、卓代が無料になります。`;
-      warnEl.textContent = warnEl.style.display === "block"
-        ? (warnEl.textContent + " " + msg)
-        : msg;
-      warnEl.style.display = "block";
+      showWarn(`あと${remain}分で「3時間以上」になり、卓代が無料になります。`);
     }
 
     setPressedPresetFromMinutes(minutes);
 
+    // 割り勘（ご主人様のみ）
     const per = Math.ceil(total / guests);
     perGuestEl.textContent = yen(per);
     perGuestNoteEl.textContent = `（ご主人様${guests}名で割る）`;
   }
 
   function reset(){
-    partnerRadios.forEach(r=>r.checked = (r.value === "maid"));
     guestsEl.value = "3";
-    maidsEl.value = "1";
+    maidsEl.value = "1";      // 初期はメイド1名
     minutesEl.value = 120;
 
     totalEl.textContent = "—";
@@ -631,10 +628,6 @@ footer{
   [guestsEl, maidsEl, minutesEl].forEach(el=>{
     el.addEventListener("input", calc);
     el.addEventListener("change", calc);
-  });
-
-  partnerRadios.forEach(r=>{
-    r.addEventListener("change", calc);
   });
 
   setPressedPresetFromMinutes(Number(minutesEl.value));
