@@ -7,11 +7,10 @@
 <meta name="description" content="ポ・トロ新サービス。全自動麻雀卓でメイドさんと楽しむ健全麻雀。ご利用方法・料金・点数表・対局ルール・採用役一覧を掲載。">
 <style>
 :root{
-  /* 読みやすさ重視：背景を少し落ち着かせ、文字コントラストを上げる */
-  --bg:#fbf7fa;            /* 旧:#fff6fb */
+  --bg:#fbf7fa;
   --card:#ffffff;
-  --text:#2f2622;          /* 旧:#3b2f2a（少し濃く） */
-  --muted:#5f5f5f;         /* 旧:#6b6b6b */
+  --text:#2f2622;
+  --muted:#5f5f5f;
   --accent:#de3f7b;
   --border:#ffd6e7;
   --grad1:#f6b7d2;
@@ -21,11 +20,10 @@
 *{box-sizing:border-box;}
 body{
   margin:0;
-  /* 本文可読性：Noto Sans JPを先頭に */
   font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",system-ui,-apple-system,Segoe UI,sans-serif;
   background:var(--bg);
   color:var(--text);
-  line-height:1.85; /* 少しゆったり */
+  line-height:1.85;
 }
 
 header{
@@ -51,8 +49,7 @@ header h1{
 header p{margin:0; font-weight:700; opacity:.98;}
 
 main{
-  /* 長文の読みやすさ：横幅を少し狭める */
-  max-width:860px; /* 旧:980px */
+  max-width:860px;
   margin:0 auto;
   padding:14px 12px 26px;
 }
@@ -61,9 +58,9 @@ section{
   background:rgba(255,255,255,.92);
   border:1px solid var(--border);
   border-radius:16px;
-  padding:22px 18px; /* 余白増で読みやすく */
+  padding:22px 18px;
   margin:12px 0;
-  box-shadow:0 10px 22px rgba(0,0,0,.05); /* うっすら影 */
+  box-shadow:0 10px 22px rgba(0,0,0,.05);
 }
 
 h2{
@@ -73,7 +70,7 @@ h2{
   font-weight:900;
   letter-spacing:.01em;
   padding-bottom:8px;
-  border-bottom:1px dashed rgba(222,63,123,.25); /* 視線誘導 */
+  border-bottom:1px dashed rgba(222,63,123,.25);
 }
 
 p{margin:0 0 10px;}
@@ -109,9 +106,7 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   padding:12px;
   background:#fffafc;
 }
-.price{
-  font-weight:900;
-}
+.price{ font-weight:900; }
 
 .example{
   margin-top:10px;
@@ -155,7 +150,6 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   will-change:transform;
 }
 
-/* 共通ホバー効果（統一） */
 .score-link:hover,
 .rules-link:hover,
 .yaku-link:hover,
@@ -172,7 +166,6 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   box-shadow:0 8px 18px rgba(0,0,0,.12);
 }
 
-/* ほんのり光るスイープ（ホバー時） */
 .score-link::after,
 .rules-link::after,
 .yaku-link::after,
@@ -183,12 +176,7 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   left:-75%;
   width:50%;
   height:100%;
-  background:linear-gradient(
-    120deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,.38) 50%,
-    rgba(255,255,255,0) 100%
-  );
+  background:linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.38) 50%, rgba(255,255,255,0) 100%);
   transform:skewX(-25deg);
   pointer-events:none;
 }
@@ -198,29 +186,12 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 .match-link:hover::after{
   animation:shine .85s forwards;
 }
-@keyframes shine{
-  100%{left:125%;}
-}
+@keyframes shine{ 100%{left:125%;} }
 
-/* 🟣 点数計算 */
-.score-link{
-  background:linear-gradient(135deg,#c084fc,#a855f7);
-}
-
-/* 🔵 ルール系 */
-.rules-link{
-  background:linear-gradient(135deg,#60a5fa,#38bdf8);
-}
-
-/* 🧾 採用役 */
-.yaku-link{
-  background:linear-gradient(135deg,#94a3b8,#64748b);
-}
-
-/* 🟢 面子募集 */
-.match-link{
-  background:linear-gradient(135deg,#34d399,#10b981);
-}
+.score-link{ background:linear-gradient(135deg,#c084fc,#a855f7); }
+.rules-link{ background:linear-gradient(135deg,#60a5fa,#38bdf8); }
+.yaku-link{ background:linear-gradient(135deg,#94a3b8,#64748b); }
+.match-link{ background:linear-gradient(135deg,#34d399,#10b981); }
 
 .cta{
   display:block;
@@ -255,6 +226,100 @@ footer{
   color:var(--muted);
   font-size:.86rem;
   padding:18px 10px 26px;
+}
+
+/* ===== 料金シミュレーター ===== */
+.sim{
+  background:#ffffff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px 14px 12px;
+}
+.sim-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+}
+@media (max-width:720px){
+  .sim-grid{ grid-template-columns:1fr; }
+}
+.field{
+  background:#fffafc;
+  border:1px dashed var(--border);
+  border-radius:14px;
+  padding:10px;
+}
+.field label{
+  display:block;
+  font-weight:900;
+  margin-bottom:6px;
+}
+.field input, .field select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #f1c2d7;
+  font-size:16px;
+  outline:none;
+  background:#fff;
+}
+.field input:focus, .field select:focus{
+  border-color:rgba(222,63,123,.55);
+  box-shadow:0 0 0 4px rgba(222,63,123,.12);
+}
+
+.sim-actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.btn{
+  border:0;
+  cursor:pointer;
+  padding:12px 14px;
+  border-radius:14px;
+  font-weight:900;
+  color:#fff;
+  background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn:hover{ transform:translateY(-2px); box-shadow:0 10px 18px rgba(0,0,0,.12); filter:saturate(1.05) brightness(1.02); }
+.btn:active{ transform:translateY(-1px); box-shadow:0 8px 14px rgba(0,0,0,.10); }
+
+.btn.secondary{
+  background:linear-gradient(135deg,#94a3b8,#64748b);
+}
+
+.result{
+  margin-top:12px;
+  padding:12px;
+  border-radius:14px;
+  background:#fff7fb;
+  border-left:4px solid var(--accent);
+}
+.result .total{
+  font-size:1.2rem;
+  font-weight:900;
+}
+.mini{
+  color:var(--muted);
+  font-size:.92rem;
+  margin-top:6px;
+}
+.breakdown{
+  margin-top:8px;
+  font-size:.98rem;
+}
+.breakdown b{ font-weight:900; }
+.warn{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:#fff3f6;
+  border:1px solid rgba(222,63,123,.25);
+  color:#7a2a43;
+  font-weight:800;
 }
 </style>
 </head>
@@ -299,7 +364,54 @@ footer{
 
   <section>
     <h2>料金案内</h2>
-    <div class="pricebox">
+
+    <!-- ★ 料金シミュレーター（追加） -->
+    <div class="sim" id="simulator">
+      <p class="price" style="margin:0 0 8px;">💰 料金シミュレーター（入力すると自動計算）</p>
+
+      <div class="sim-grid">
+        <div class="field">
+          <label for="guests">ご主人様の人数</label>
+          <input id="guests" type="number" inputmode="numeric" min="1" max="12" step="1" value="3" aria-describedby="guestsHelp">
+          <div class="mini" id="guestsHelp">1人以上で入力（例：3）</div>
+        </div>
+
+        <div class="field">
+          <label for="maids">メイドさんの人数</label>
+          <select id="maids" aria-describedby="maidsHelp">
+            <option value="0">0名（同卓なし）</option>
+            <option value="1" selected>1名</option>
+            <option value="2">2名（最大）</option>
+          </select>
+          <div class="mini" id="maidsHelp">同卓は最大2名まで</div>
+        </div>
+
+        <div class="field">
+          <label for="minutes">ご利用時間（分）</label>
+          <input id="minutes" type="number" inputmode="numeric" min="30" max="720" step="10" value="120" aria-describedby="minutesHelp">
+          <div class="mini" id="minutesHelp">30分以上。30分単位で切り上げ計算</div>
+        </div>
+      </div>
+
+      <div class="sim-actions">
+        <button class="btn" type="button" id="calcBtn">計算する</button>
+        <button class="btn secondary" type="button" id="resetBtn">リセット</button>
+      </div>
+
+      <div class="result" aria-live="polite">
+        <div class="total">合計：<span id="total">—</span></div>
+        <div class="mini" id="meta">—</div>
+        <div class="breakdown" id="breakdown"></div>
+        <div class="warn" id="warn" style="display:none;"></div>
+      </div>
+
+      <div class="mini" style="margin-top:8px;">
+        <b>計算ルール：</b>卓代 2,000円（初回のみ）／3時間以上で卓代無料／ご主人様 30分1,000円/人／メイド同卓 30分1,000円/人（最大2名）／30分単位で切り上げ
+      </div>
+    </div>
+    <!-- ★ ここまで -->
+
+    <div class="pricebox" style="margin-top:14px;">
       <p class="price">■ 初回ご利用：120分〜</p>
       <p class="price">■ ご延長：30分〜（30分単位）</p>
       <p class="note">※表示はすべて税込です。</p>
@@ -352,7 +464,6 @@ footer{
     </ul>
   </section>
 
-  <!-- 予約導線：公式XのDMリンクに差し替え推奨 -->
   <a class="cta" href="https://twitter.com/messages/compose?recipient_id=1161961177749999617">
     XのDMで予約する
     <small>（前日までにご予約ください）</small>
@@ -363,6 +474,111 @@ footer{
 <footer>
   concept cafe PO・TORO
 </footer>
+
+<script>
+(function(){
+  // === 料金設定（改定版） ===
+  const RATE_PER_30_GUEST = 1000;   // ご主人様 30分/人
+  const RATE_PER_30_MAID  = 1000;   // メイド同卓 30分/人
+  const TABLE_FEE         = 2000;   // 卓代（初回のみ）
+  const TABLE_FREE_MIN    = 180;    // 3時間以上で卓代無料
+  const MAID_MAX          = 2;
+
+  const $ = (id)=>document.getElementById(id);
+  const guestsEl = $("guests");
+  const maidsEl  = $("maids");
+  const minutesEl= $("minutes");
+  const totalEl  = $("total");
+  const metaEl   = $("meta");
+  const breakdownEl = $("breakdown");
+  const warnEl   = $("warn");
+
+  function yen(n){
+    return n.toLocaleString("ja-JP") + "円";
+  }
+  function ceilTo30(min){
+    return Math.ceil(min / 30) * 30;
+  }
+
+  function calc(){
+    warnEl.style.display = "none";
+    warnEl.textContent = "";
+
+    let guests = Number(guestsEl.value);
+    let maids  = Number(maidsEl.value);
+    let minutes= Number(minutesEl.value);
+
+    // バリデーション
+    if(!Number.isFinite(guests) || guests < 1){
+      guests = 1; guestsEl.value = 1;
+      warnEl.textContent = "ご主人様人数は1名以上で入力してください。";
+      warnEl.style.display = "block";
+    }
+    if(!Number.isFinite(maids) || maids < 0) maids = 0;
+    if(maids > MAID_MAX){
+      maids = MAID_MAX;
+      maidsEl.value = String(MAID_MAX);
+      warnEl.textContent = "メイドさん同卓は最大2名までです。2名に補正しました。";
+      warnEl.style.display = "block";
+    }
+    if(!Number.isFinite(minutes) || minutes < 30){
+      minutes = 30; minutesEl.value = 30;
+      warnEl.textContent = "ご利用時間は30分以上で入力してください。";
+      warnEl.style.display = "block";
+    }
+
+    const billedMinutes = ceilTo30(minutes);
+    const slots = billedMinutes / 30;
+
+    const tableFee = (minutes >= TABLE_FREE_MIN) ? 0 : TABLE_FEE;
+    const guestsFee = RATE_PER_30_GUEST * slots * guests;
+    const maidsFee  = RATE_PER_30_MAID  * slots * maids;
+    const total = tableFee + guestsFee + maidsFee;
+
+    totalEl.textContent = yen(total);
+
+    metaEl.textContent =
+      `入力：${minutes}分 → 請求は${billedMinutes}分（30分×${slots}枠）／ご主人様${guests}名・メイド${maids}名`;
+
+    breakdownEl.innerHTML =
+      `内訳：卓代 <b>${yen(tableFee)}</b> ＋ ご主人様 <b>${yen(guestsFee)}</b> ＋ メイド同卓 <b>${yen(maidsFee)}</b>`;
+
+    // 卓代の注意喚起
+    if(minutes < TABLE_FREE_MIN){
+      const remain = TABLE_FREE_MIN - minutes;
+      const msg = `あと${remain}分で「3時間以上」になり、卓代が無料になります。`;
+      warnEl.textContent = warnEl.style.display === "block"
+        ? (warnEl.textContent + " " + msg)
+        : msg;
+      warnEl.style.display = "block";
+    }
+  }
+
+  function reset(){
+    guestsEl.value = 3;
+    maidsEl.value = 1;
+    minutesEl.value = 120;
+    totalEl.textContent = "—";
+    metaEl.textContent = "—";
+    breakdownEl.textContent = "";
+    warnEl.style.display = "none";
+    warnEl.textContent = "";
+  }
+
+  // ボタン
+  $("calcBtn").addEventListener("click", calc);
+  $("resetBtn").addEventListener("click", reset);
+
+  // 入力即時反映（体験をよくする）
+  [guestsEl, maidsEl, minutesEl].forEach(el=>{
+    el.addEventListener("input", calc);
+    el.addEventListener("change", calc);
+  });
+
+  // 初期計算
+  calc();
+})();
+</script>
 
 </body>
 </html>
