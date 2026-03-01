@@ -412,10 +412,20 @@ footer{
       <p class="price" style="margin:0 0 8px;">💰 料金シミュレーター（入力すると自動計算）</p>
 
       <div class="sim-grid">
+        <!-- ★ ご主人様の人数：select方式に変更（メイドさんと同じ作り） -->
         <div class="field">
           <label for="guests">ご主人様の人数</label>
-          <input id="guests" type="number" inputmode="numeric" min="1" max="12" step="1" value="3" aria-describedby="guestsHelp">
-          <div class="mini" id="guestsHelp">1人以上で入力（例：3）</div>
+          <select id="guests" aria-describedby="guestsHelp">
+            <option value="1">1名</option>
+            <option value="2">2名</option>
+            <option value="3" selected>3名</option>
+            <option value="4">4名</option>
+            <option value="5">5名</option>
+            <option value="6">6名</option>
+            <option value="7">7名</option>
+            <option value="8">8名</option>
+          </select>
+          <div class="mini" id="guestsHelp">プルダウンで人数を選択</div>
         </div>
 
         <div class="field">
@@ -433,7 +443,6 @@ footer{
           <input id="minutes" type="number" inputmode="numeric" min="30" max="720" step="10" value="120" aria-describedby="minutesHelp">
           <div class="mini" id="minutesHelp">30分以上。30分単位で切り上げ計算</div>
 
-          <!-- ★ 分プリセット -->
           <div class="presets" role="group" aria-label="利用時間プリセット">
             <button class="pbtn" type="button" data-min="120" aria-pressed="true">120</button>
             <button class="pbtn" type="button" data-min="150" aria-pressed="false">150</button>
@@ -457,7 +466,6 @@ footer{
         <div class="mini" id="meta">—</div>
         <div class="breakdown" id="breakdown"></div>
 
-        <!-- ★ 割り勘（ご主人様のみ） -->
         <div class="split">
           <div class="row">
             <span class="label">ご主人様 1人あたり：</span>
@@ -541,15 +549,14 @@ footer{
 
 <script>
 (function(){
-  // === 料金設定（改定版） ===
-  const RATE_PER_30_GUEST = 1000;   // ご主人様 30分/人
-  const RATE_PER_30_MAID  = 1000;   // メイド同卓 30分/人
-  const TABLE_FEE         = 2000;   // 卓代（初回のみ）
-  const TABLE_FREE_MIN    = 180;    // 3時間以上で卓代無料
+  const RATE_PER_30_GUEST = 1000;
+  const RATE_PER_30_MAID  = 1000;
+  const TABLE_FEE         = 2000;
+  const TABLE_FREE_MIN    = 180;
   const MAID_MAX          = 2;
 
   const $ = (id)=>document.getElementById(id);
-  const guestsEl = $("guests");
+  const guestsEl = $("guests");   // ← select
   const maidsEl  = $("maids");
   const minutesEl= $("minutes");
 
@@ -563,12 +570,8 @@ footer{
 
   const presetButtons = Array.from(document.querySelectorAll(".pbtn"));
 
-  function yen(n){
-    return n.toLocaleString("ja-JP") + "円";
-  }
-  function ceilTo30(min){
-    return Math.ceil(min / 30) * 30;
-  }
+  function yen(n){ return n.toLocaleString("ja-JP") + "円"; }
+  function ceilTo30(min){ return Math.ceil(min / 30) * 30; }
 
   function setPressedPresetFromMinutes(min){
     presetButtons.forEach(btn=>{
@@ -585,10 +588,9 @@ footer{
     let maids  = Number(maidsEl.value);
     let minutes= Number(minutesEl.value);
 
-    // バリデーション
     if(!Number.isFinite(guests) || guests < 1){
-      guests = 1; guestsEl.value = 1;
-      warnEl.textContent = "ご主人様人数は1名以上で入力してください。";
+      guests = 1; guestsEl.value = "1";
+      warnEl.textContent = "ご主人様人数は1名以上で選択してください。";
       warnEl.style.display = "block";
     }
     if(!Number.isFinite(maids) || maids < 0) maids = 0;
@@ -607,7 +609,7 @@ footer{
     const billedMinutes = ceilTo30(minutes);
     const slots = billedMinutes / 30;
 
-    const tableFee = (minutes >= TABLE_FREE_MIN) ? 0 : TABLE_FEE;
+    const tableFee  = (minutes >= TABLE_FREE_MIN) ? 0 : TABLE_FEE;
     const guestsFee = RATE_PER_30_GUEST * slots * guests;
     const maidsFee  = RATE_PER_30_MAID  * slots * maids;
     const total = tableFee + guestsFee + maidsFee;
@@ -619,7 +621,6 @@ footer{
     breakdownEl.innerHTML =
       `内訳：卓代 <b>${yen(tableFee)}</b> ＋ ご主人様 <b>${yen(guestsFee)}</b> ＋ メイド同卓 <b>${yen(maidsFee)}</b>`;
 
-    // 卓代の注意喚起
     if(minutes < TABLE_FREE_MIN){
       const remain = TABLE_FREE_MIN - minutes;
       const msg = `あと${remain}分で「3時間以上」になり、卓代が無料になります。`;
@@ -629,19 +630,16 @@ footer{
       warnEl.style.display = "block";
     }
 
-    // 分プリセットの押下状態（手入力でも追従）
     setPressedPresetFromMinutes(minutes);
 
-    // 割り勘（ご主人様のみ）
-    const divisor = guests;
-    const per = Math.ceil(total / divisor); // 円単位で切り上げ
+    const per = Math.ceil(total / guests);
     perGuestEl.textContent = yen(per);
-    perGuestNoteEl.textContent = `（ご主人様${divisor}名で割る）`;
+    perGuestNoteEl.textContent = `（ご主人様${guests}名で割る）`;
   }
 
   function reset(){
-    guestsEl.value = 3;
-    maidsEl.value = 1;
+    guestsEl.value = "3";
+    maidsEl.value = "1";
     minutesEl.value = 120;
 
     totalEl.textContent = "—";
@@ -660,7 +658,6 @@ footer{
   $("calcBtn").addEventListener("click", calc);
   $("resetBtn").addEventListener("click", reset);
 
-  // 分プリセット
   presetButtons.forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const v = Number(btn.dataset.min);
@@ -670,7 +667,6 @@ footer{
     });
   });
 
-  // 入力即時反映
   [guestsEl, maidsEl, minutesEl].forEach(el=>{
     el.addEventListener("input", calc);
     el.addEventListener("change", calc);
