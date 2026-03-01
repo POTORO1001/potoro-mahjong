@@ -16,7 +16,6 @@
   --grad1:#f6b7d2;
   --grad2:#a9d6f7;
 }
-
 *{box-sizing:border-box;}
 body{
   margin:0;
@@ -25,7 +24,6 @@ body{
   color:var(--text);
   line-height:1.85;
 }
-
 header{
   padding:44px 18px 28px;
   text-align:center;
@@ -47,13 +45,11 @@ header h1{
   letter-spacing:.01em;
 }
 header p{margin:0; font-weight:700; opacity:.98;}
-
 main{
   max-width:860px;
   margin:0 auto;
   padding:14px 12px 26px;
 }
-
 section{
   background:rgba(255,255,255,.92);
   border:1px solid var(--border);
@@ -62,7 +58,6 @@ section{
   margin:12px 0;
   box-shadow:0 10px 22px rgba(0,0,0,.05);
 }
-
 h2{
   margin:0 0 12px;
   color:var(--accent);
@@ -72,10 +67,8 @@ h2{
   padding-bottom:8px;
   border-bottom:1px dashed rgba(222,63,123,.25);
 }
-
 p{margin:0 0 10px;}
 ul{margin:8px 0 0 1.2em; padding:0;}
-
 .checks{
   list-style:none;
   padding:0;
@@ -93,21 +86,11 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   color:var(--accent);
   font-weight:900;
 }
-
 .note{
   margin-top:8px;
   color:var(--muted);
   font-size:.95rem;
 }
-
-.pricebox{
-  border:1px dashed var(--border);
-  border-radius:14px;
-  padding:12px;
-  background:#fffafc;
-}
-.price{ font-weight:900; }
-
 .example{
   margin-top:10px;
   padding:10px 12px;
@@ -115,15 +98,11 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   background:#fff7fb;
   border-radius:10px;
 }
-
-/* 導線ボタン */
 .link-grid{
   display:grid;
   gap:10px;
   margin-top:14px;
 }
-
-/* ルール2つは横並び（小画面は縦） */
 .rules-row{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -132,11 +111,11 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 @media (max-width:560px){
   .rules-row{grid-template-columns:1fr;}
 }
-
 .score-link,
 .rules-link,
 .yaku-link,
-.match-link{
+.match-link,
+.price-link{
   display:block;
   padding:16px 14px;
   text-align:center;
@@ -152,7 +131,8 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 .score-link:hover,
 .rules-link:hover,
 .yaku-link:hover,
-.match-link:hover{
+.match-link:hover,
+.price-link:hover{
   transform:translateY(-4px);
   box-shadow:0 12px 24px rgba(0,0,0,.14);
   filter:saturate(1.05) brightness(1.02);
@@ -160,14 +140,16 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 .score-link:active,
 .rules-link:active,
 .yaku-link:active,
-.match-link:active{
+.match-link:active,
+.price-link:active{
   transform:translateY(-1px);
   box-shadow:0 8px 18px rgba(0,0,0,.12);
 }
 .score-link::after,
 .rules-link::after,
 .yaku-link::after,
-.match-link::after{
+.match-link::after,
+.price-link::after{
   content:"";
   position:absolute;
   top:0;
@@ -181,7 +163,8 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 .score-link:hover::after,
 .rules-link:hover::after,
 .yaku-link:hover::after,
-.match-link:hover::after{
+.match-link:hover::after,
+.price-link:hover::after{
   animation:shine .85s forwards;
 }
 @keyframes shine{ 100%{left:125%;} }
@@ -190,6 +173,7 @@ ul{margin:8px 0 0 1.2em; padding:0;}
 .rules-link{ background:linear-gradient(135deg,#60a5fa,#38bdf8); }
 .yaku-link{ background:linear-gradient(135deg,#94a3b8,#64748b); }
 .match-link{ background:linear-gradient(135deg,#34d399,#10b981); }
+.price-link{ background:linear-gradient(135deg,#ff7aa8,#ffb3cd); }
 
 .cta{
   display:block;
@@ -218,7 +202,6 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   opacity:.95;
   margin-top:2px;
 }
-
 footer{
   text-align:center;
   color:var(--muted);
@@ -226,143 +209,50 @@ footer{
   padding:18px 10px 26px;
 }
 
-/* ===== 料金シミュレーター ===== */
-.sim{
-  background:#ffffff;
+/* うまカード */
+.uma-card{
+  background:#fffafc;
   border:1px solid var(--border);
   border-radius:16px;
-  padding:14px 14px 12px;
+  padding:16px 14px;
 }
-.sim-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
-}
-@media (max-width:720px){
-  .sim-grid{ grid-template-columns:1fr; }
-}
-.field{
-  background:#fffafc;
-  border:1px dashed var(--border);
-  border-radius:14px;
-  padding:10px;
-}
-.field label{
-  display:block;
-  font-weight:900;
-  margin-bottom:6px;
-}
-.field input, .field select{
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid #f1c2d7;
-  font-size:16px;
-  outline:none;
-  background:#fff;
-}
-.field input:focus, .field select:focus{
-  border-color:rgba(222,63,123,.55);
-  box-shadow:0 0 0 4px rgba(222,63,123,.12);
-}
-
-.sim-actions{
+.uma-head{
   display:flex;
+  align-items:center;
   gap:10px;
-  margin-top:10px;
   flex-wrap:wrap;
+  margin-bottom:8px;
 }
-.btn{
-  border:0;
-  cursor:pointer;
-  padding:12px 14px;
-  border-radius:14px;
+.uma-tag{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
   font-weight:900;
   color:#fff;
+  background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
+}
+.uma-card ul{
+  margin:8px 0 0 1.2em;
+}
+.uma-cta-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.uma-btn{
+  display:inline-block;
+  text-decoration:none;
+  font-weight:900;
+  color:#fff;
+  padding:12px 14px;
+  border-radius:14px;
   background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
   transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
 }
-.btn:hover{ transform:translateY(-2px); box-shadow:0 10px 18px rgba(0,0,0,.12); filter:saturate(1.05) brightness(1.02); }
-.btn:active{ transform:translateY(-1px); box-shadow:0 8px 14px rgba(0,0,0,.10); }
-.btn.secondary{ background:linear-gradient(135deg,#94a3b8,#64748b); }
-
-/* 分プリセット */
-.presets{
-  margin-top:10px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.pbtn{
-  border:1px solid rgba(222,63,123,.25);
-  background:#fff7fb;
-  color:#7a2a43;
-  font-weight:900;
-  padding:9px 12px;
-  border-radius:999px;
-  cursor:pointer;
-  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
-}
-.pbtn:hover{ transform:translateY(-2px); box-shadow:0 10px 16px rgba(0,0,0,.10); filter:saturate(1.02) brightness(1.01); }
-.pbtn:active{ transform:translateY(-1px); box-shadow:0 8px 12px rgba(0,0,0,.08); }
-.pbtn[aria-pressed="true"]{
-  background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
-  color:#fff;
-  border-color:transparent;
-}
-
-.result{
-  margin-top:12px;
-  padding:12px;
-  border-radius:14px;
-  background:#fff7fb;
-  border-left:4px solid var(--accent);
-}
-.result .total{
-  font-size:1.2rem;
-  font-weight:900;
-}
-.mini{
-  color:var(--muted);
-  font-size:.92rem;
-  margin-top:6px;
-}
-.breakdown{
-  margin-top:8px;
-  font-size:.98rem;
-}
-.breakdown b{ font-weight:900; }
-
-/* 割り勘（ご主人様のみ） */
-.split{
-  margin-top:10px;
-  padding:10px;
-  border-radius:14px;
-  background:#fffafc;
-  border:1px dashed var(--border);
-}
-.split .row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px 14px;
-  align-items:center;
-}
-.split .label{ font-weight:900; }
-.split .per{
-  font-weight:900;
-  font-size:1.08rem;
-}
-.split small{ color:var(--muted); }
-
-.warn{
-  margin-top:8px;
-  padding:10px 12px;
-  border-radius:12px;
-  background:#fff3f6;
-  border:1px solid rgba(222,63,123,.25);
-  color:#7a2a43;
-  font-weight:800;
-}
+.uma-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 18px rgba(0,0,0,.12); filter:saturate(1.05) brightness(1.02); }
+.uma-btn:active{ transform:translateY(-1px); box-shadow:0 8px 14px rgba(0,0,0,.10); }
+.uma-btn.secondary{ background:linear-gradient(135deg,#94a3b8,#64748b); }
 </style>
 </head>
 
@@ -399,119 +289,48 @@ footer{
       <li>ご希望日時</li>
       <li>ご利用時間（初回120分〜／延長は30分〜）</li>
       <li>ご利用人数（ご主人様／お嬢様の人数）</li>
-      <li>メイドさん同卓の有無（同卓の場合：人数 ※最大2名まで）</li>
+      <li>同卓オプション（メイド同卓 or うま特別料金）</li>
     </ul>
     <p class="note">空き状況を確認のうえ、ご返信いたします。</p>
   </section>
 
   <section>
+    <h2>19:00〜21:00限定「うま特別料金」</h2>
+
+    <div class="uma-card" id="uma">
+      <div class="uma-head">
+        <span class="uma-tag">同卓料なし</span>
+        <strong>特別サポート“うま”稼働中（19:00〜21:00）</strong>
+      </div>
+
+      <ul>
+        <li>メイドさんではない特別サポート枠</li>
+        <li>同卓料なし</li>
+        <li>基本無口</li>
+        <li>稼働時間：19:00～21:00限定</li>
+      </ul>
+
+      <p class="note">※21:00以降に継続する場合は、同卓料が発生しメイドさんへバトンタッチできます。</p>
+
+      <div class="uma-cta-row">
+        <a class="uma-btn" href="price.html#calc">料金を計算する（シミュレーター）</a>
+        <a class="uma-btn secondary" href="price.html#uma">制度・料金の詳細を見る</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
     <h2>料金案内</h2>
-
-    <!-- ★ 料金シミュレーター -->
-    <div class="sim" id="simulator">
-      <p class="price" style="margin:0 0 8px;">💰 料金シミュレーター（入力すると自動計算）</p>
-
-      <div class="sim-grid">
-        <!-- ★ ご主人様の人数：select方式に変更（メイドさんと同じ作り） -->
-        <div class="field">
-          <label for="guests">ご主人様の人数</label>
-          <select id="guests" aria-describedby="guestsHelp">
-            <option value="1">1名</option>
-            <option value="2">2名</option>
-            <option value="3" selected>3名</option>
-            <option value="4">4名</option>
-            <option value="5">5名</option>
-            <option value="6">6名</option>
-            <option value="7">7名</option>
-            <option value="8">8名</option>
-          </select>
-          <div class="mini" id="guestsHelp">プルダウンで人数を選択</div>
-        </div>
-
-        <div class="field">
-          <label for="maids">メイドさんの人数</label>
-          <select id="maids" aria-describedby="maidsHelp">
-            <option value="0">0名（同卓なし）</option>
-            <option value="1" selected>1名</option>
-            <option value="2">2名（最大）</option>
-          </select>
-          <div class="mini" id="maidsHelp">同卓は最大2名まで</div>
-        </div>
-
-        <div class="field">
-          <label for="minutes">ご利用時間（分）</label>
-          <input id="minutes" type="number" inputmode="numeric" min="30" max="720" step="10" value="120" aria-describedby="minutesHelp">
-          <div class="mini" id="minutesHelp">30分以上。30分単位で切り上げ計算</div>
-
-          <div class="presets" role="group" aria-label="利用時間プリセット">
-            <button class="pbtn" type="button" data-min="120" aria-pressed="true">120</button>
-            <button class="pbtn" type="button" data-min="150" aria-pressed="false">150</button>
-            <button class="pbtn" type="button" data-min="180" aria-pressed="false">180</button>
-            <button class="pbtn" type="button" data-min="210" aria-pressed="false">210</button>
-            <button class="pbtn" type="button" data-min="240" aria-pressed="false">240</button>
-            <button class="pbtn" type="button" data-min="270" aria-pressed="false">270</button>
-            <button class="pbtn" type="button" data-min="300" aria-pressed="false">300</button>
-          </div>
-          <div class="mini">※押すと分入力が切り替わります</div>
-        </div>
-      </div>
-
-      <div class="sim-actions">
-        <button class="btn" type="button" id="calcBtn">計算する</button>
-        <button class="btn secondary" type="button" id="resetBtn">リセット</button>
-      </div>
-
-      <div class="result" aria-live="polite">
-        <div class="total">合計：<span id="total">—</span></div>
-        <div class="mini" id="meta">—</div>
-        <div class="breakdown" id="breakdown"></div>
-
-        <div class="split">
-          <div class="row">
-            <span class="label">ご主人様 1人あたり：</span>
-            <span class="per" id="perGuest">—</span>
-            <small id="perGuestNote">—</small>
-          </div>
-          <div class="mini">※端数は「円単位」で切り上げ表示（合計と一致しない場合は端数調整で対応してください）</div>
-        </div>
-
-        <div class="warn" id="warn" style="display:none;"></div>
-      </div>
-
-      <div class="mini" style="margin-top:8px;">
-        <b>計算ルール：</b>卓代 2,000円（初回のみ）／3時間以上で卓代無料／ご主人様 30分1,000円/人／メイド同卓 30分1,000円/人（最大2名）／30分単位で切り上げ
-      </div>
+    <p>料金表・注意事項・料金シミュレーターは、下記ページにまとめています。</p>
+    <div class="link-grid">
+      <a class="price-link" href="price.html">💰 料金ページへ（料金表／注意事項／シミュレーター）</a>
+      <a class="price-link" href="price.html#calc">🧮 料金をすぐ計算する（#calc）</a>
     </div>
-    <!-- ★ ここまで -->
+    <p class="note">※表示はすべて税込です。</p>
+  </section>
 
-    <div class="pricebox" style="margin-top:14px;">
-      <p class="price">■ 初回ご利用：120分〜</p>
-      <p class="price">■ ご延長：30分〜（30分単位）</p>
-      <p class="note">※表示はすべて税込です。</p>
-    </div>
-
-    <div class="pricebox" style="margin-top:12px;">
-      <p class="price">① 全自動麻雀卓貸出料：2,000円（税込）</p>
-      <p class="note">※初回のみ発生します。延長時は再発生しません。</p>
-      <p class="note">※<strong>3時間以上のご利用予約で、貸出料は無料</strong>となります。</p>
-
-      <p class="price" style="margin-top:10px;">② ご主人様：30分 1,000円（税込）／人</p>
-      <p class="note">※通常料金と同様の時間制料金です。</p>
-
-      <p class="price" style="margin-top:10px;">③ メイドさん同卓料：30分 1,000円（税込）／人</p>
-      <p class="note">※同卓できるメイドは最大2名まで。</p>
-    </div>
-
-    <div class="example">
-      <strong>料金例</strong><br>
-      👑 ご主人様3名＋メイドさん1名／120分（2時間）の場合<br><br>
-      卓代：2,000円<br>
-      ご主人様3名：1,000円 × 4（30分単位） × 3名 ＝ 12,000円<br>
-      メイドさん1名同卓料：1,000円 × 4 ＝ 4,000円<br><br>
-      ✅ 合計：<strong>18,000円（税込）</strong><br>
-      <span class="note">※120分は「30分×4枠」として計算します。</span>
-    </div>
-
+  <section>
+    <h2>関連ページ</h2>
     <div class="link-grid">
       <a class="score-link" href="mahjong-score.html">🀄 ポ・トロ独自の簡易点数計算を見る</a>
 
@@ -526,7 +345,7 @@ footer{
   </section>
 
   <section>
-    <h2>注意事項</h2>
+    <h2>注意事項（抜粋）</h2>
     <ul>
       <li>健全なアミューズメントサービスです</li>
       <li>金銭のやり取り・賭博行為は禁止です</li>
@@ -534,6 +353,7 @@ footer{
       <li>他のお客様のご迷惑になる行為はご遠慮ください</li>
       <li>メイドさんへの過度な要求は禁止です</li>
     </ul>
+    <p class="note">※注意事項の完全版は料金ページにも掲載しています。</p>
   </section>
 
   <a class="cta" href="https://twitter.com/messages/compose?recipient_id=1161961177749999617">
@@ -546,136 +366,6 @@ footer{
 <footer>
   concept cafe PO・TORO
 </footer>
-
-<script>
-(function(){
-  const RATE_PER_30_GUEST = 1000;
-  const RATE_PER_30_MAID  = 1000;
-  const TABLE_FEE         = 2000;
-  const TABLE_FREE_MIN    = 180;
-  const MAID_MAX          = 2;
-
-  const $ = (id)=>document.getElementById(id);
-  const guestsEl = $("guests");   // ← select
-  const maidsEl  = $("maids");
-  const minutesEl= $("minutes");
-
-  const totalEl  = $("total");
-  const metaEl   = $("meta");
-  const breakdownEl = $("breakdown");
-  const warnEl   = $("warn");
-
-  const perGuestEl = $("perGuest");
-  const perGuestNoteEl = $("perGuestNote");
-
-  const presetButtons = Array.from(document.querySelectorAll(".pbtn"));
-
-  function yen(n){ return n.toLocaleString("ja-JP") + "円"; }
-  function ceilTo30(min){ return Math.ceil(min / 30) * 30; }
-
-  function setPressedPresetFromMinutes(min){
-    presetButtons.forEach(btn=>{
-      const v = Number(btn.dataset.min);
-      btn.setAttribute("aria-pressed", String(v === min));
-    });
-  }
-
-  function calc(){
-    warnEl.style.display = "none";
-    warnEl.textContent = "";
-
-    let guests = Number(guestsEl.value);
-    let maids  = Number(maidsEl.value);
-    let minutes= Number(minutesEl.value);
-
-    if(!Number.isFinite(guests) || guests < 1){
-      guests = 1; guestsEl.value = "1";
-      warnEl.textContent = "ご主人様人数は1名以上で選択してください。";
-      warnEl.style.display = "block";
-    }
-    if(!Number.isFinite(maids) || maids < 0) maids = 0;
-    if(maids > MAID_MAX){
-      maids = MAID_MAX;
-      maidsEl.value = String(MAID_MAX);
-      warnEl.textContent = "メイドさん同卓は最大2名までです。2名に補正しました。";
-      warnEl.style.display = "block";
-    }
-    if(!Number.isFinite(minutes) || minutes < 30){
-      minutes = 30; minutesEl.value = 30;
-      warnEl.textContent = "ご利用時間は30分以上で入力してください。";
-      warnEl.style.display = "block";
-    }
-
-    const billedMinutes = ceilTo30(minutes);
-    const slots = billedMinutes / 30;
-
-    const tableFee  = (minutes >= TABLE_FREE_MIN) ? 0 : TABLE_FEE;
-    const guestsFee = RATE_PER_30_GUEST * slots * guests;
-    const maidsFee  = RATE_PER_30_MAID  * slots * maids;
-    const total = tableFee + guestsFee + maidsFee;
-
-    totalEl.textContent = yen(total);
-    metaEl.textContent =
-      `入力：${minutes}分 → 請求は${billedMinutes}分（30分×${slots}枠）／ご主人様${guests}名・メイド${maids}名`;
-
-    breakdownEl.innerHTML =
-      `内訳：卓代 <b>${yen(tableFee)}</b> ＋ ご主人様 <b>${yen(guestsFee)}</b> ＋ メイド同卓 <b>${yen(maidsFee)}</b>`;
-
-    if(minutes < TABLE_FREE_MIN){
-      const remain = TABLE_FREE_MIN - minutes;
-      const msg = `あと${remain}分で「3時間以上」になり、卓代が無料になります。`;
-      warnEl.textContent = warnEl.style.display === "block"
-        ? (warnEl.textContent + " " + msg)
-        : msg;
-      warnEl.style.display = "block";
-    }
-
-    setPressedPresetFromMinutes(minutes);
-
-    const per = Math.ceil(total / guests);
-    perGuestEl.textContent = yen(per);
-    perGuestNoteEl.textContent = `（ご主人様${guests}名で割る）`;
-  }
-
-  function reset(){
-    guestsEl.value = "3";
-    maidsEl.value = "1";
-    minutesEl.value = 120;
-
-    totalEl.textContent = "—";
-    metaEl.textContent = "—";
-    breakdownEl.textContent = "";
-    warnEl.style.display = "none";
-    warnEl.textContent = "";
-
-    perGuestEl.textContent = "—";
-    perGuestNoteEl.textContent = "—";
-
-    setPressedPresetFromMinutes(120);
-    calc();
-  }
-
-  $("calcBtn").addEventListener("click", calc);
-  $("resetBtn").addEventListener("click", reset);
-
-  presetButtons.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const v = Number(btn.dataset.min);
-      minutesEl.value = String(v);
-      setPressedPresetFromMinutes(v);
-      calc();
-    });
-  });
-
-  [guestsEl, maidsEl, minutesEl].forEach(el=>{
-    el.addEventListener("input", calc);
-    el.addEventListener("change", calc);
-  });
-
-  setPressedPresetFromMinutes(Number(minutesEl.value));
-  calc();
-})();
-</script>
 
 </body>
 </html>
