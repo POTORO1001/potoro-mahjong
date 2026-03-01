@@ -149,7 +149,6 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   overflow:hidden;
   will-change:transform;
 }
-
 .score-link:hover,
 .rules-link:hover,
 .yaku-link:hover,
@@ -165,7 +164,6 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   transform:translateY(-1px);
   box-shadow:0 8px 18px rgba(0,0,0,.12);
 }
-
 .score-link::after,
 .rules-link::after,
 .yaku-link::after,
@@ -291,6 +289,31 @@ footer{
   background:linear-gradient(135deg,#94a3b8,#64748b);
 }
 
+/* 分プリセット */
+.presets{
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.pbtn{
+  border:1px solid rgba(222,63,123,.25);
+  background:#fff7fb;
+  color:#7a2a43;
+  font-weight:900;
+  padding:9px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.pbtn:hover{ transform:translateY(-2px); box-shadow:0 10px 16px rgba(0,0,0,.10); filter:saturate(1.02) brightness(1.01); }
+.pbtn:active{ transform:translateY(-1px); box-shadow:0 8px 12px rgba(0,0,0,.08); }
+.pbtn[aria-pressed="true"]{
+  background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
+  color:#fff;
+  border-color:transparent;
+}
+
 .result{
   margin-top:12px;
   padding:12px;
@@ -312,6 +335,29 @@ footer{
   font-size:.98rem;
 }
 .breakdown b{ font-weight:900; }
+
+.split{
+  margin-top:10px;
+  padding:10px;
+  border-radius:14px;
+  background:#fffafc;
+  border:1px dashed var(--border);
+}
+.split .row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 14px;
+  align-items:center;
+}
+.split .label{
+  font-weight:900;
+}
+.split .per{
+  font-weight:900;
+  font-size:1.08rem;
+}
+.split small{ color:var(--muted); }
+
 .warn{
   margin-top:8px;
   padding:10px 12px;
@@ -365,7 +411,7 @@ footer{
   <section>
     <h2>料金案内</h2>
 
-    <!-- ★ 料金シミュレーター（追加） -->
+    <!-- ★ 料金シミュレーター -->
     <div class="sim" id="simulator">
       <p class="price" style="margin:0 0 8px;">💰 料金シミュレーター（入力すると自動計算）</p>
 
@@ -390,6 +436,18 @@ footer{
           <label for="minutes">ご利用時間（分）</label>
           <input id="minutes" type="number" inputmode="numeric" min="30" max="720" step="10" value="120" aria-describedby="minutesHelp">
           <div class="mini" id="minutesHelp">30分以上。30分単位で切り上げ計算</div>
+
+          <!-- ★ 分プリセット -->
+          <div class="presets" role="group" aria-label="利用時間プリセット">
+            <button class="pbtn" type="button" data-min="120" aria-pressed="true">120</button>
+            <button class="pbtn" type="button" data-min="150" aria-pressed="false">150</button>
+            <button class="pbtn" type="button" data-min="180" aria-pressed="false">180</button>
+            <button class="pbtn" type="button" data-min="210" aria-pressed="false">210</button>
+            <button class="pbtn" type="button" data-min="240" aria-pressed="false">240</button>
+            <button class="pbtn" type="button" data-min="270" aria-pressed="false">270</button>
+            <button class="pbtn" type="button" data-min="300" aria-pressed="false">300</button>
+          </div>
+          <div class="mini">※押すと分入力が切り替わります</div>
         </div>
       </div>
 
@@ -402,6 +460,24 @@ footer{
         <div class="total">合計：<span id="total">—</span></div>
         <div class="mini" id="meta">—</div>
         <div class="breakdown" id="breakdown"></div>
+
+        <!-- ★ 割り勘表示 -->
+        <div class="split" style="margin-top:10px;">
+          <div class="row">
+            <span class="label">割り勘対象：</span>
+            <select id="splitMode" aria-label="割り勘対象の選択" style="padding:9px 10px;border-radius:12px;border:1px solid #f1c2d7;">
+              <option value="guests" selected>ご主人様のみで割る</option>
+              <option value="all">同卓の全員で割る（ご主人様＋メイド）</option>
+            </select>
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <span class="label">1人あたり：</span>
+            <span class="per" id="perPerson">—</span>
+            <small id="perNote">—</small>
+          </div>
+          <div class="mini">※端数は「円単位」で表示（合計と一致しない場合は端数調整で対応してください）</div>
+        </div>
+
         <div class="warn" id="warn" style="display:none;"></div>
       </div>
 
@@ -439,7 +515,6 @@ footer{
       <span class="note">※120分は「30分×4枠」として計算します。</span>
     </div>
 
-    <!-- 導線ボタン -->
     <div class="link-grid">
       <a class="score-link" href="mahjong-score.html">🀄 ポ・トロ独自の簡易点数計算を見る</a>
 
@@ -488,16 +563,30 @@ footer{
   const guestsEl = $("guests");
   const maidsEl  = $("maids");
   const minutesEl= $("minutes");
+  const splitModeEl = $("splitMode");
+
   const totalEl  = $("total");
   const metaEl   = $("meta");
   const breakdownEl = $("breakdown");
   const warnEl   = $("warn");
+
+  const perPersonEl = $("perPerson");
+  const perNoteEl   = $("perNote");
+
+  const presetButtons = Array.from(document.querySelectorAll(".pbtn"));
 
   function yen(n){
     return n.toLocaleString("ja-JP") + "円";
   }
   function ceilTo30(min){
     return Math.ceil(min / 30) * 30;
+  }
+
+  function setPressedPresetFromMinutes(min){
+    presetButtons.forEach(btn=>{
+      const v = Number(btn.dataset.min);
+      btn.setAttribute("aria-pressed", String(v === min));
+    });
   }
 
   function calc(){
@@ -536,7 +625,6 @@ footer{
     const total = tableFee + guestsFee + maidsFee;
 
     totalEl.textContent = yen(total);
-
     metaEl.textContent =
       `入力：${minutes}分 → 請求は${billedMinutes}分（30分×${slots}枠）／ご主人様${guests}名・メイド${maids}名`;
 
@@ -552,30 +640,63 @@ footer{
         : msg;
       warnEl.style.display = "block";
     }
+
+    // 分プリセットの押下状態（手入力でも追従）
+    setPressedPresetFromMinutes(minutes);
+
+    // 割り勘
+    const mode = splitModeEl.value; // "guests" | "all"
+    const divisor = (mode === "all") ? (guests + maids) : guests;
+
+    if(divisor <= 0){
+      perPersonEl.textContent = "—";
+      perNoteEl.textContent = "（割り勘人数が0です）";
+    }else{
+      // 円単位で表示（端数は切り上げ）
+      const per = Math.ceil(total / divisor);
+      perPersonEl.textContent = yen(per);
+      perNoteEl.textContent = `（${divisor}人で割る）`;
+    }
   }
 
   function reset(){
     guestsEl.value = 3;
     maidsEl.value = 1;
     minutesEl.value = 120;
+    splitModeEl.value = "guests";
     totalEl.textContent = "—";
     metaEl.textContent = "—";
     breakdownEl.textContent = "";
     warnEl.style.display = "none";
     warnEl.textContent = "";
+    perPersonEl.textContent = "—";
+    perNoteEl.textContent = "—";
+    setPressedPresetFromMinutes(120);
+    calc();
   }
 
   // ボタン
   $("calcBtn").addEventListener("click", calc);
   $("resetBtn").addEventListener("click", reset);
 
-  // 入力即時反映（体験をよくする）
-  [guestsEl, maidsEl, minutesEl].forEach(el=>{
+  // 分プリセット
+  presetButtons.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const v = Number(btn.dataset.min);
+      minutesEl.value = String(v);
+      setPressedPresetFromMinutes(v);
+      calc();
+    });
+  });
+
+  // 入力即時反映
+  [guestsEl, maidsEl, minutesEl, splitModeEl].forEach(el=>{
     el.addEventListener("input", calc);
     el.addEventListener("change", calc);
   });
 
   // 初期計算
+  setPressedPresetFromMinutes(Number(minutesEl.value));
   calc();
 })();
 </script>
