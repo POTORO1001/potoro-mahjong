@@ -91,13 +91,6 @@ ul{margin:8px 0 0 1.2em; padding:0;}
   color:var(--muted);
   font-size:.95rem;
 }
-.example{
-  margin-top:10px;
-  padding:10px 12px;
-  border-left:4px solid var(--accent);
-  background:#fff7fb;
-  border-radius:10px;
-}
 .link-grid{
   display:grid;
   gap:10px;
@@ -208,51 +201,6 @@ footer{
   font-size:.86rem;
   padding:18px 10px 26px;
 }
-
-/* うまカード */
-.uma-card{
-  background:#fffafc;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px 14px;
-}
-.uma-head{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:8px;
-}
-.uma-tag{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:999px;
-  font-weight:900;
-  color:#fff;
-  background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
-}
-.uma-card ul{
-  margin:8px 0 0 1.2em;
-}
-.uma-cta-row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-.uma-btn{
-  display:inline-block;
-  text-decoration:none;
-  font-weight:900;
-  color:#fff;
-  padding:12px 14px;
-  border-radius:14px;
-  background:linear-gradient(135deg,#ff7aa8,#ffb3cd);
-  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
-}
-.uma-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 18px rgba(0,0,0,.12); filter:saturate(1.05) brightness(1.02); }
-.uma-btn:active{ transform:translateY(-1px); box-shadow:0 8px 14px rgba(0,0,0,.10); }
-.uma-btn.secondary{ background:linear-gradient(135deg,#94a3b8,#64748b); }
 </style>
 </head>
 
@@ -289,42 +237,17 @@ footer{
       <li>ご希望日時</li>
       <li>ご利用時間（初回120分〜／延長は30分〜）</li>
       <li>ご利用人数（ご主人様／お嬢様の人数）</li>
-      <li>同卓オプション（メイド同卓 or うま特別料金）</li>
+      <li>同卓オプション（詳細は料金ページをご確認ください）</li>
     </ul>
     <p class="note">空き状況を確認のうえ、ご返信いたします。</p>
-  </section>
-
-  <section>
-    <h2>19:00〜21:00限定「うま特別料金」</h2>
-
-    <div class="uma-card" id="uma">
-      <div class="uma-head">
-        <span class="uma-tag">同卓料なし</span>
-        <strong>特別サポート“うま”稼働中（19:00〜21:00）</strong>
-      </div>
-
-      <ul>
-        <li>メイドさんではない特別サポート枠</li>
-        <li>同卓料なし</li>
-        <li>基本無口</li>
-        <li>稼働時間：19:00～21:00限定</li>
-      </ul>
-
-      <p class="note">※21:00以降に継続する場合は、同卓料が発生しメイドさんへバトンタッチできます。</p>
-
-      <div class="uma-cta-row">
-        <a class="uma-btn" href="price.html#calc">料金を計算する（シミュレーター）</a>
-        <a class="uma-btn secondary" href="price.html#uma">制度・料金の詳細を見る</a>
-      </div>
-    </div>
   </section>
 
   <section>
     <h2>料金案内</h2>
     <p>料金表・注意事項・料金シミュレーターは、下記ページにまとめています。</p>
     <div class="link-grid">
-      <a class="price-link" href="price.html">💰 料金ページへ（料金表／注意事項／シミュレーター）</a>
-      <a class="price-link" href="price.html#calc">🧮 料金をすぐ計算する（#calc）</a>
+      <a class="price-link" href="mahjong-price.html">💰 料金ページへ（料金表／注意事項／シミュレーター）</a>
+      <a class="price-link" href="mahjong-price.html#calc">🧮 料金をすぐ計算する（#calc）</a>
     </div>
     <p class="note">※表示はすべて税込です。</p>
   </section>
@@ -345,7 +268,7 @@ footer{
   </section>
 
   <section>
-    <h2>注意事項（抜粋）</h2>
+    <h2>注意事項</h2>
     <ul>
       <li>健全なアミューズメントサービスです</li>
       <li>金銭のやり取り・賭博行為は禁止です</li>
@@ -353,7 +276,6 @@ footer{
       <li>他のお客様のご迷惑になる行為はご遠慮ください</li>
       <li>メイドさんへの過度な要求は禁止です</li>
     </ul>
-    <p class="note">※注意事項の完全版は料金ページにも掲載しています。</p>
   </section>
 
   <a class="cta" href="https://twitter.com/messages/compose?recipient_id=1161961177749999617">
