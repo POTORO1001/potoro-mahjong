@@ -284,10 +284,7 @@ footer{
 }
 .btn:hover{ transform:translateY(-2px); box-shadow:0 10px 18px rgba(0,0,0,.12); filter:saturate(1.05) brightness(1.02); }
 .btn:active{ transform:translateY(-1px); box-shadow:0 8px 14px rgba(0,0,0,.10); }
-
-.btn.secondary{
-  background:linear-gradient(135deg,#94a3b8,#64748b);
-}
+.btn.secondary{ background:linear-gradient(135deg,#94a3b8,#64748b); }
 
 /* 分プリセット */
 .presets{
@@ -336,6 +333,7 @@ footer{
 }
 .breakdown b{ font-weight:900; }
 
+/* 割り勘（ご主人様のみ） */
 .split{
   margin-top:10px;
   padding:10px;
@@ -349,9 +347,7 @@ footer{
   gap:8px 14px;
   align-items:center;
 }
-.split .label{
-  font-weight:900;
-}
+.split .label{ font-weight:900; }
 .split .per{
   font-weight:900;
   font-size:1.08rem;
@@ -461,21 +457,14 @@ footer{
         <div class="mini" id="meta">—</div>
         <div class="breakdown" id="breakdown"></div>
 
-        <!-- ★ 割り勘表示 -->
-        <div class="split" style="margin-top:10px;">
+        <!-- ★ 割り勘（ご主人様のみ） -->
+        <div class="split">
           <div class="row">
-            <span class="label">割り勘対象：</span>
-            <select id="splitMode" aria-label="割り勘対象の選択" style="padding:9px 10px;border-radius:12px;border:1px solid #f1c2d7;">
-              <option value="guests" selected>ご主人様のみで割る</option>
-              <option value="all">同卓の全員で割る（ご主人様＋メイド）</option>
-            </select>
+            <span class="label">ご主人様 1人あたり：</span>
+            <span class="per" id="perGuest">—</span>
+            <small id="perGuestNote">—</small>
           </div>
-          <div class="row" style="margin-top:8px;">
-            <span class="label">1人あたり：</span>
-            <span class="per" id="perPerson">—</span>
-            <small id="perNote">—</small>
-          </div>
-          <div class="mini">※端数は「円単位」で表示（合計と一致しない場合は端数調整で対応してください）</div>
+          <div class="mini">※端数は「円単位」で切り上げ表示（合計と一致しない場合は端数調整で対応してください）</div>
         </div>
 
         <div class="warn" id="warn" style="display:none;"></div>
@@ -563,15 +552,14 @@ footer{
   const guestsEl = $("guests");
   const maidsEl  = $("maids");
   const minutesEl= $("minutes");
-  const splitModeEl = $("splitMode");
 
   const totalEl  = $("total");
   const metaEl   = $("meta");
   const breakdownEl = $("breakdown");
   const warnEl   = $("warn");
 
-  const perPersonEl = $("perPerson");
-  const perNoteEl   = $("perNote");
+  const perGuestEl = $("perGuest");
+  const perGuestNoteEl = $("perGuestNote");
 
   const presetButtons = Array.from(document.querySelectorAll(".pbtn"));
 
@@ -644,38 +632,31 @@ footer{
     // 分プリセットの押下状態（手入力でも追従）
     setPressedPresetFromMinutes(minutes);
 
-    // 割り勘
-    const mode = splitModeEl.value; // "guests" | "all"
-    const divisor = (mode === "all") ? (guests + maids) : guests;
-
-    if(divisor <= 0){
-      perPersonEl.textContent = "—";
-      perNoteEl.textContent = "（割り勘人数が0です）";
-    }else{
-      // 円単位で表示（端数は切り上げ）
-      const per = Math.ceil(total / divisor);
-      perPersonEl.textContent = yen(per);
-      perNoteEl.textContent = `（${divisor}人で割る）`;
-    }
+    // 割り勘（ご主人様のみ）
+    const divisor = guests;
+    const per = Math.ceil(total / divisor); // 円単位で切り上げ
+    perGuestEl.textContent = yen(per);
+    perGuestNoteEl.textContent = `（ご主人様${divisor}名で割る）`;
   }
 
   function reset(){
     guestsEl.value = 3;
     maidsEl.value = 1;
     minutesEl.value = 120;
-    splitModeEl.value = "guests";
+
     totalEl.textContent = "—";
     metaEl.textContent = "—";
     breakdownEl.textContent = "";
     warnEl.style.display = "none";
     warnEl.textContent = "";
-    perPersonEl.textContent = "—";
-    perNoteEl.textContent = "—";
+
+    perGuestEl.textContent = "—";
+    perGuestNoteEl.textContent = "—";
+
     setPressedPresetFromMinutes(120);
     calc();
   }
 
-  // ボタン
   $("calcBtn").addEventListener("click", calc);
   $("resetBtn").addEventListener("click", reset);
 
@@ -690,12 +671,11 @@ footer{
   });
 
   // 入力即時反映
-  [guestsEl, maidsEl, minutesEl, splitModeEl].forEach(el=>{
+  [guestsEl, maidsEl, minutesEl].forEach(el=>{
     el.addEventListener("input", calc);
     el.addEventListener("change", calc);
   });
 
-  // 初期計算
   setPressedPresetFromMinutes(Number(minutesEl.value));
   calc();
 })();
